@@ -1,4 +1,4 @@
-package vom.client.utility;
+package vom.client.asm.utility;
 
 import vom.client.exception.FallDownException;
 import org.objectweb.asm.Type;

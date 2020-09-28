@@ -1,6 +1,6 @@
 package vom.client;
 
-import vom.client.port.performance.SystemPerformanceWorker;
+import vom.client.performance.SystemPerformanceWorker;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -15,14 +15,28 @@
   </modules>
 
   <properties>
-    <asm.version>8.0.1</asm.version>
-    <grpc.version>1.31.1</grpc.version>
-    <oshi.version>3.13.6</oshi.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <vom.package>vom</vom.package>
+    <java.sdk.version>1.6</java.sdk.version>
+
+    <asm.version>8.0.1</asm.version>
+    <oshi.version>3.13.6</oshi.version>
+    <h2.version>1.4.199</h2.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm-commons</artifactId>
+      <version>${asm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm-util</artifactId>
+      <version>${asm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>com.github.oshi</groupId>
       <artifactId>oshi-core-shaded</artifactId>
@@ -30,26 +44,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-commons</artifactId>
-      <version>${asm.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-protobuf</artifactId>
-      <version>${grpc.version}</version>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-stub</artifactId>
-      <version>${grpc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-netty</artifactId>
-      <version>${grpc.version}</version>
-      <scope>runtime</scope>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP-java6</artifactId>
+      <version>2.3.13</version>
     </dependency>
 
     <dependency>

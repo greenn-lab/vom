@@ -1,4 +1,4 @@
-package vom.client.port.performance;
+package vom.client.performance;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
