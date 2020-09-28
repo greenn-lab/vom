@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: "vom-server"
+
+  datasource:
+    driver-class-name: "org.h2.Driver"
+    url: "jdbc:h2:file:~/.vom/env"
+    username: "sa"
+    password: ""
+
+  chaser:
+    datasource:
+      driver-class-name: "org.h2.Driver"
+      url: "jdbc:h2:mem:chaser"
+      username: "sa"
+      password: ""
+
+
+---
+server:
+  port: 8888
