@@ -2,7 +2,7 @@ package vom.client.asm.web.chaser;
 
 import vom.client.Config;
 import vom.client.asm.AgentLinkageAdapter;
-import vom.client.asm.InvokeStatic;
+import vom.client.asm.utility.InvokeStatic;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;

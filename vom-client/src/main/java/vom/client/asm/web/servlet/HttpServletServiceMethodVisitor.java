@@ -1,18 +1,19 @@
 package vom.client.asm.web.servlet;
 
+import lombok.extern.slf4j.Slf4j;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.Booty;
 import vom.client.Config;
+import vom.client.chase.Booty;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
-import java.util.Map;
+import java.util.HashMap;
 
+@Slf4j
 public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
-  
   
   private static final String CLASS_INTERNAL_NAME =
       Type.getInternalName(HttpServletServiceMethodVisitor.class);
@@ -44,50 +45,46 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
           "()V",
           false);
     }
-
+    
     mv.visitInsn(opcode);
   }
   
   public static void swipe(HttpServletRequest request) {
-    final Booty.Builder builder = Booty.newBuilder();
-    HttpServletServiceAdapter.BOOTY.set(builder);
+    final Booty booty = Booty.builder()
+        .id(Config.getId())
+        .collected(System.currentTimeMillis())
+        .uri(request.getRequestURI())
+        .parameters(new HashMap<String, String>(request.getParameterMap()))
+        .build();
     
-    builder.setId(Config.getId())
-        .setTimestamp(System.currentTimeMillis())
-        .setUri(request.getRequestURI());
+    @SuppressWarnings("unchecked") final Enumeration<String> headerNames =
+        request.getHeaderNames();
     
-    fillParametersAndHeaders(request, builder);
+    while (headerNames.hasMoreElements()) {
+      final String name = headerNames.nextElement();
+      booty.addHeader(name, request.getHeader(name));
+    }
     
-    System.err.printf("swipe(request): %d%n", builder.getTimestamp());
+    System.err.printf("swipe(request): %d%n", booty.getCollected());
+    HttpServletServiceAdapter.BOOTY.set(booty);
   }
   
   public static void emit() {
-    final Booty.Builder builder = HttpServletServiceAdapter.BOOTY.get();
+    final Booty builder = HttpServletServiceAdapter.BOOTY.get();
     if (builder != null) {
-      System.err.printf("emit(): %d%n", builder.getTimestamp());
+      System.err.printf("emit(): %d%n", builder.getCollected());
       HttpServletServiceAdapter.BOOTY.remove();
     }
   }
   
   public static void addMethodStack(String signature, long elapsed) {
-    final Booty.Builder builder = HttpServletServiceAdapter.BOOTY.get();
+    final Booty builder = HttpServletServiceAdapter.BOOTY.get();
     if (builder != null) {
-      builder.addTroves(
-          Booty.Trove.newBuilder()
-              .setSignature(signature)
-              .setElapsed((int) (builder.getTimestamp() - elapsed)).build()
+      builder.addTrove(
+          signature,
+          "",
+          builder.getCollected() - elapsed
       );
-    }
-  }
-  
-  private static void fillParametersAndHeaders(HttpServletRequest request, Booty.Builder builder) {
-    @SuppressWarnings("unchecked") final Map<String, String> parameters = request.getParameterMap();
-    builder.putAllParameter(parameters);
-    
-    @SuppressWarnings("unchecked") final Enumeration<String> headerNames = request.getHeaderNames();
-    while (headerNames.hasMoreElements()) {
-      final String headerName = headerNames.nextElement();
-      builder.putHeader(headerName, request.getHeader(headerName));
     }
   }
   

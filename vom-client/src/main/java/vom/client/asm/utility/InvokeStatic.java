@@ -1,4 +1,4 @@
-package vom.client.asm;
+package vom.client.asm.utility;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

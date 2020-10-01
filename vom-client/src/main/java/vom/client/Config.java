@@ -18,9 +18,10 @@ public final class Config {
   public static final int ASM_VERSION = Opcodes.ASM7;
   
   protected static final Set<String> DEFAULT_JDBC_CLASSES = new HashSet<String>();
-  protected static final Set<String> DEFAULT_SERVLET_CLASSES = new HashSet<String>();
+  public static final Set<String> DEFAULT_SERVLET_CLASSES = new HashSet<String>();
   
   private static final Properties props = new Properties();
+  private static final Long id;
   private static final Set<String> packages;
   
   static {
@@ -32,6 +33,8 @@ public final class Config {
     
     // 설정파일을 통해서 초기 설정을 구성해요.
     configure();
+    
+    id = Long.parseLong(props.getProperty("id"));
 
     packages = new HashSet<String>();
     for (String pkg : props.getProperty("monitor.packages").split("[\\s,|]+")) {
@@ -44,8 +47,8 @@ public final class Config {
   }
   
   
-  public static String getId() {
-    return props.getProperty("id");
+  public static Long getId() {
+    return id;
   }
   
   public static int getPollingInterval() {

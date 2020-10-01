@@ -1,5 +1,6 @@
 package vom.client;
 
+import vom.client.asm.VOMClientTransformer;
 import vom.client.performance.SystemPerformanceWorker;
 
 import java.io.BufferedReader;

@@ -1,5 +1,6 @@
-package vom.client;
+package vom.client.asm;
 
+import vom.client.Config;
 import vom.client.asm.web.chaser.HttpServletChaserAdapter;
 import vom.client.asm.web.servlet.HttpServletServiceAdapter;
 
