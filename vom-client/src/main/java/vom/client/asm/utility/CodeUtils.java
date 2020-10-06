@@ -1,16 +1,36 @@
 package vom.client.asm.utility;
 
-import vom.client.exception.FallDownException;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import vom.client.exception.FallDownException;
 
 import java.lang.reflect.Method;
 
-public class CodeUtils {
+public class CodeUtils implements Opcodes{
   
   private CodeUtils() {
   }
   
-  public static Class<?> typeToClass(Type type) throws ClassNotFoundException {
+  public static int localVariableOpcode(Type type) {
+    switch (type.getSort()) {
+      case Type.BOOLEAN:
+      case Type.BYTE:
+      case Type.CHAR:
+      case Type.SHORT:
+      case Type.INT:
+        return ILOAD;
+      case Type.FLOAT:
+        return FLOAD;
+      case Type.LONG:
+        return LLOAD;
+      case Type.DOUBLE:
+        return DLOAD;
+      default:
+        return ALOAD;
+    }
+  }
+  
+  public static Class<?> typeToClass(Type type) {
     switch (type.getSort()) {
       case Type.BOOLEAN:
         return boolean.class;
@@ -29,8 +49,9 @@ public class CodeUtils {
       case Type.DOUBLE:
         return double.class;
       case Type.ARRAY:
-        if (type.getDimensions() == 1 && !type.getInternalName().contains("/")) {
-          return Class.forName(type.getInternalName());
+        if (type.getDimensions() == 1
+            && !type.getInternalName().contains("/")) {
+          return asClass(type.getInternalName());
         }
         else {
           final StringBuilder className = new StringBuilder();
@@ -43,16 +64,25 @@ public class CodeUtils {
             className.insert(0, '[');
           }
           
-          return Class.forName(className.toString());
+          return asClass(className.toString());
         }
       case Type.OBJECT:
-        return Class.forName(type.getClassName());
+        return asClass(type.getClassName());
       default:
         return null;
     }
   }
   
-  public static Class<?>[] argumentsToClasses(String parameters) throws ClassNotFoundException {
+  private static Class<?> asClass(String clazz) {
+    try {
+      return Class.forName(clazz);
+    }
+    catch (ClassNotFoundException e) {
+      throw new FallDownException(e);
+    }
+  }
+  
+  public static Class<?>[] argumentsToClasses(String parameters) {
     final Type[] argumentTypes = Type.getType(parameters).getArgumentTypes();
     
     final Class<?>[] classes = new Class[argumentTypes.length];
@@ -63,7 +93,10 @@ public class CodeUtils {
     return classes;
   }
   
-  public static Method getMethod(Class<?> clazz, String methodName, String descriptor) {
+  public static Method getMethod(
+      Class<?> clazz,
+      String methodName,
+      String descriptor) {
     try {
       return clazz.getMethod(methodName, argumentsToClasses(descriptor));
     }
@@ -74,7 +107,10 @@ public class CodeUtils {
   
   
   public static void main(String... args) throws Exception {
-    for (Class<?> c : argumentsToClasses("(IZF[I[[Ljava/lang/String;JDLjava/lang/String;)V"))
+    final String parameters =
+        "(IZF[I[[Ljava/lang/String;JDLjava/lang/String;)V";
+    
+    for (Class<?> c : argumentsToClasses(parameters))
       System.out.println(c);
     
     System.out.println("--------------");

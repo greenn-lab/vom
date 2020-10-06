@@ -37,8 +37,8 @@ public final class ASMTestTransformer implements Extension {
       }
       
       final Constructor<?> constructor = adapterClass.getConstructor(adapterClassParameters);
-      @SuppressWarnings("JavaReflectionInvocation") final AgentLinkageAdapter o = (AgentLinkageAdapter) constructor.newInstance(internalName, out.toByteArray());
-      byte[] adaptedBytes = o.toByteArray();
+      @SuppressWarnings("JavaReflectionInvocation") final ClassWritable o = (ClassWritable) constructor.newInstance(internalName, out.toByteArray());
+      byte[] adaptedBytes = o.toBytes();
   
       final String replace = path.replaceAll("\\.class", "BCI.class");
       FileOutputStream classOut = new FileOutputStream(replace);

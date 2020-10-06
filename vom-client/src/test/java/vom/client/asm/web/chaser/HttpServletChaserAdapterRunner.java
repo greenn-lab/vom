@@ -32,7 +32,7 @@ class HttpServletChaserAdapterRunner {
     final FileOutputStream classOut =
         new FileOutputStream(file);
     
-    classOut.write(adapter.toByteArray());
+    classOut.write(adapter.toBytes());
     classOut.close();
   }
   

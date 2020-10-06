@@ -22,11 +22,13 @@ public class Bootstrap {
   /**
    * JVMTI(JVM Tool Interface)로 시작해요.
    *
-   * @param agentId         VM Options 를 설정할 때, "-javaagent:jarpath=id" 이렇게 사용해요.
+   * @param configFilepath  -javaagent:jar-path=<설정파일경로>
    * @param instrumentation 기본 도구에요.
    */
-  public static void premain(String agentId, Instrumentation instrumentation) {
-    Config.setId(agentId);
+  public static void premain(String configFilepath, Instrumentation instrumentation) {
+    if (configFilepath != null) {
+      Config.mergeProperties(configFilepath);
+    }
     
     bootSystemPerformance();
     

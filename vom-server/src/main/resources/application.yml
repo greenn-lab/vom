@@ -2,6 +2,11 @@ spring:
   application:
     name: "vom-server"
 
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
   datasource:
     driver-class-name: "org.h2.Driver"
     url: "jdbc:h2:file:~/.vom/env"
@@ -11,10 +16,9 @@ spring:
   chaser:
     datasource:
       driver-class-name: "org.h2.Driver"
-      url: "jdbc:h2:mem:chaser"
+      jdbc-url: "jdbc:h2:mem:chaser"
       username: "sa"
       password: ""
-
 
 ---
 server:

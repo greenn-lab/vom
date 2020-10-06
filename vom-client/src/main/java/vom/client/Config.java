@@ -1,7 +1,9 @@
 package vom.client;
 
-import vom.client.exception.FallDownException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.objectweb.asm.Opcodes;
+import vom.client.exception.FallDownException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,51 +15,38 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Config {
   
-  public static final int ASM_VERSION = Opcodes.ASM7;
-  
-  protected static final Set<String> DEFAULT_JDBC_CLASSES = new HashSet<String>();
-  public static final Set<String> DEFAULT_SERVLET_CLASSES = new HashSet<String>();
+  private static final String CONFIG_DEFAULT_PROPERTIES =
+      System.getProperty("user.home") + "/.vom/config.properties";
   
   private static final Properties props = new Properties();
-  private static final Long id;
-  private static final Set<String> packages;
+  private static final Set<String> packages = new HashSet<>();
   
   static {
-    DEFAULT_SERVLET_CLASSES.add("javax/servlet/http/HttpServlet");
-    
-    DEFAULT_JDBC_CLASSES.add("javax/sql/Statement");
-    DEFAULT_JDBC_CLASSES.add("javax/sql/PreparedStatement");
-    DEFAULT_JDBC_CLASSES.add("javax/sql/CallableStatement");
-    
-    // 설정파일을 통해서 초기 설정을 구성해요.
     configure();
     
-    id = Long.parseLong(props.getProperty("id"));
-
-    packages = new HashSet<String>();
-    for (String pkg : props.getProperty("monitor.packages").split("[\\s,|]+")) {
-      packages.add(pkg.replace('.', '/'));
+    final String[] packages = props.getProperty("monitor.packages")
+        .split("[\\s,|]+");
+    
+    for (String pkg : packages) {
+      Config.packages.add(pkg.replace('.', '/'));
     }
   }
   
   
-  private Config() {
-  }
-  
-  
-  public static Long getId() {
-    return id;
+  public static String getId() {
+    return props.getProperty("id");
   }
   
   public static int getPollingInterval() {
     return Integer.parseInt(props.getProperty("polling.interval"));
   }
   
-  public static void setId(String name) {
-    if (name != null && !name.trim().equals("")) {
-      props.setProperty("id", name.trim());
+  public static void setId(String id) {
+    if (id != null && !"".equals(id.trim())) {
+      props.setProperty("id", id.trim());
     }
   }
   
@@ -77,46 +66,49 @@ public final class Config {
     return Boolean.parseBoolean(props.getProperty("debug", "false"));
   }
   
+  /**
+   * 설정파일을 통해서 초기 설정을 구성해요.
+   */
   public static void configure() {
-    InputStream in = null;
+    final URL propFileUrl = ClassLoader.getSystemResource("config-default.properties");
     
-    try {
-      final URL propFileUrl = ClassLoader.getSystemResource("default-config.properties");
-      
-      in = propFileUrl.openStream();
+    try (final InputStream in = propFileUrl.openStream()) {
       props.load(in);
-      
-      in.close();
-      in = new FileInputStream(System.getProperty("user.home") + "/.vom/default-config.properties");
-      
-      final Properties userProps = new Properties();
-      userProps.load(in);
-      
-      for (final String name : userProps.stringPropertyNames()) {
-        props.setProperty(name, userProps.getProperty(name));
-      }
     }
     catch (IOException e) {
       // no work
     }
-    finally {
-      if (in != null) {
-        try {
-          in.close();
-        }
-        catch (IOException e) {
-          e.printStackTrace(System.err);
-        }
-      }
-    }
     
-    if (getId() == null || "".equals(getId())) {
+    mergeProperties(CONFIG_DEFAULT_PROPERTIES);
+    
+    if (getId() == null) {
       try {
-        props.setProperty("id", InetAddress.getLocalHost().getHostName());
+        final String id = InetAddress.getLocalHost().getHostName();
+        setId(id);
       }
       catch (UnknownHostException e) {
         throw new FallDownException(e);
       }
+    }
+  }
+  
+  public static void mergeProperties(final String filepath) {
+    try (final InputStream in = new FileInputStream(filepath)) {
+      final Properties newProps = new Properties();
+      newProps.load(in);
+      
+      for (final String name : newProps.stringPropertyNames()) {
+        final String value = newProps.getProperty(name);
+        
+        if (value != null && !"".equals(value.trim())) {
+          props.setProperty(name, value);
+        }
+      }
+      
+      System.err.printf("%s is applied to configuration", filepath);
+    }
+    catch (IOException e) {
+      // no work
     }
   }
   

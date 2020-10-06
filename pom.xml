@@ -17,10 +17,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <vom.package>vom</vom.package>
-    <java.sdk.version>1.6</java.sdk.version>
 
     <asm.version>8.0.1</asm.version>
     <oshi.version>3.13.6</oshi.version>
+    <hikari-cp.version>3.4.5</hikari-cp.version>
     <h2.version>1.4.199</h2.version>
   </properties>
 
@@ -30,28 +30,17 @@
       <artifactId>asm-commons</artifactId>
       <version>${asm.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-util</artifactId>
-      <version>${asm.version}</version>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
-      <groupId>com.github.oshi</groupId>
-      <artifactId>oshi-core-shaded</artifactId>
-      <version>${oshi.version}</version>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>${hikari-cp.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <version>${h2.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.zaxxer</groupId>
-      <artifactId>HikariCP-java6</artifactId>
-      <version>2.3.13</version>
     </dependency>
 
     <dependency>

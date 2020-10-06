@@ -14,9 +14,24 @@
   <packaging>jar</packaging>
 
   <properties>
+    <java.sdk.version>1.7</java.sdk.version>
     <maven.compiler.source>${java.sdk.version}</maven.compiler.source>
     <maven.compiler.target>${java.sdk.version}</maven.compiler.target>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.github.oshi</groupId>
+      <artifactId>oshi-core-shaded</artifactId>
+      <version>${oshi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.ruedigermoeller</groupId>
+      <artifactId>fst</artifactId>
+      <version>2.48-jdk-6</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>

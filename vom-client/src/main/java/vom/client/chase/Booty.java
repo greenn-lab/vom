@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -17,15 +18,15 @@ import java.util.Map;
 @Builder
 @Getter
 @Setter
-public class Booty {
+public class Booty implements Serializable {
   
-  private Long id;
+  private String id;
   private Long collected;
   private String uri;
-  private Map<String, String> headers = new HashMap<String, String>();
-  private Map<String, String> parameters;
+  private Map<String, String> headers = new HashMap<>();
+  private Map<? extends Serializable, ? extends Serializable> parameters;
   
-  private Deque<Trove> troves = new ArrayDeque<Trove>(5);
+  private Deque<Trove> troves = new ArrayDeque<>(5);
   
   public void addHeader(String name, String value) {
     headers.put(name, value);
@@ -43,10 +44,10 @@ public class Booty {
   
   
   @Builder
-  private static class Trove {
+  private static class Trove implements Serializable {
     
     private String signature;
-    private List<Object> arguments;
+    private List<? extends Serializable> arguments;
     private long elapsed;
     private Throwable error;
     

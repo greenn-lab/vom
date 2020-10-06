@@ -4,29 +4,34 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import vom.client.Config;
-import vom.client.asm.AgentLinkageAdapter;
+import vom.client.asm.ClassWritable;
 import vom.client.chase.Booty;
 
-public class HttpServletServiceAdapter extends ClassVisitor implements AgentLinkageAdapter {
+import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
+
+public class HttpServletServiceAdapter extends ClassVisitor implements ClassWritable {
   
-  public static final ThreadLocal<Booty> BOOTY = new ThreadLocal<Booty>();
-  
-  private final ClassWriter writer;
+  public static final ThreadLocal<Booty> BOOTY = new ThreadLocal<>();
   
   public HttpServletServiceAdapter(byte[] classfileBuffer) {
-    super(Config.ASM_VERSION);
-
+    super(ASM_VERSION);
+    
     final ClassReader reader = new ClassReader(classfileBuffer);
-    this.cv = this.writer
-        = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-
+    this.cv = new ClassWriter(
+        reader,
+        ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
+    );
+    
     reader.accept(this, ClassReader.EXPAND_FRAMES);
   }
   
+  public ClassWriter getWriter() {
+    return (ClassWriter) cv;
+  }
+  
   @Override
-  public byte[] toByteArray() {
-    return writer.toByteArray();
+  public byte[] toBytes() {
+    return ((ClassWriter) cv).toByteArray();
   }
   
   @Override

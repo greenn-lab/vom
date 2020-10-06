@@ -1,8 +1,5 @@
 package vom.client.asm.web.chaser;
 
-import vom.client.Config;
-import vom.client.asm.AgentLinkageAdapter;
-import vom.client.asm.utility.InvokeStatic;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -10,12 +7,17 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import vom.client.Config;
+import vom.client.asm.ClassWritable;
+import vom.client.asm.utility.PrimitiveTypes;
 
 import java.util.Arrays;
 
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
+import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
+import static vom.client.asm.utility.PrimitiveTypes.OBJECT_NAME;
 
-public class HttpServletChaserAdapter extends ClassVisitor implements AgentLinkageAdapter, Opcodes {
+public class HttpServletChaserAdapter extends ClassVisitor implements ClassWritable, Opcodes {
   
   private static final String INTERNAL_NAME =
       Type.getInternalName(HttpServletChaserAdapter.class);
@@ -25,7 +27,7 @@ public class HttpServletChaserAdapter extends ClassVisitor implements AgentLinka
   
   
   public HttpServletChaserAdapter(byte[] classfileBuffer) {
-    super(Config.ASM_VERSION);
+    super(ASM_VERSION);
     
     final ClassReader reader = new ClassReader(classfileBuffer);
     this.cv = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
@@ -34,7 +36,7 @@ public class HttpServletChaserAdapter extends ClassVisitor implements AgentLinka
   }
   
   @Override
-  public byte[] toByteArray() {
+  public byte[] toBytes() {
     return ((ClassWriter) cv).toByteArray();
   }
   
@@ -82,7 +84,7 @@ public class HttpServletChaserAdapter extends ClassVisitor implements AgentLinka
     private final Type[] arguments;
     
     public ChaserTargetMethodVisitor(MethodVisitor visitor, int access, String className, String methodName, String descriptor) {
-      super(Config.ASM_VERSION, access, descriptor, visitor);
+      super(ASM_VERSION, access, descriptor, visitor);
       
       this.classAndMethod = className + "#" + methodName;
       this.arguments = Type.getArgumentTypes(descriptor);
@@ -118,9 +120,9 @@ public class HttpServletChaserAdapter extends ClassVisitor implements AgentLinka
       }
       else {
         mv.visitIntInsn(BIPUSH, arguments.length);
-        mv.visitTypeInsn(ANEWARRAY, TYPE_OBJECT);
+        mv.visitTypeInsn(ANEWARRAY, OBJECT_NAME);
         mv.visitVarInsn(ASTORE, arrayIndex);
-  
+        
         int index = 1;
         int arrayPoint = 0;
         for (final Type argument : arguments) {
@@ -130,42 +132,42 @@ public class HttpServletChaserAdapter extends ClassVisitor implements AgentLinka
           switch (argument.getSort()) {
             case Type.BOOLEAN:
               mv.visitVarInsn(ILOAD, index);
-              InvokeStatic.booleanValueOf(mv);
+              PrimitiveTypes.booleanValueOf(mv);
               break;
             case Type.CHAR:
               mv.visitVarInsn(ILOAD, index);
-              InvokeStatic.characterValueOf(mv);
+              PrimitiveTypes.characterValueOf(mv);
               break;
             case Type.BYTE:
               mv.visitVarInsn(ILOAD, index);
-              InvokeStatic.byteValueOf(mv);
+              PrimitiveTypes.byteValueOf(mv);
               break;
             case Type.SHORT:
               mv.visitVarInsn(ILOAD, index);
-              InvokeStatic.shortValueOf(mv);
+              PrimitiveTypes.shortValueOf(mv);
               break;
             case Type.INT:
               mv.visitVarInsn(ILOAD, index);
-              InvokeStatic.integerValueOf(mv);
+              PrimitiveTypes.integerValueOf(mv);
               break;
             case Type.FLOAT:
               mv.visitVarInsn(FLOAD, index);
-              InvokeStatic.floatValueOf(mv);
+              PrimitiveTypes.floatValueOf(mv);
               break;
             case Type.LONG:
               mv.visitVarInsn(LLOAD, index);
-              InvokeStatic.longValueOf(mv);
+              PrimitiveTypes.longValueOf(mv);
               break;
             case Type.DOUBLE:
               mv.visitVarInsn(DLOAD, index);
-              InvokeStatic.doubleValueOf(mv);
+              PrimitiveTypes.doubleValueOf(mv);
               break;
             default:
               mv.visitVarInsn(ALOAD, index);
           }
-
+          
           mv.visitInsn(AASTORE);
-         
+          
           index += argument.getSize();
         }
         

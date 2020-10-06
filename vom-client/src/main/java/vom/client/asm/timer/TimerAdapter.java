@@ -1,10 +1,12 @@
 package vom.client.asm.timer;
 
-import vom.client.Config;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import vom.client.Config;
+
+import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
 
 public class TimerAdapter extends ClassVisitor implements Opcodes {
   
@@ -12,7 +14,7 @@ public class TimerAdapter extends ClassVisitor implements Opcodes {
   private boolean isInterface;
   
   public TimerAdapter(ClassVisitor cv) {
-    super(Config.ASM_VERSION, cv);
+    super(ASM_VERSION, cv);
   }
   
   @Override
@@ -35,7 +37,7 @@ public class TimerAdapter extends ClassVisitor implements Opcodes {
   private class TimerMethodVisitor extends LocalVariablesSorter implements Opcodes {
     
     public TimerMethodVisitor(MethodVisitor mv, int access, String descriptor) {
-      super(Config.ASM_VERSION, access, descriptor, mv);
+      super(ASM_VERSION, access, descriptor, mv);
     }
     
     @Override
