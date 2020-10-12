@@ -21,7 +21,7 @@
     <asm.version>8.0.1</asm.version>
     <oshi.version>3.13.6</oshi.version>
     <hikari-cp.version>3.4.5</hikari-cp.version>
-    <h2.version>1.4.199</h2.version>
+    <h2.version>1.4.200</h2.version>
   </properties>
 
   <dependencies>

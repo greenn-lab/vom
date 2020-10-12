@@ -23,17 +23,6 @@ public final class Config {
   private static final Properties props = new Properties();
   private static final Set<String> packages = new HashSet<String>();
 
-  static {
-    configure();
-
-    final String[] packages = props.getProperty("monitor.packages")
-      .split("[\\s,|]+");
-
-    for (String pkg : packages) {
-      Config.packages.add(pkg.replace('.', '/'));
-    }
-  }
-
 
   public static String getId() {
     return props.getProperty("id");
@@ -85,7 +74,7 @@ public final class Config {
           in.close();
         }
         catch (IOException e) {
-          e.printStackTrace();
+          // no work
         }
       }
     }
@@ -100,6 +89,13 @@ public final class Config {
       catch (UnknownHostException e) {
         throw new FallDownException(e);
       }
+    }
+
+    final String[] packages = props.getProperty("monitor.packages")
+      .split("[\\s,|]+");
+
+    for (String pkg : packages) {
+      Config.packages.add(pkg.replace('.', '/'));
     }
   }
 
@@ -122,14 +118,14 @@ public final class Config {
       System.err.printf("%s is applied to configuration%n", filepath);
     }
     catch (IOException e) {
-      // no work
+      e.printStackTrace();
     } finally {
       if (in != null) {
         try {
           in.close();
         }
         catch (IOException e) {
-          e.printStackTrace();
+          // no work
         }
       }
     }

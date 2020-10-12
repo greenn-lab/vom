@@ -12,8 +12,8 @@ import java.lang.instrument.Instrumentation;
 public class Bootstrap {
 
   static {
-    Config.configure();
     welcome();
+    Config.configure();
   }
 
   private Bootstrap() {
