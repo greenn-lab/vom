@@ -52,44 +52,60 @@ public class JdbcAdapter extends ClassVisitor implements Opcodes, ClassWritable 
     if (null != visitor
       && ACC_PUBLIC == access) {
 
-      if (isPrepareAndConnection(name, descriptor)) {
+      if (isConnectionPrepareStatement(name, descriptor)) {
         return new ConnectionPrepareStatementVisitor(visitor);
       }
 
-      // Statement#execute(...)
-      else if (isExecuteMethod(name)) {
+      else if (isStatementExecutesMethod(name, descriptor)) {
         return new StatementExecutesVisitor(visitor);
       }
-      // PreparedStatement#setXXX(index: int, value: <?>)
-      else if (
-        isPreparedStatement()
-          && isParameterMethod(name, descriptor)
-      ) {
-        return new PreparedStatementParametersVisitor(
-          visitor,
-          access,
-          name,
-          descriptor
-        );
+
+      else if (isPreparedStatement()) {
+        if (isPreparedStatementExecuteMethod(name, descriptor)) {
+          return new PreparedStatementExecuteVisitor(visitor);
+        }
+        else if (isPerparedStatementParameterMethod(name, descriptor)) {
+          return new PreparedStatementParametersVisitor(
+            visitor,
+            access,
+            descriptor
+          );
+        }
       }
     }
 
     return visitor;
   }
 
-  private boolean isPrepareAndConnection(String name, String descriptor) {
+  private boolean isConnectionPrepareStatement(String name, String descriptor) {
     for (String interface_ : reader.getInterfaces()) {
       if (CONNECTION_INTERNAL_NAME.equals(interface_)) {
-        return name.startsWith("prepare")
-          && descriptor.endsWith("Ljava/sql/PreparedStatement;");
+        return "prepareStatement".equals(name)
+          && descriptor.startsWith("(Ljava/lang/String;")
+          && descriptor.endsWith(")Ljava/sql/PreparedStatement;");
       }
     }
 
     return false;
   }
 
-  private boolean isExecuteMethod(String name) {
-    return name.startsWith("execute");
+  private boolean isStatementExecutesMethod(String name, String descriptor) {
+    // Statement#execute(sql: String, ...)
+    // Statement#executeLargeUpdate(sql: String, ...)
+    // Statement#executeQuery(sql: String)
+    // Statement#executeUpdate(sql: String, ...)
+    // Statement#addBatch(sql: String)
+    return (name.startsWith("execute") || ("addBatch".equals(name)))
+      && descriptor.startsWith("(Ljava/lang/String;");
+  }
+
+  private boolean isPreparedStatementExecuteMethod(String name, String descriptor) {
+    return (
+      "execute".equals(name)
+        || "executeLargeUpdate".equals(name)
+        || "executeQuery".equals(name)
+        || "executeUpdate".equals(name)
+    ) && descriptor.startsWith("()");
   }
 
   private boolean isPreparedStatement() {
@@ -102,9 +118,10 @@ public class JdbcAdapter extends ClassVisitor implements Opcodes, ClassWritable 
     return false;
   }
 
-  private boolean isParameterMethod(String name, String descriptor) {
+  private boolean isPerparedStatementParameterMethod(String name, String descriptor) {
     return name.startsWith("set")
-      && descriptor.startsWith("(I");
+      && descriptor.startsWith("(I")
+      && descriptor.endsWith(")V");
   }
 
 }

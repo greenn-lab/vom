@@ -4,13 +4,13 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.asm.jdbc.trove.DBTrove;
 import vom.client.asm.utility.OpcodeUtils;
 import vom.client.asm.utility.PrimitiveTypes;
 
-import java.io.PrintStream;
-
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_ADD_PARAM;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_ADD_PARAM_DESC;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_INTERNAL_NAME;
 
 public class PreparedStatementParametersVisitor
   extends LocalVariablesSorter
@@ -18,19 +18,14 @@ public class PreparedStatementParametersVisitor
 
   private final Type valueType;
 
-  private final String name;
-  private String descriptor;
 
   public PreparedStatementParametersVisitor(
     MethodVisitor visitor,
-    int access, String name, String descriptor
+    int access, String descriptor
   ) {
     super(ASM_VERSION, access, descriptor, visitor);
 
     this.valueType = Type.getArgumentTypes(descriptor)[1];
-
-    this.name = name;
-    this.descriptor = descriptor;
   }
 
   @Override
@@ -43,9 +38,9 @@ public class PreparedStatementParametersVisitor
 
     mv.visitMethodInsn(
       INVOKESTATIC,
-      Type.getInternalName(DBTrove.class),
-      "addParameter",
-      "(Ljava/lang/Object;)V",
+      DB_TROVE_INTERNAL_NAME,
+      DB_TROVE_ADD_PARAM,
+      DB_TROVE_ADD_PARAM_DESC,
       false
     );
   }

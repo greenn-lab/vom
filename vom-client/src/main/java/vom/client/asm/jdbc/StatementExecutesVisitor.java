@@ -2,10 +2,11 @@ package vom.client.asm.jdbc;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import vom.client.asm.jdbc.trove.DBTrove;
 
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_ADD_SQL;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_ADD_SQL_DESC;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_INTERNAL_NAME;
 
 public class StatementExecutesVisitor
   extends MethodVisitor
@@ -16,18 +17,17 @@ public class StatementExecutesVisitor
   }
 
   @Override
-  public void visitInsn(int opcode) {
-    if (IRETURN <= opcode && RETURN >= opcode) {
-      mv.visitMethodInsn(
-        INVOKESTATIC,
-        Type.getInternalName(DBTrove.class),
-        "seize",
-        "()V",
-        false
-      );
-    }
+  public void visitCode() {
+    mv.visitVarInsn(ALOAD, 1);
+    mv.visitMethodInsn(
+      INVOKESTATIC,
+      DB_TROVE_INTERNAL_NAME,
+      DB_TROVE_ADD_SQL,
+      DB_TROVE_ADD_SQL_DESC,
+      false
+    );
 
-    mv.visitInsn(opcode);
+    mv.visitCode();
   }
 
 }

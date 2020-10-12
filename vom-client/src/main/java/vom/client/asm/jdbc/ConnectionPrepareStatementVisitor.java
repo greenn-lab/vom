@@ -2,10 +2,11 @@ package vom.client.asm.jdbc;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import vom.client.asm.jdbc.trove.DBTrove;
 
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_ADD_SQL;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_ADD_SQL_DESC;
+import static vom.client.asm.jdbc.trove.DBTrove.DB_TROVE_INTERNAL_NAME;
 
 public class ConnectionPrepareStatementVisitor
   extends MethodVisitor
@@ -20,9 +21,9 @@ public class ConnectionPrepareStatementVisitor
     mv.visitVarInsn(ALOAD, 1);
     mv.visitMethodInsn(
       INVOKESTATIC,
-      Type.getInternalName(DBTrove.class),
-      "addSql",
-      "(Ljava/lang/String;)V",
+      DB_TROVE_INTERNAL_NAME,
+      DB_TROVE_ADD_SQL,
+      DB_TROVE_ADD_SQL_DESC,
       false
     );
 

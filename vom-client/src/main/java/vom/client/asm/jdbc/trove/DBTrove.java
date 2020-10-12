@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.objectweb.asm.Type;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,6 +15,15 @@ public class DBTrove extends ArrayList<DBTrove.Booty> {
 
   public static final ThreadLocal<DBTrove> DB_TROVE = new ThreadLocal<DBTrove>();
 
+  public static final String DB_TROVE_INTERNAL_NAME =
+    Type.getInternalName(DBTrove.class);
+
+  public static final String DB_TROVE_SEIZE = "seize";
+  public static final String DB_TROVE_SEIZE_DESC = "()V";
+  public static final String DB_TROVE_ADD_SQL = "addSql";
+  public static final String DB_TROVE_ADD_SQL_DESC = "(Ljava/lang/String;)V";
+  public static final String DB_TROVE_ADD_PARAM = "addParameter";
+  public static final String DB_TROVE_ADD_PARAM_DESC = "(Ljava/lang/Object;)V";
 
   @SuppressWarnings("unused")
   public static void addSql(String sql) {

@@ -12,8 +12,8 @@ import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
 
 public class HttpServletChaserAdapter extends ClassVisitor implements ClassWritable, Opcodes {
 
-  private String className;
-  private boolean isInterface;
+  private final String className;
+  private final boolean isInterface;
 
   public HttpServletChaserAdapter(byte[] classfileBuffer, String className) {
     super(ASM_VERSION);
