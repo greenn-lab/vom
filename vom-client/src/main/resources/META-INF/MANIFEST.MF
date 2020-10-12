@@ -3,5 +3,3 @@ Premain-Class: vom.client.Bootstrap
 Agent-Class: vom.client.Bootstrap
 Can-Redefine-Classes: true
 Can-Retransform-Classes: true
-Boot-Class-Path: scouter.agent.jar
-

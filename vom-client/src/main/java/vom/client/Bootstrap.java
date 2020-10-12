@@ -10,15 +10,15 @@ import java.io.InputStreamReader;
 import java.lang.instrument.Instrumentation;
 
 public class Bootstrap {
-  
+
   static {
     Config.configure();
     welcome();
   }
-  
+
   private Bootstrap() {
   }
-  
+
   /**
    * JVMTI(JVM Tool Interface)로 시작해요.
    *
@@ -29,28 +29,28 @@ public class Bootstrap {
     if (configFilepath != null) {
       Config.mergeProperties(configFilepath);
     }
-    
+
     bootSystemPerformance();
-    
+
     instrumentation.addTransformer(
         new VOMClientTransformer(),
         true
     );
-    
+
   }
-  
+
   public static void agentmain(String options, Instrumentation instrumentation) {
     System.err.printf("Called agentmain(\"%s\" :options, \"%s\" :instrumentation)",
         options,
         instrumentation.toString());
   }
-  
+
   private static void welcome() {
-    final InputStream in = ClassLoader.getSystemResourceAsStream("META-INF/agent-logo");
-    
+    final InputStream in = ClassLoader.getSystemResourceAsStream("META-INF/welcome.txt");
+
     if (in != null) {
       final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-      
+
       try {
         String line;
         while ((line = reader.readLine()) != null) {
@@ -61,7 +61,7 @@ public class Bootstrap {
         // no work
       }
     }
-    
+
     if (Config.isDebugMode()) {
       System.err.printf("agent.id: %s%n", Config.getId());
       System.err.printf("agent.pollingInterval: %s%n", Config.getPollingInterval());
@@ -71,18 +71,18 @@ public class Bootstrap {
       System.out.println();
     }
   }
-  
+
   private static void bootSystemPerformance() {
     final SystemPerformanceWorker worker = new SystemPerformanceWorker();
-    
+
     Runtime.getRuntime().addShutdownHook(new Thread("system-performance-worker-shutdown-hook") {
       @Override
       public void run() {
         worker.die();
       }
     });
-    
+
     worker.start();
   }
-  
+
 }

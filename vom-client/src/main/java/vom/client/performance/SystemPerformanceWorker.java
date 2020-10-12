@@ -7,19 +7,16 @@ import java.util.concurrent.TimeUnit;
 public class SystemPerformanceWorker extends Thread {
 
   private boolean running = true;
-  
-  
+
+
   public SystemPerformanceWorker() {
     setName("system-performance-worker");
     setDaemon(true);
   }
-  
+
   @Override
   public void run() {
-    
-    
     while (true) {
-      
       try {
         TimeUnit.SECONDS.sleep(Config.getPollingInterval());
       }
@@ -27,16 +24,15 @@ public class SystemPerformanceWorker extends Thread {
         e.printStackTrace(System.err);
         Thread.currentThread().interrupt();
       }
-      
+
       if (!running) {
         break;
       }
     }
-    
   }
-  
+
   public void die() {
     running = false;
   }
-  
+
 }
