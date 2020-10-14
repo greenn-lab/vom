@@ -1,15 +1,15 @@
 package vom.client.asm.utility;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import vom.client.exception.FallDownException;
 
 import java.lang.reflect.Method;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpcodeUtils {
-
-  private OpcodeUtils() {
-  }
 
   public static int loadLocalVariable(Type type) {
     switch (type.getSort()) {

@@ -10,17 +10,18 @@ import vom.client.exception.CarryException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ServerBridge {
+public final class ServerDefaultConnection {
 
   private static final HikariDataSource dataSource = new HikariDataSource();
 
   static {
-    final Integer timeout = Config.getProperty("server.timeout", "2000");
-    final Integer poolSize = Config.getProperty("server.pool", "100");
+    final Integer timeout =
+      Config.getIntegerProperty("server.timeout", "2000");
+    final Integer poolSize =
+      Config.getIntegerProperty("server.pool", "100");
 
     try {
       dataSource.getConnection("sa", "");
@@ -41,7 +42,7 @@ public final class ServerBridge {
 
   private static final String INSERT_DB_TROVE =
     "INSERT INTO TROVE (" +
-    "ID, COLLECTED, TYPE, BIN, )";
+      "ID, COLLECTED, TYPE, BIN, )";
 
   public static void send(DBTrove trove) {
     if (1 != executePrepared(INSERT_DB_TROVE)) {
@@ -68,8 +69,7 @@ public final class ServerBridge {
     }
     catch (SQLException e) {
       throw new CarryException(e.getMessage(), e);
-    }
-    finally {
+    } finally {
       if (ps != null) {
         try {
           ps.close();

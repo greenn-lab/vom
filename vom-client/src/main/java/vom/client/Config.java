@@ -50,6 +50,10 @@ public final class Config {
     return Integer.parseInt(props.getProperty("server.port", "3506"));
   }
 
+  public static Integer getIntegerProperty(String key, String... defaultValue) {
+    return Integer.parseInt(props.getProperty(key, defaultValue[0] == null ? "0" : defaultValue[0]));
+  }
+
   public static boolean isDebugMode() {
     return Boolean.parseBoolean(props.getProperty("debug", "false"));
   }

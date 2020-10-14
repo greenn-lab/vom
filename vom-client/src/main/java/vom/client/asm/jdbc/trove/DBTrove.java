@@ -11,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public class DBTrove extends ArrayList<DBTrove.Booty> {
+public class DBTrove
+  extends ArrayList<DBTrove.Booty>
+  implements Serializable {
 
   public static final ThreadLocal<DBTrove> DB_TROVE = new ThreadLocal<DBTrove>();
 
   public static final String DB_TROVE_INTERNAL_NAME =
     Type.getInternalName(DBTrove.class);
-
   public static final String DB_TROVE_SEIZE = "seize";
   public static final String DB_TROVE_SEIZE_DESC = "()V";
   public static final String DB_TROVE_ADD_SQL = "addSql";
@@ -32,8 +33,6 @@ public class DBTrove extends ArrayList<DBTrove.Booty> {
       trove = new DBTrove();
       DB_TROVE.set(trove);
     }
-
-    System.out.printf("trove sql: %s%n", sql);
 
     trove.add(new DBTrove.Booty(sql));
   }
@@ -54,6 +53,8 @@ public class DBTrove extends ArrayList<DBTrove.Booty> {
         System.out.printf("seized ----%n %s %n---%n", booty.toString());
       }
     }
+
+    DB_TROVE.remove();
   }
 
 

@@ -127,13 +127,4 @@ public class HttpServletChaserMethodVisitor
     );
   }
 
-  public static void swipe(String classAndMethod, Object[] parameters) {
-    System.out.printf(
-      "%s.swipe(%n\\tclassAndMethod: %s,%n\\tparameters: %s%n)%n",
-      HttpServletChaserAdapter.class.getName(),
-      classAndMethod,
-      Arrays.toString(parameters)
-    );
-  }
-
 }
