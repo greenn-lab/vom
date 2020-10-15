@@ -4,8 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import vom.client.Config;
-import vom.client.asm.jdbc.trove.DBTrove;
-import vom.client.asm.web.trove.WebTrove;
+import vom.client.connector.sql.SqlManager;
 import vom.client.exception.CarryException;
 
 import java.sql.Connection;
@@ -19,53 +18,56 @@ public final class ServerDefaultConnection {
 
   static {
     final Integer timeout =
-      Config.getIntegerProperty("server.timeout", "2000");
+      Integer.parseInt(Config.get("server.timeout", "2000"));
     final Integer poolSize =
-      Config.getIntegerProperty("server.pool", "100");
+      Integer.parseInt(Config.get("server.pool", "100"));
 
-    try {
-      dataSource.getConnection("sa", "");
-      dataSource.setJdbcUrl("jdbc:h2:tcp://" +
-        Config.getServerHost() + ":" +
-        Config.getServerPort() + "/mem:trace"
-      );
-      dataSource.setUsername("sa");
-      dataSource.setPassword("");
-      dataSource.setConnectionTimeout(timeout);
-      dataSource.setMaximumPoolSize(poolSize);
-    }
-    catch (SQLException e) {
-      e.printStackTrace();
-    }
-
+    dataSource.setJdbcUrl("jdbc:h2:tcp://" +
+      Config.getServerHost() + ":" +
+      Config.getServerPort() + "/mem:collector"
+    );
+    dataSource.setUsername("sa");
+    dataSource.setPassword("");
+    dataSource.setConnectionTimeout(timeout);
+    dataSource.setMaximumPoolSize(poolSize);
   }
 
-  private static final String INSERT_DB_TROVE =
-    "INSERT INTO TROVE (" +
-      "ID, COLLECTED, TYPE, BIN, )";
 
-  public static void send(DBTrove trove) {
-    if (1 != executePrepared(INSERT_DB_TROVE)) {
-      throw new CarryException("too many inserted");
-    }
-  }
-
-  public static void send(WebTrove trove) {
-
+  public static void sendSystemStats(
+    Double cpu,
+    long[] disk,
+    long[] memory,
+    long[] network
+  ) {
+    execute(
+      SqlManager.getInstance().get("system-stats"),
+      Config.getId(),
+      System.currentTimeMillis(),
+      cpu,
+      disk[0], disk[1],
+      memory[0], memory[1],
+      network[0], network[1], network[2]
+    );
   }
 
   private static Connection getConnection() throws SQLException {
     return dataSource.getConnection();
   }
 
-  private static int executePrepared(String sql) {
+  private static void execute(String sql, Object... parameters) {
     Connection connection = null;
     PreparedStatement ps = null;
 
     try {
       connection = getConnection();
       ps = connection.prepareStatement(sql);
-      return ps.executeUpdate();
+
+      for (int i = 0; i < parameters.length; i++) {
+        ps.setObject(i + 1, parameters[i]);
+      }
+
+      ps.executeUpdate();
+      connection.commit();
     }
     catch (SQLException e) {
       throw new CarryException(e.getMessage(), e);

@@ -60,11 +60,11 @@ public class JdbcAdapter extends ClassVisitor implements Opcodes, ClassWritable 
         return new StatementExecutesVisitor(visitor);
       }
 
-      else if (isPreparedStatement()) {
+      else if (isPreparedStatement(name)) {
         if (isPreparedStatementExecuteMethod(name, descriptor)) {
           return new PreparedStatementExecuteVisitor(visitor);
         }
-        else if (isPerparedStatementParameterMethod(name, descriptor)) {
+        else if (isPreparedStatementParameterMethod(name, descriptor)) {
           return new PreparedStatementParametersVisitor(
             visitor,
             access,
@@ -108,7 +108,7 @@ public class JdbcAdapter extends ClassVisitor implements Opcodes, ClassWritable 
     ) && descriptor.startsWith("()");
   }
 
-  private boolean isPreparedStatement() {
+  private boolean isPreparedStatement(String name) {
     for (String interface_ : reader.getInterfaces()) {
       if (PREPARED_STATEMENT_INTERNAL_NAME.equals(interface_)) {
         return true;
@@ -118,7 +118,7 @@ public class JdbcAdapter extends ClassVisitor implements Opcodes, ClassWritable 
     return false;
   }
 
-  private boolean isPerparedStatementParameterMethod(String name, String descriptor) {
+  private boolean isPreparedStatementParameterMethod(String name, String descriptor) {
     return name.startsWith("set")
       && descriptor.startsWith("(I")
       && descriptor.endsWith(")V");

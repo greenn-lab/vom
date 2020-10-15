@@ -6,6 +6,10 @@ public class CarryException extends RuntimeException {
     super(message);
   }
 
+  public CarryException(Throwable cause) {
+    super(cause);
+  }
+
   public CarryException(String message, Throwable cause) {
     super(message, cause);
   }

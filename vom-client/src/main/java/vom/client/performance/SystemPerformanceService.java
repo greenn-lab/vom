@@ -29,8 +29,8 @@ public class SystemPerformanceService {
   public static long[] getMemory() {
     final GlobalMemory memory = hardware.getMemory();
     return new long[]{
-      memory.getTotal(),
-      memory.getAvailable()
+      memory.getAvailable(),
+      memory.getTotal()
     };
   }
 
@@ -46,8 +46,8 @@ public class SystemPerformanceService {
     }
 
     return new long[]{
-      total,
-      empty
+      empty,
+      total
     };
   }
 
@@ -80,9 +80,9 @@ public class SystemPerformanceService {
     }
 
     return new long[]{
-      bandwidth,
+      received,
       sent,
-      received
+      bandwidth
     };
   }
 

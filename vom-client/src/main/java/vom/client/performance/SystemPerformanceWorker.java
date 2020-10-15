@@ -1,7 +1,9 @@
 package vom.client.performance;
 
 import vom.client.Config;
+import vom.client.connector.ServerDefaultConnection;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class SystemPerformanceWorker extends Thread {
@@ -18,6 +20,18 @@ public class SystemPerformanceWorker extends Thread {
   public void run() {
     while (true) {
       try {
+        final long[] disk = SystemPerformanceService.getDisk();
+        System.out.println(Arrays.toString(disk));
+        final long[] memory = SystemPerformanceService.getMemory();
+        System.out.println(Arrays.toString(memory));
+        final long[] network = SystemPerformanceService.getNetwork();
+        System.out.println(Arrays.toString(network));
+
+        ServerDefaultConnection.sendSystemStats(
+          SystemPerformanceService.getCpu(), disk, memory, network
+        );
+
+        System.out.println("fall in sleep");
         TimeUnit.SECONDS.sleep(Config.getPollingInterval());
       }
       catch (InterruptedException e) {

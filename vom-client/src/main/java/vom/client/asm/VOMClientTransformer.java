@@ -15,6 +15,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,13 +69,37 @@ public class VOMClientTransformer implements ClassFileTransformer {
 
   private boolean inJdbc(final ClassReader reader) {
     for (String inf : reader.getInterfaces()) {
-      if (DEFAULT_JDBC_CLASSES.contains(inf)) {
+      if (DEFAULT_JDBC_CLASSES.contains(inf)
+      && containsVendor(reader.getClassName())) {
         return true;
       }
     }
 
     return false;
   }
+
+
+  /**
+   * Connection Pool 에서 Delegating 하는 식으로 SQL 객체를
+   * 구성하기 때문에 불필요한 구현체들이 추출되는데, 이를 방지하기 위해
+   * vendor 가 실제적으로 사용하는 PreparedStatement 구현체를 추려내요.
+   *
+   * @return 지정된 벤더에 포함될까, 아닐까.
+   */
+  private boolean containsVendor(String name) {
+    final Set<String> vendors = new HashSet<String>(
+      Arrays.asList(Config.get("chaser.db.vendors").split("[\\s,|]+"))
+    );
+
+    for (String vendor : vendors) {
+      if (name.contains(vendor)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 
   private boolean isServletClass(final String className) {
     for (final String servletClass : DEFAULT_SERVLET_CLASSES) {

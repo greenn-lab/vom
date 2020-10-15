@@ -22,7 +22,15 @@ public final class Config {
 
   private static final Properties props = new Properties();
   private static final Set<String> packages = new HashSet<String>();
+  public static final String PROPERTY_VALUE_SPLIT_PATTERN = "[\\s,|]+";
 
+  public static String get(String key) {
+    return props.getProperty(key);
+  }
+
+  public static String get(String key, String defaultValue) {
+    return props.getProperty(key, defaultValue);
+  }
 
   public static String getId() {
     return props.getProperty("id");
@@ -48,10 +56,6 @@ public final class Config {
 
   public static int getServerPort() {
     return Integer.parseInt(props.getProperty("server.port", "3506"));
-  }
-
-  public static Integer getIntegerProperty(String key, String... defaultValue) {
-    return Integer.parseInt(props.getProperty(key, defaultValue[0] == null ? "0" : defaultValue[0]));
   }
 
   public static boolean isDebugMode() {
@@ -96,7 +100,7 @@ public final class Config {
     }
 
     final String[] packages = props.getProperty("monitor.packages")
-      .split("[\\s,|]+");
+      .split(PROPERTY_VALUE_SPLIT_PATTERN);
 
     for (String pkg : packages) {
       Config.packages.add(pkg.replace('.', '/'));
@@ -119,10 +123,10 @@ public final class Config {
         }
       }
 
-      System.err.printf("%s is applied to configuration%n", filepath);
+      System.err.printf("\"%s\" is applied to vom configuration!%n", filepath);
     }
     catch (IOException e) {
-      e.printStackTrace();
+      // no work
     } finally {
       if (in != null) {
         try {

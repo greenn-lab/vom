@@ -1,14 +1,9 @@
 package vom.server.chaser.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
-@Getter
-@Setter
+//@Entity
 public class SystemStats {
 
   @Id

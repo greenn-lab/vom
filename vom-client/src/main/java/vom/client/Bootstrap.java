@@ -12,8 +12,8 @@ import java.lang.instrument.Instrumentation;
 public class Bootstrap {
 
   static {
-    welcome();
     Config.configure();
+    welcome();
   }
 
   private Bootstrap() {
@@ -75,6 +75,8 @@ public class Bootstrap {
   private static void bootSystemPerformance() {
     final SystemPerformanceWorker worker = new SystemPerformanceWorker();
 
+    worker.start();
+
     Runtime.getRuntime().addShutdownHook(new Thread("system-performance-worker-shutdown-hook") {
       @Override
       public void run() {
@@ -82,7 +84,6 @@ public class Bootstrap {
       }
     });
 
-    worker.start();
   }
 
 }

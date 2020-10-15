@@ -62,7 +62,7 @@
           </execution>
         </executions>
         <configuration>
-          <outputFile>${project.build.directory}/${project.artifactId}-${project.version}.jar</outputFile>
+          <outputFile>${project.build.directory}/${project.artifactId}.jar</outputFile>
           <filters>
             <filter>
               <artifact>org.projectlombok:lombok</artifact>

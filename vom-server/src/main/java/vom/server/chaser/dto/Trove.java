@@ -1,25 +1,15 @@
 package vom.server.chaser.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@NoArgsConstructor
-@Builder
-@Getter
-@Setter
+//@Entity
 public class Trove {
 
   @Id
