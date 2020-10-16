@@ -63,11 +63,11 @@ public class Bootstrap {
     }
 
     if (Config.isDebugMode()) {
-      System.err.printf("agent.id: %s%n", Config.getId());
-      System.err.printf("agent.pollingInterval: %s%n", Config.getPollingInterval());
-      System.err.printf("agent.packages: %s%n", Config.getPackages().toString());
+      System.err.printf("id: %s%n", Config.getId());
       System.err.printf("server.host: %s%n", Config.getServerHost());
       System.err.printf("server.port: %s%n", Config.getServerPort());
+      System.err.printf("polling interval: %s%n", Config.getPollingInterval());
+      System.err.printf("servlet packages: %s%n", Config.get("monitor.packages"));
       System.out.println();
     }
   }
