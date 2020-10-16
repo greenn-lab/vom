@@ -5,22 +5,21 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.Config;
-import vom.client.asm.web.trove.WebTrove;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.Map;
+import java.io.PrintStream;
 
-import static java.util.Collections.unmodifiableMap;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
-import static vom.client.asm.web.trove.WebTrove.WEB_TROVE;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_EXPEL;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_EXPEL_DESC;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_INTERNAL_NAME;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_SEIZE;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_SEIZE_DESC;
 
 @Slf4j
 public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
-
-  private static final String CLASS_INTERNAL_NAME =
-    Type.getInternalName(HttpServletServiceMethodVisitor.class);
 
   public HttpServletServiceMethodVisitor(MethodVisitor visitor, int access, String descriptor) {
     super(ASM_VERSION, access, descriptor, visitor);
@@ -28,12 +27,24 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
   @Override
   public void visitCode() {
+    mv.visitLdcInsn("Hello!!");
+    mv.visitFieldInsn(GETSTATIC, Type.getInternalName(System.class), "out",
+      Type.getDescriptor(PrintStream.class));
+    mv.visitMethodInsn(INVOKEVIRTUAL, Type.getInternalName(PrintStream.class),
+      "println", "(Ljava/lang/String;)V", false);
+
     mv.visitVarInsn(Opcodes.ALOAD, 1);
+
+    mv.visitFieldInsn(GETSTATIC, Type.getInternalName(System.class), "out",
+      Type.getDescriptor(PrintStream.class));
+    mv.visitMethodInsn(INVOKEVIRTUAL, Type.getInternalName(PrintStream.class),
+      "println", "(Ljava/lang/Object;)V", false);
+
     mv.visitMethodInsn(
-      Opcodes.INVOKESTATIC,
-      CLASS_INTERNAL_NAME,
-      "swipe",
-      "(Ljavax/servlet/http/HttpServletRequest;)V",
+      INVOKESTATIC,
+      WEB_TROVE_INTERNAL_NAME,
+      WEB_TROVE_SEIZE,
+      WEB_TROVE_SEIZE_DESC,
       false);
 
     mv.visitCode();
@@ -43,47 +54,14 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
   public void visitInsn(int opcode) {
     if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
       mv.visitMethodInsn(
-        Opcodes.INVOKESTATIC,
-        CLASS_INTERNAL_NAME,
-        "emit",
-        "()V",
+        INVOKESTATIC,
+        WEB_TROVE_INTERNAL_NAME,
+        WEB_TROVE_EXPEL,
+        WEB_TROVE_EXPEL_DESC,
         false);
     }
 
     mv.visitInsn(opcode);
-  }
-
-  @SuppressWarnings("unused")
-  public static void swipe(HttpServletRequest request) {
-    @SuppressWarnings("unchecked") final Map<String, String> parameters =
-      unmodifiableMap(request.getParameterMap());
-
-    final WebTrove booty = WebTrove.builder()
-      .id(Config.getId())
-      .collected(System.currentTimeMillis())
-      .uri(request.getRequestURI())
-      .parameters(parameters)
-      .build();
-
-    @SuppressWarnings("unchecked") final Enumeration<String> headerNames =
-      request.getHeaderNames();
-
-    while (headerNames.hasMoreElements()) {
-      final String name = headerNames.nextElement();
-      booty.addHeader(name, request.getHeader(name));
-    }
-
-    System.err.printf("swipe(request): %d%n", booty.getCollected());
-    WEB_TROVE.set(booty);
-  }
-
-  @SuppressWarnings("unused")
-  public static void emit() {
-    final WebTrove builder = WEB_TROVE.get();
-    if (builder!=null) {
-      System.err.printf("emit(): %d%n", builder.getCollected());
-      WEB_TROVE.remove();
-    }
   }
 
 }

@@ -6,17 +6,15 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 import vom.client.asm.utility.PrimitiveTypes;
 
-import java.util.Arrays;
-
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
 import static vom.client.asm.utility.PrimitiveTypes.OBJECT_NAME;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_INTERNAL_NAME;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_SEIZE;
+import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_SEIZE_DESC;
 
 public class HttpServletChaserMethodVisitor
   extends LocalVariablesSorter
   implements Opcodes {
-
-  private static final String INTERNAL_NAME =
-    Type.getInternalName(HttpServletChaserMethodVisitor.class);
 
   private final String classAndMethod;
   private final Type[] arguments;
@@ -120,9 +118,9 @@ public class HttpServletChaserMethodVisitor
 
     mv.visitMethodInsn(
       INVOKESTATIC,
-      INTERNAL_NAME,
-      "swipe",
-      "(Ljava/lang/String;[Ljava/lang/Object;)V",
+      WEB_TROVE_INTERNAL_NAME,
+      WEB_TROVE_SEIZE,
+      WEB_TROVE_SEIZE_DESC,
       false
     );
   }

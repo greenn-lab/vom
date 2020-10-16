@@ -123,13 +123,7 @@ public final class Config {
   }
 
   public static boolean containsServletClass(final String className) {
-    for (final String servletClass : DEFAULT_SERVLET_CLASSES) {
-      if (servletClass.startsWith(className)) {
-        return true;
-      }
-    }
-
-    return false;
+    return DEFAULT_SERVLET_CLASSES.contains(className);
   }
 
   /**

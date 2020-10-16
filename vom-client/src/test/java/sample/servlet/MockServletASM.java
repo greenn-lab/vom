@@ -1,7 +1,7 @@
-package vom.client.asm;
+package sample.servlet;
 
-import vom.client.asm.web.chaser.MockHttpServletChaserTarget;
 import org.mockito.Mockito;
+import vom.client.asm.web.chaser.MockHttpServletChaserTarget;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,18 +45,7 @@ public class MockServletASM extends HttpServlet {
     );
   }
 
-  public static void main(String[] args) throws ServletException, IOException {
-    final MockServletASM mockServletASM = new MockServletASM();
-    final MockGetReq request = new MockGetReq(Mockito.mock(HttpServletRequest.class));
-    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-
-    mockServletASM.service(
-        request,
-        response
-    );
-  }
-
-  private static class MockGetReq extends HttpServletRequestWrapper {
+  protected static class MockGetReq extends HttpServletRequestWrapper {
 
     private final Map<String, String> parameters = new HashMap<String, String>(2);
     private final Hashtable<String, String> headers = new Hashtable<String, String>();

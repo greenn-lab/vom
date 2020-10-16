@@ -50,8 +50,13 @@ public final class ServerDefaultConnection {
     );
   }
 
-  private static Connection getConnection() throws SQLException {
-    return dataSource.getConnection();
+  private static Connection getConnection() {
+    try {
+      return dataSource.getConnection();
+    }
+    catch (SQLException e) {
+      throw new CarryException("refuse connect to server!");
+    }
   }
 
   private static void execute(String sql, Object... parameters) {
@@ -70,7 +75,7 @@ public final class ServerDefaultConnection {
       connection.commit();
     }
     catch (SQLException e) {
-      throw new CarryException(e.getMessage(), e);
+      // no work
     } finally {
       if (ps != null) {
         try {

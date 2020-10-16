@@ -18,7 +18,8 @@ public class SystemPerformanceService {
 
   private static final SystemInfo system = new SystemInfo();
   private static final HardwareAbstractionLayer hardware = system.getHardware();
-  private static final FileSystem fileSystem = system.getOperatingSystem().getFileSystem();
+  private static final FileSystem fileSystem =
+    system.getOperatingSystem().getFileSystem();
   private static final NetworkIF[] networkInterfaces = hardware.getNetworkIFs();
 
 

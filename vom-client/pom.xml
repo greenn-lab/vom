@@ -76,12 +76,16 @@
           </filters>
           <relocations>
             <relocation>
-              <pattern>com</pattern>
-              <shadedPattern>${vom.package}.com</shadedPattern>
+              <pattern>com.zaxxer</pattern>
+              <shadedPattern>${vom.package}.com.zaxxer</shadedPattern>
             </relocation>
             <relocation>
-              <pattern>org</pattern>
-              <shadedPattern>${vom.package}.org</shadedPattern>
+              <pattern>org.h2</pattern>
+              <shadedPattern>${vom.package}.org.h2</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.objectweb</pattern>
+              <shadedPattern>${vom.package}.org.objectweb</shadedPattern>
             </relocation>
             <relocation>
               <pattern>oshi</pattern>
