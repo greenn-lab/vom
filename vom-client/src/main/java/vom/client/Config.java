@@ -1,28 +1,20 @@
 package vom.client;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Type;
 import vom.client.exception.FallDownException;
 
-import javax.servlet.http.HttpServlet;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Config {
 
   private static final String VALUE_SPLIT_PATTERN = "[\\s,|]+";
@@ -36,18 +28,25 @@ public final class Config {
 
   private static final Set<String> databaseVendors = new HashSet<String>();
 
-  private static final Set<String> DEFAULT_JDBC_CLASSES = new HashSet<String>();
+  private static final Set<String> DEFAULT_SERVLET_CLASSES = new HashSet<String>(
+    Collections.singletonList(
+      "javax/servlet/http/HttpServlet"
+    )
+  );
 
-  private static final Set<String> DEFAULT_SERVLET_CLASSES = new HashSet<String>();
+  private static final Set<String> DEFAULT_JDBC_CLASSES = new HashSet<String>(
+    Arrays.asList(
+      "java/sql/Connection",
+      "java/sql/Statement",
+      "java/sql/PreparedStatement",
+      "java/sql/CallableStatement"
+    )
+  );
 
-  static {
-    DEFAULT_SERVLET_CLASSES.add(Type.getInternalName(HttpServlet.class));
 
-    DEFAULT_JDBC_CLASSES.add(Type.getInternalName(Connection.class));
-    DEFAULT_JDBC_CLASSES.add(Type.getInternalName(Statement.class));
-    DEFAULT_JDBC_CLASSES.add(Type.getInternalName(PreparedStatement.class));
-    DEFAULT_JDBC_CLASSES.add(Type.getInternalName(CallableStatement.class));
+  private Config() {
   }
+
 
   public static String get(String key) {
     return props.getProperty(key);
@@ -130,22 +129,20 @@ public final class Config {
    * 설정파일을 통해서 초기 설정을 구성해요.
    */
   public static void configure() {
-    final URL propFileUrl = ClassLoader.getSystemResource("config-default.properties");
+    final URL propFileUrl = ClassLoader.getSystemResource("vom/client/config-default.properties");
 
     InputStream in = null;
 
     try {
       in = propFileUrl.openStream();
       props.load(in);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       // no work
     } finally {
       if (in != null) {
         try {
           in.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           // no work
         }
       }
@@ -157,8 +154,7 @@ public final class Config {
       try {
         final String id = InetAddress.getLocalHost().getHostName();
         setId(id);
-      }
-      catch (UnknownHostException e) {
+      } catch (UnknownHostException e) {
         throw new FallDownException(e);
       }
     }
@@ -195,15 +191,13 @@ public final class Config {
       }
 
       System.err.printf("\"%s\" is applied to vom configuration!%n", filepath);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       // no work
     } finally {
       if (in != null) {
         try {
           in.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           // no work
         }
       }

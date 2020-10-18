@@ -1,7 +1,5 @@
 package vom.client.performance;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
@@ -13,7 +11,6 @@ import oshi.software.os.OSFileStore;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SystemPerformanceService {
 
   private static final SystemInfo system = new SystemInfo();
@@ -21,6 +18,10 @@ public class SystemPerformanceService {
   private static final FileSystem fileSystem =
     system.getOperatingSystem().getFileSystem();
   private static final NetworkIF[] networkInterfaces = hardware.getNetworkIFs();
+
+
+  private SystemPerformanceService() {
+  }
 
 
   public static double getCpu() {
@@ -74,8 +75,7 @@ public class SystemPerformanceService {
           sent += (network.getBytesSent() - beforeSent) * 8 / seconds;
           received += (network.getBytesRecv() - beforeReceived) * 8 / seconds;
         }
-      }
-      catch (SocketException e) {
+      } catch (SocketException e) {
         e.printStackTrace(System.err);
       }
     }

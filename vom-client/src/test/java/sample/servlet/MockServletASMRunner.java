@@ -1,23 +1,24 @@
 package sample.servlet;
 
-import org.mockito.Mockito;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class MockServletASMRunner {
 
   public static void main(String[] args) throws ServletException, IOException {
-    final HttpServlet mockServletASM = new MockServletASM();
-    final MockServletASM.MockGetReq request = new MockServletASM.MockGetReq(Mockito.mock(HttpServletRequest.class));
-    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+    final MockHttpServletRequest request = new MockHttpServletRequest();
+    final MockHttpServletResponse response = new MockHttpServletResponse();
 
-    mockServletASM.toString();
+    final HttpServlet servlet = new MockServletASM();
 
-    mockServletASM.service(
+    servlet.service(request, response);
+
+    servlet.service(
         request,
         response
     );

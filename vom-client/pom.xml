@@ -24,6 +24,12 @@
       <groupId>com.github.oshi</groupId>
       <artifactId>oshi-core-shaded</artifactId>
       <version>${oshi.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
@@ -65,13 +71,16 @@
           <outputFile>${project.build.directory}/${project.artifactId}.jar</outputFile>
           <filters>
             <filter>
-              <artifact>org.projectlombok:lombok</artifact>
-              <excludes>
-                <exclude>**/*</exclude>
-              </excludes>
-            </filter>
-            <filter>
               <artifact>*:*</artifact>
+              <includes>
+                <include>org/objectweb/**/*</include>
+                <!--<include>com/sun/jna/**/*</include>-->
+                <!--<include>org/h2/**/*</include>-->
+                <!--<include>com/zaxxer/**/*</include>-->
+                <!--<include>oshi/**/*</include>-->
+                <include>vom/**/*</include>
+                <include>META-INF/**/*</include>
+              </includes>
             </filter>
           </filters>
           <relocations>

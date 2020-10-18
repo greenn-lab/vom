@@ -1,12 +1,9 @@
 package vom.client.asm.utility;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PrimitiveTypes implements Opcodes {
 
   private static final String VALUE_OF = "valueOf";
@@ -20,6 +17,10 @@ public final class PrimitiveTypes implements Opcodes {
   public static final String FLOAT_NAME = Type.getInternalName(Float.class);
   public static final String LONG_NAME = Type.getInternalName(Long.class);
   public static final String DOUBLE_NAME = Type.getInternalName(Double.class);
+
+
+  private PrimitiveTypes() {
+  }
 
 
   public static void booleanValueOf(MethodVisitor mv) {

@@ -1,18 +1,13 @@
 package vom.client.asm.trove;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public abstract class Booty implements Serializable {
 
   protected final String signature;
 
-  @Setter
   protected long elapse;
 
   private final List<Parameter> parameters = new ArrayList<Parameter>();
@@ -30,7 +25,6 @@ public abstract class Booty implements Serializable {
   }
 
 
-  @Getter
   public static class Parameter {
 
     private final Class<?> type;

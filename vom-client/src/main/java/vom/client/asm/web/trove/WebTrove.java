@@ -1,10 +1,5 @@
 package vom.client.asm.web.trove;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.objectweb.asm.Type;
 import vom.client.Config;
 
@@ -16,11 +11,6 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
-@Setter
 public class WebTrove implements Serializable {
 
   public static final ThreadLocal<WebTrove> WEB_TROVE = new ThreadLocal<WebTrove>();
@@ -52,26 +42,26 @@ public class WebTrove implements Serializable {
   @SuppressWarnings("unused")
   public static void seize(HttpServletRequest request) {
     if (request == null) return;
-    @SuppressWarnings("unchecked") final Map<String, String> parameters =
-      unmodifiableMap(request.getParameterMap());
-
-    final WebTrove trove = WebTrove.builder()
-      .id(Config.getId())
-      .collected(System.currentTimeMillis())
-      .uri(request.getRequestURI())
-      .parameters(parameters)
-      .build();
-
-    @SuppressWarnings("unchecked") final Enumeration<String> headerNames =
-      request.getHeaderNames();
-
-    while (headerNames.hasMoreElements()) {
-      final String name = headerNames.nextElement();
-      trove.addHeader(name, request.getHeader(name));
-    }
-
-    System.err.printf("swipe(request): %d%n", trove.getCollected());
-    WEB_TROVE.set(trove);
+//    final Map<String, String[]> parameters =
+//      unmodifiableMap(request.getParameterMap());
+//
+//    final WebTrove trove = WebTrove.builder()
+//      .id(Config.getId())
+//      .collected(System.currentTimeMillis())
+//      .uri(request.getRequestURI())
+//      .parameters(parameters)
+//      .build();
+//
+//    final Enumeration<String> headerNames =
+//      request.getHeaderNames();
+//
+//    while (headerNames.hasMoreElements()) {
+//      final String name = headerNames.nextElement();
+//      trove.addHeader(name, request.getHeader(name));
+//    }
+//
+//    System.err.printf("swipe(request): %d%n", trove.getCollected());
+//    WEB_TROVE.set(trove);
   }
 
   @SuppressWarnings("unused")

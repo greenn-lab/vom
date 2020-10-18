@@ -1,15 +1,16 @@
 package vom.client.asm.utility;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import vom.client.exception.FallDownException;
 
 import java.lang.reflect.Method;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpcodeUtils {
+
+  private OpcodeUtils() {
+  }
+
 
   public static int loadLocalVariable(Type type) {
     switch (type.getSort()) {
@@ -52,8 +53,7 @@ public class OpcodeUtils {
         if (type.getDimensions() == 1
           && !type.getInternalName().contains("/")) {
           return asClass(type.getInternalName());
-        }
-        else {
+        } else {
           final StringBuilder className = new StringBuilder();
           className
             .append('L')
@@ -76,8 +76,7 @@ public class OpcodeUtils {
   private static Class<?> asClass(String clazz) {
     try {
       return Class.forName(clazz);
-    }
-    catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) {
       throw new FallDownException(e);
     }
   }
@@ -99,8 +98,7 @@ public class OpcodeUtils {
     String descriptor) {
     try {
       return clazz.getMethod(methodName, argumentsToClasses(descriptor));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new FallDownException(e);
     }
   }

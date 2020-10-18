@@ -1,16 +1,11 @@
 package vom.client.asm.jdbc.trove;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.objectweb.asm.Type;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 public class DBTrove
   extends ArrayList<DBTrove.Booty>
   implements Serializable {
@@ -58,11 +53,8 @@ public class DBTrove
   }
 
 
-  @Builder
-  @ToString
   protected static class Booty implements Serializable {
 
-    @Getter
     private final String sql;
 
     private final List<Parameter> parameters = new ArrayList<Parameter>();
@@ -74,22 +66,34 @@ public class DBTrove
 
 
     public void addParameter(Object value) {
-      final Parameter build = Parameter.builder()
-        .type(value.getClass())
-        .value(value)
-        .build();
-
-      parameters.add(build);
+      parameters.add(
+        new Parameter(value)
+      );
     }
 
   }
 
-  @RequiredArgsConstructor
-  @Builder
-  @ToString
   private static class Parameter implements Serializable {
     private final Class<?> type;
     private final transient Object value;
+
+    public Parameter(Object value) {
+      this.type = value.getClass();
+      this.value = value;
+    }
+
+    public Parameter(Class<?> type, Object value) {
+      this.type = type;
+      this.value = value;
+    }
+
+    public Class<?> getType() {
+      return type;
+    }
+
+    public Object getValue() {
+      return value;
+    }
   }
 
 }

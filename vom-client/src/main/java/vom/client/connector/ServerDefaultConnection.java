@@ -1,8 +1,6 @@
 package vom.client.connector;
 
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import vom.client.Config;
 import vom.client.connector.sql.SqlManager;
 import vom.client.exception.CarryException;
@@ -11,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ServerDefaultConnection {
 
   private static final HikariDataSource dataSource = new HikariDataSource();
@@ -30,6 +27,10 @@ public final class ServerDefaultConnection {
     dataSource.setPassword("");
     dataSource.setConnectionTimeout(timeout);
     dataSource.setMaximumPoolSize(poolSize);
+  }
+
+
+  private ServerDefaultConnection() {
   }
 
 
@@ -53,8 +54,7 @@ public final class ServerDefaultConnection {
   private static Connection getConnection() {
     try {
       return dataSource.getConnection();
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new CarryException("refuse connect to server!");
     }
   }
@@ -73,15 +73,13 @@ public final class ServerDefaultConnection {
 
       ps.executeUpdate();
       connection.commit();
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       // no work
     } finally {
       if (ps != null) {
         try {
           ps.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
           // no work
         }
       }
@@ -89,8 +87,7 @@ public final class ServerDefaultConnection {
       if (connection != null) {
         try {
           connection.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
           // no work
         }
       }

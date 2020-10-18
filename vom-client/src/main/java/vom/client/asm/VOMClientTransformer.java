@@ -7,10 +7,7 @@ import vom.client.asm.web.servlet.HttpServletChaserAdapter;
 import vom.client.asm.web.servlet.HttpServletServiceAdapter;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.net.URL;
 import java.security.ProtectionDomain;
-import java.sql.SQLOutput;
-import java.util.Arrays;
 
 import static vom.client.Config.containsDatabaseVendor;
 import static vom.client.Config.containsJdbcClass;
@@ -24,21 +21,9 @@ public class VOMClientTransformer implements ClassFileTransformer {
   @Override
   public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
     // 내 스스로 감시하진 말아줘...
-//    if (className.startsWith("vom/")) {
-//      return new byte[0];
-//    }
-
-    try {
-      final Class<?> aClass = Class.forName("javax.servlet.http.HttpServlet");
+    if (className.startsWith("vom/")) {
+      return new byte[0];
     }
-    catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-
-
-
-
-    System.out.println(">>>>> " + className);
 
     // Servlet 이 호출 될 때,
     // 추적을 위한 코드를 이식 시켜요.
@@ -47,9 +32,9 @@ public class VOMClientTransformer implements ClassFileTransformer {
     }
 
     // Servlet 관련 대상을 찾아서 추적해요.
-//    if (containsServletChasedTarget(className)) {
-//      return new HttpServletChaserAdapter(classfileBuffer, className).toBytes();
-//    }
+    if (containsServletChasedTarget(className)) {
+      return new HttpServletChaserAdapter(classfileBuffer, className).toBytes();
+    }
 
     // JDBC 관련된 것들을 추적해요.
     if (
