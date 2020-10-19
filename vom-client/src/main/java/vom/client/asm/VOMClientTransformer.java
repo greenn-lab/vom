@@ -31,7 +31,8 @@ public class VOMClientTransformer implements ClassFileTransformer {
       return new HttpServletServiceAdapter(classfileBuffer).toBytes();
     }
 
-    // Servlet 관련 대상을 찾아서 추적해요.
+    // 모니터링 패키지(monitor.packages) 설정에 속해있는
+    // 대상들을 추적해요.
     if (containsServletChasedTarget(className)) {
       return new HttpServletChaserAdapter(classfileBuffer, className).toBytes();
     }

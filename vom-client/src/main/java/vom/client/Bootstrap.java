@@ -26,9 +26,9 @@ public class Bootstrap {
    * @param instrumentation 기본 도구에요.
    */
   public static void premain(String configFilepath, Instrumentation instrumentation) {
-//    if (configFilepath != null) {
-//      Config.mergeProperties(configFilepath);
-//    }
+    if (configFilepath != null) {
+      Config.mergeProperties(configFilepath);
+    }
 
 //    bootSystemPerformance();
 

@@ -6,10 +6,13 @@ import vom.client.Config;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
@@ -17,6 +20,16 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 public class WebTrove implements Serializable {
 
   public static final ThreadLocal<WebTrove> WEB_TROVE = new ThreadLocal<WebTrove>();
+
+  public static final ThreadLocal<Integer> execCount = new ThreadLocal<Integer>() {
+    @Override
+    protected Integer initialValue() {
+      return 0;
+    }
+  };
+
+  public static final List<String> logs =
+    Collections.synchronizedList(new ArrayList<String>());
 
   public static final String WEB_TROVE_INTERNAL_NAME =
     Type.getInternalName(WebTrove.class);
@@ -73,6 +86,10 @@ public class WebTrove implements Serializable {
       request.getRequestURI()
     );
 
+    WEB_TROVE.set(trove);
+    execCount.set(execCount.get() + 1);
+
+
     @SuppressWarnings("unchecked") final Map<String, String[]> parameterMap
       = request.getParameterMap();
     trove.setParameters(parameterMap);
@@ -84,15 +101,22 @@ public class WebTrove implements Serializable {
       trove.addHeader(name, request.getHeader(name));
     }
 
-    System.out.printf(
-      "---[ %s : %s ] ----------%n%s %s%n",
+    logs.add(String.format(
+      "%s%d---[ %s : %s ] ----------%n",
+      Thread.currentThread().getName(),
+      execCount.get(),
       trove.getId(),
-      new Date(trove.getCollected()).toString(),
+      new Date(trove.getCollected()).toString()
+    ));
+
+    logs.add(String.format(
+      "%s%d %s %s%n",
+      Thread.currentThread().getName(),
+      execCount.get(),
       trove.getMethod(),
       trove.getUri()
-    );
+    ));
 
-    WEB_TROVE.set(trove);
   }
 
   public static void expel(MethodVisitor mv) {
@@ -108,14 +132,21 @@ public class WebTrove implements Serializable {
   public static void expel(long elapsed) {
     WebTrove trove = WEB_TROVE.get();
 
-    System.out.printf(
-      "elapsed: %d%n---[ %s : %s ] ----------%n%s %s%n",
-      elapsed,
+    logs.add(String.format(
+      "%s%d elapsed: %d%n",
+      Thread.currentThread().getName(),
+      execCount.get(),
+      elapsed
+    ));
+    logs.add(String.format(
+      "%s%d---[ %s : %s ] ---------- %n",
+      Thread.currentThread().getName(),
+      execCount.get(),
       trove.getId(),
-      new Date(trove.getCollected()).toString(),
-      trove.getMethod(),
-      trove.getUri()
-    );
+      new Date(trove.getCollected()).toString()
+    ));
+
+    WEB_TROVE.remove();
   }
 
   public static void chase(MethodVisitor mv) {
@@ -134,10 +165,13 @@ public class WebTrove implements Serializable {
     long elapsed,
     Object[] parameter
   ) {
-    System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-    System.out.printf("%s # %s (%d ms)%n", className, methodName, elapsed);
-    System.out.println(Arrays.toString(parameter));
-    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    final WebTrove trove = WEB_TROVE.get();
+    if (trove == null) return;
+
+    logs.add(String.format("%s%d<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<%n", Thread.currentThread().getName(), execCount.get()));
+    logs.add(String.format("%s%d %s # %s (%d ms)%n", Thread.currentThread().getName(), execCount.get(), className, methodName, elapsed));
+    logs.add(String.format("%s%d %s%n", Thread.currentThread().getName(), execCount.get(), Arrays.toString(parameter)));
+    logs.add(String.format("%s%d>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>%n", Thread.currentThread().getName(), execCount.get()));
   }
 
   public String getId() {
