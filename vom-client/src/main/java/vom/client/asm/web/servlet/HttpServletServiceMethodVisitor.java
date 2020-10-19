@@ -11,6 +11,7 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.LLOAD;
 import static org.objectweb.asm.Opcodes.LSTORE;
+import static org.objectweb.asm.Opcodes.LSUB;
 import static org.objectweb.asm.Opcodes.RETURN;
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
 import static vom.client.asm.utility.OpcodeUtils.CURRENT_TIME_MILLIS;
@@ -39,18 +40,18 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
     startIndex = newLocal(Type.LONG_TYPE);
     mv.visitVarInsn(LSTORE, startIndex);
+
+    // 1st parameter
+    mv.visitVarInsn(ALOAD, 1);
+    // 2nd parameter
+    mv.visitVarInsn(LLOAD, startIndex);
+    WebTrove.seize(mv);
   }
 
   @Override
   public void visitInsn(int opcode) {
     if ((RETURN >= opcode && IRETURN <= opcode)
     || ATHROW == opcode) {
-
-      // 1st parameter
-      mv.visitVarInsn(ALOAD, 1);
-      // 2nd parameter
-      mv.visitVarInsn(LLOAD, startIndex);
-      // 3rd parameter
       mv.visitMethodInsn(
         INVOKESTATIC,
         SYSTEM_INTERNAL,
@@ -58,8 +59,10 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
         CURRENT_TIME_MILLIS_DESC,
         false
       );
-      WebTrove.seize(mv);
+      mv.visitVarInsn(LLOAD, startIndex);
+      mv.visitInsn(LSUB);
 
+      WebTrove.expel(mv);
     }
 
     mv.visitInsn(opcode);
