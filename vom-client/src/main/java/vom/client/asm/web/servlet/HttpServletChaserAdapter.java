@@ -38,7 +38,7 @@ public class HttpServletChaserAdapter extends ClassVisitor implements ClassWrita
 
     if (!isInterface
       && null != visitor
-      && Opcodes.ACC_PUBLIC == access
+      && ACC_PUBLIC == access
       && !"<init>".equals(name)
     ) {
       visitor = new HttpServletChaserMethodVisitor(

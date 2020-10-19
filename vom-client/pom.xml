@@ -73,11 +73,11 @@
             <filter>
               <artifact>*:*</artifact>
               <includes>
+                <include>com/sun/jna/**/*</include>
+                <include>com/zaxxer/**/*</include>
                 <include>org/objectweb/**/*</include>
-                <!--<include>com/sun/jna/**/*</include>-->
-                <!--<include>org/h2/**/*</include>-->
-                <!--<include>com/zaxxer/**/*</include>-->
-                <!--<include>oshi/**/*</include>-->
+                <include>org/h2/**/*</include>
+                <include>oshi/**/*</include>
                 <include>vom/**/*</include>
                 <include>META-INF/**/*</include>
               </includes>

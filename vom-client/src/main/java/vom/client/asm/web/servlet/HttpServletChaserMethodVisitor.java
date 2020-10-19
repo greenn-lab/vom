@@ -5,19 +5,24 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 import vom.client.asm.utility.PrimitiveTypes;
+import vom.client.asm.web.trove.WebTrove;
 
 import static vom.client.asm.VOMClientTransformer.ASM_VERSION;
+import static vom.client.asm.utility.OpcodeUtils.CURRENT_TIME_MILLIS;
+import static vom.client.asm.utility.OpcodeUtils.CURRENT_TIME_MILLIS_DESC;
+import static vom.client.asm.utility.OpcodeUtils.SYSTEM_INTERNAL;
 import static vom.client.asm.utility.PrimitiveTypes.OBJECT_NAME;
-import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_INTERNAL_NAME;
-import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_SEIZE;
-import static vom.client.asm.web.trove.WebTrove.WEB_TROVE_SEIZE_DESC;
 
 public class HttpServletChaserMethodVisitor
   extends LocalVariablesSorter
   implements Opcodes {
 
-  private final String classAndMethod;
+  private final String className;
+  private final String methodName;
   private final Type[] arguments;
+
+  private int elapsedIndex;
+
 
   public HttpServletChaserMethodVisitor(
     MethodVisitor visitor,
@@ -28,35 +33,65 @@ public class HttpServletChaserMethodVisitor
   ) {
     super(ASM_VERSION, access, descriptor, visitor);
 
-    this.classAndMethod = className + "#" + methodName;
+    this.className = className;
+    this.methodName = methodName;
     this.arguments = Type.getArgumentTypes(descriptor);
   }
 
+
   @Override
   public void visitCode() {
-    invokeMethodSwipe(
-      mv,
-      classAndMethod,
-      arguments,
-      newLocal(Type.getType(Object[].class))
+    mv.visitCode();
+
+    mv.visitMethodInsn(
+      INVOKESTATIC,
+      SYSTEM_INTERNAL,
+      CURRENT_TIME_MILLIS,
+      CURRENT_TIME_MILLIS_DESC,
+      false
     );
 
-    mv.visitCode();
+    elapsedIndex = newLocal(Type.LONG_TYPE);
+    mv.visitVarInsn(LSTORE, elapsedIndex);
   }
 
   @Override
   public void visitInsn(int opcode) {
-    mv.visitInsn(opcode);
+    if ((RETURN >= opcode && IRETURN <= opcode)
+      || ATHROW == opcode) {
+      // 1st parameter
+      mv.visitLdcInsn(className);
+      // 2nd parameter
+      mv.visitLdcInsn(methodName);
+      // 3rd parameter
+      mv.visitMethodInsn(
+        INVOKESTATIC,
+        SYSTEM_INTERNAL,
+        CURRENT_TIME_MILLIS,
+        CURRENT_TIME_MILLIS_DESC,
+        false
+      );
+      mv.visitVarInsn(LLOAD, elapsedIndex);
+      mv.visitInsn(LSUB);
 
-    if (RETURN >= opcode && IRETURN <= opcode) {
-      mv.visitMaxs(0, 0);
-      mv.visitEnd();
+      // from 4th parameters
+      chasingParameters(
+        mv,
+        arguments,
+        newLocal(Type.getType(Object[].class))
+      );
+
+      WebTrove.chase(mv);
     }
+
+    super.visitInsn(opcode);
   }
 
-  private void invokeMethodSwipe(MethodVisitor mv, String classAndMethod, Type[] arguments, int arrayIndex) {
-    mv.visitLdcInsn(classAndMethod);
-
+  private void chasingParameters(
+    MethodVisitor mv,
+    Type[] arguments,
+    int arrayIndex
+  ) {
     if (0 == arguments.length) {
       mv.visitInsn(ACONST_NULL);
     }
@@ -115,14 +150,6 @@ public class HttpServletChaserMethodVisitor
 
       mv.visitVarInsn(ALOAD, arrayIndex);
     }
-
-    mv.visitMethodInsn(
-      INVOKESTATIC,
-      WEB_TROVE_INTERNAL_NAME,
-      WEB_TROVE_SEIZE,
-      WEB_TROVE_SEIZE_DESC,
-      false
-    );
   }
 
 }
