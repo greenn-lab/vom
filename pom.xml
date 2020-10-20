@@ -16,7 +16,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <vom.package>vom</vom.package>
+    <vom.package>vom.shaded</vom.package>
 
     <asm.version>8.0.1</asm.version>
     <oshi.version>3.13.6</oshi.version>
