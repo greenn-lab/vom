@@ -81,7 +81,7 @@ public class Trover implements Serializable {
     headers.put(name, value);
   }
 
-  public void addBooty(BootyInChasing booty) {
+  public void addBooty(PointInChasing booty) {
     booties.add(booty);
   }
 
@@ -144,13 +144,12 @@ public class Trover implements Serializable {
 
     try {
       final ByteArrayOutputStream outByteArray
-        = new ByteArrayOutputStream(1024);
+        = new ByteArrayOutputStream();
       final ObjectOutputStream out = new ObjectOutputStream(outByteArray);
 
       out.writeObject(trove);
       out.close();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 
@@ -177,8 +176,8 @@ public class Trover implements Serializable {
     if (trove == null) return;
 
     final BootyInChasing booty = BootyInChasing.builder()
-      .signature(className)
-      .name(methodName)
+      .className(className)
+      .methodName(methodName)
       .elapsed(elapsed)
       .build();
 
@@ -204,13 +203,7 @@ public class Trover implements Serializable {
     final Trover trove = TROVE.get();
     if (trove == null) return;
 
-    final QueryInChasing currentQuery = new QueryInChasing(sql);
-    trove.addBooty(
-
-    );
-    trove.setCurrentQuery(
-      currentQuery
-    );
+    trove.setCurrentQuery(new QueryInChasing(sql));
   }
 
   public static void glean(MethodVisitor mv) {
@@ -247,19 +240,13 @@ public class Trover implements Serializable {
   @SuppressWarnings("unused")
   public static void bring(long elapsed) {
     final Trover trove = TROVE.get();
-    if (trove == null) return;
-
-    final QueryInChasing currentQuery = trove.getCurrentQuery();
-    if (currentQuery == null) return;
-
-    final BootyInChasing booty = BootyInChasing.builder()
-      .signature(currentQuery.getSql())
-      .elapsed(elapsed)
-      .build();
-
-    booty.setArguments(currentQuery.getArguments());
-
-    trove.addBooty(booty);
+    if (trove != null) {
+      final QueryInChasing currentQuery = trove.getCurrentQuery();
+      if (currentQuery != null) {
+        currentQuery.setElapsed(elapsed);
+        trove.addBooty(currentQuery);
+      }
+    }
   }
 
   public static void vomit(MethodVisitor mv) {

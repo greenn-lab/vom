@@ -55,14 +55,8 @@ public class JdbcStatementAdapter
       && (ACC_PUBLIC & access) == 1) {
 
       if (isConnection()) {
-        System.out.printf("........ %s%s%n", name, descriptor);
-
-        if ("commit".equals(name)) {
-          return new ConnectionCommitVisitor(visitor);
-        }
-
-        if ("rollback".equals(name)) {
-          return new ConnectionRollbackVisitor(visitor);
+        if ("commit".equals(name) || "rollback".equals(name)) {
+          return new ConnectionCommitRollbackVisitor(name, visitor);
         }
 
         if (isConnectionPrepareStatement(name, descriptor)) {

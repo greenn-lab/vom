@@ -15,6 +15,7 @@ public class StatementExecutesVisitor
 
   private int varStarted;
 
+
   public StatementExecutesVisitor(
     int access,
     String descriptor,
@@ -22,6 +23,7 @@ public class StatementExecutesVisitor
   ) {
     super(ASM_VERSION, access, descriptor, visitor);
   }
+
 
   @Override
   public void visitCode() {
@@ -37,14 +39,12 @@ public class StatementExecutesVisitor
   }
 
   @Override
+  @SuppressWarnings("DuplicatedCode")
   public void visitInsn(int opcode) {
-    if (
-      (IRETURN <= opcode && RETURN >= opcode)
-      || ATHROW == opcode
-    ) {
+    if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
       OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
-      mv.visitVarInsn(LLOAD, varStarted);
-      mv.visitInsn(LSUB);
+//      mv.visitVarInsn(LLOAD, varStarted);
+//      mv.visitInsn(LSUB);
 
       Trover.bring(mv);
     }

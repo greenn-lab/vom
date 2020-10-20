@@ -5,15 +5,16 @@ import lombok.Getter;
 import java.io.Serializable;
 
 @Getter
-public class VomitInChasing extends Throwable implements PointInChasing, Serializable {
+public class VomitInChasing extends PointInChasing implements Serializable {
+
+  private final Throwable cause;
 
   public VomitInChasing(Throwable cause) {
-    super(cause);
+    this.cause = cause;
   }
 
   @Override
-  public void addArgument(Object argument) {
-    throw new UnsupportedOperationException();
+  public String getSignature() {
+    return cause.getMessage();
   }
-
 }

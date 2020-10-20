@@ -9,6 +9,7 @@ import vom.client.bci.servlet.HttpServletServiceAdapter;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 
+import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
 import static vom.client.Config.containsDatabaseVendor;
 import static vom.client.Config.containsJdbcClass;
 import static vom.client.Config.containsServletChasedTarget;
@@ -44,10 +45,9 @@ public class VOMClientTransformer implements ClassFileTransformer {
     ) {
       final ClassReader reader = new ClassReader(classfileBuffer);
       final boolean isInterface =
-        (reader.getAccess() & Opcodes.ACC_INTERFACE) != 0;
+        (ACC_INTERFACE & reader.getAccess()) != 0;
 
       if (!isInterface && containsJdbcClass(reader)) {
-        System.out.printf("----- %s%n%n", className);
         return new JdbcStatementAdapter(reader).toBytes();
       }
     }

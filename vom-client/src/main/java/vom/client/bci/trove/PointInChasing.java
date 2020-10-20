@@ -1,7 +1,19 @@
 package vom.client.bci.trove;
 
-public interface PointInChasing {
+import lombok.Setter;
 
-  void addArgument(Object argument);
+import java.util.ArrayList;
+import java.util.List;
 
+public abstract class PointInChasing {
+
+  @Setter
+  private List<TroveArgument> arguments = new ArrayList<TroveArgument>();
+
+  public void addArgument(Object argument) {
+    arguments.add(new TroveArgument(argument));
+  }
+
+  public abstract String getSignature();
+  
 }

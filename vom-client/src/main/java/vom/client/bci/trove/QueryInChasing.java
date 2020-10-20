@@ -4,15 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
-public class QueryInChasing implements PointInChasing, Serializable {
+public class QueryInChasing extends PointInChasing implements Serializable {
 
   private final String sql;
-
-  private List<TroveArgument> arguments = null;
 
   @Setter
   private long elapsed;
@@ -22,13 +18,8 @@ public class QueryInChasing implements PointInChasing, Serializable {
     this.sql = sql;
   }
 
-
-  public void addArgument(Object argument) {
-    if (arguments == null) {
-      arguments = new ArrayList<TroveArgument>();
-    }
-
-    arguments.add(new TroveArgument(argument));
+  @Override
+  public String getSignature() {
+    return sql;
   }
-
 }

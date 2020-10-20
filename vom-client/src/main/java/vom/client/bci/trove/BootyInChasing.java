@@ -2,34 +2,27 @@ package vom.client.bci.trove;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
+@Builder
 @Getter
-public class BootyInChasing implements PointInChasing, Serializable {
+public class BootyInChasing extends PointInChasing implements Serializable {
 
-  private final String signature;
-  private final String name;
+  private final String className;
+  private final String methodName;
   private final long elapsed;
-
-  @Setter
-  private List<TroveArgument> arguments = new ArrayList<TroveArgument>();
 
 
   @Builder
-  public BootyInChasing(String signature, String name, long elapsed) {
-    this.signature = signature;
-    this.name = name;
+  public BootyInChasing(String className, String methodName, long elapsed) {
+    this.className = className;
+    this.methodName = methodName;
     this.elapsed = elapsed;
   }
 
-
   @Override
-  public void addArgument(Object argument) {
-    arguments.add(new TroveArgument(argument));
+  public String getSignature() {
+    return String.format("%s#%s", className, methodName);
   }
-
 }
