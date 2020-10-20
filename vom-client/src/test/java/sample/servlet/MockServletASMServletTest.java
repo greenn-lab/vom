@@ -35,7 +35,7 @@ class MockServletASMServletTest {
       }
     });
 
-    final CountDownLatch latch = new CountDownLatch(10);
+    final CountDownLatch latch = new CountDownLatch(50);
 
     for (int i = 0; i < 50; i++) {
       service.execute(new Runnable() {

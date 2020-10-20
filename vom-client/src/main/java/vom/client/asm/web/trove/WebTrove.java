@@ -102,7 +102,7 @@ public class WebTrove implements Serializable {
     }
 
     logs.add(String.format(
-      "%s%d---[ %s : %s ] ----------%n",
+      "%s-%d---seize [ %s : %s ] ----------%n",
       Thread.currentThread().getName(),
       execCount.get(),
       trove.getId(),
@@ -110,7 +110,7 @@ public class WebTrove implements Serializable {
     ));
 
     logs.add(String.format(
-      "%s%d %s %s%n",
+      "%s-%d %s %s%n",
       Thread.currentThread().getName(),
       execCount.get(),
       trove.getMethod(),
@@ -133,13 +133,13 @@ public class WebTrove implements Serializable {
     WebTrove trove = WEB_TROVE.get();
 
     logs.add(String.format(
-      "%s%d elapsed: %d%n",
+      "%s-%d elapsed: %d%n",
       Thread.currentThread().getName(),
       execCount.get(),
       elapsed
     ));
     logs.add(String.format(
-      "%s%d---[ %s : %s ] ---------- %n",
+      "%s-%d---expel [ %s : %s ] ---------- %n",
       Thread.currentThread().getName(),
       execCount.get(),
       trove.getId(),
@@ -168,10 +168,10 @@ public class WebTrove implements Serializable {
     final WebTrove trove = WEB_TROVE.get();
     if (trove == null) return;
 
-    logs.add(String.format("%s%d<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<%n", Thread.currentThread().getName(), execCount.get()));
-    logs.add(String.format("%s%d %s # %s (%d ms)%n", Thread.currentThread().getName(), execCount.get(), className, methodName, elapsed));
-    logs.add(String.format("%s%d %s%n", Thread.currentThread().getName(), execCount.get(), Arrays.toString(parameter)));
-    logs.add(String.format("%s%d>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>%n", Thread.currentThread().getName(), execCount.get()));
+    logs.add(String.format("%s-%d<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<%n", Thread.currentThread().getName(), execCount.get()));
+    logs.add(String.format("%s-%d %s # %s (%d ms)%n", Thread.currentThread().getName(), execCount.get(), className, methodName, elapsed));
+    logs.add(String.format("%s-%d %s%n", Thread.currentThread().getName(), execCount.get(), Arrays.toString(parameter)));
+    logs.add(String.format("%s-%d>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>%n", Thread.currentThread().getName(), execCount.get()));
   }
 
   public String getId() {
