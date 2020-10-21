@@ -1,41 +1,49 @@
 package vom.client.bci.tasting.try_catch;
 
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 import java.io.IOException;
 
+import static vom.client.bci.tasting.TastingUtils.OBJECT_INTERNAL;
 import static vom.client.bci.tasting.TastingUtils.writeTastingClassfile;
 
 public class TastingTryCatch implements Opcodes {
 
+  private static final String CLASS_NAME = "tasting/TastingTryCatch";
+  private static final String METHOD_NAME = "hi";
+  private static final String METHOD_DESC = "(I)V";
+
   public static void main(String[] args) throws IOException {
-    final String className = "example/HelloASM";
     final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-    final TastingTryCatchClassVisitor visitor =
-      new TastingTryCatchClassVisitor(writer);
+    final ClassVisitor visitor = new ClassVisitor(ASM7, writer) {
+      @Override
+      public MethodVisitor visitMethod(
+        int access, String name, String descriptor, String signature,
+        String[] exceptions
+      ) {
+        final MethodVisitor methodVisitor =
+          super.visitMethod(access, name, descriptor, signature, exceptions);
+
+        if (METHOD_NAME.equals(name)) {
+          return new TastingTryCatchMethodVisitor(methodVisitor);
+        }
+
+        return methodVisitor;
+      }
+    };
 
     visitor.visit(
-      V1_8,
-      ACC_PUBLIC,
-      className,
-      null,
-      Type.getInternalName(Object.class),
-      null
+      V1_8, ACC_PUBLIC, CLASS_NAME, null,
+      OBJECT_INTERNAL, null
     );
 
-    MethodVisitor mv =
-      visitor.visitMethod(
-        ACC_PUBLIC,
-        "<init>",
-        "(I)V",
-        null,
-        null
-      );
-
-    mv.visitCode();
+    visitor.visitMethod(
+      ACC_PUBLIC, METHOD_NAME, METHOD_DESC, null, null
+    )
+      .visitCode();
 
     writeTastingClassfile(writer);
   }
