@@ -24,12 +24,15 @@ public class PreparedStatementParametersVisitor
     super(ASM_VERSION, access, descriptor, visitor);
 
     this.valueType = Type.getArgumentTypes(descriptor)[1];
+
+    OpcodeUtils.print(mv, descriptor);
   }
 
   @Override
   public void visitCode() {
     mv.visitCode();
 
+    // Trover.glean()'s 1st parameter
     mv.visitVarInsn(
       OpcodeUtils.loadLocalVariable(valueType),
       2

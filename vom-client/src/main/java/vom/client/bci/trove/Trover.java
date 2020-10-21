@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static vom.client.bci.trove.Chasing.CHASE_INTERNAL;
+import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
+import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
+import static vom.client.bci.utility.OpcodeUtils.VOID_THROWS;
 
 @Getter
 public class Trover implements Serializable {
@@ -33,16 +37,16 @@ public class Trover implements Serializable {
   private static final String TROVER_QUERY = "query";
   private static final String TROVER_GLEAN = "glean";
   private static final String TROVER_BRING = "bring";
+  private static final String TROVER_TAKEN = "taken";
   private static final String TROVER_VOMIT = "vomit";
 
-  private static final String TROVER_DSC_SEIZE =
+  private static final String VOID_SEIZE =
     "(Ljavax/servlet/http/HttpServletRequest;J)V";
-  private static final String TROVER_DSC_CHASE =
-    "(Ljava/lang/String;Ljava/lang/String;J[Ljava/lang/Object;)V";
-  private static final String TROVER_DSC_LONG = "(J)V";
-  private static final String TROVER_DSC_STRING = "(Ljava/lang/String;)V";
-  private static final String TROVER_DSC_OBJECT = "(Ljava/lang/Object;)V";
-  private static final String TROVER_DSC_THROWS = "(Ljava/lang/Throwable;)V";
+  private static final String VOID_CHASE =
+    "(L" + CHASE_INTERNAL + ";)V";
+  private static final String VOID_BRING =
+    "(L" + CHASE_INTERNAL + ";)V";
+
 
   private final String id;
   private final Long collected;
@@ -56,7 +60,8 @@ public class Trover implements Serializable {
   private Map<String, String[]> parameters = new HashMap<String, String[]>();
 
   @Setter
-  private List<PointInChasing> booties = new ArrayList<PointInChasing>();
+  @Getter
+  private List<Chasing> booties = new ArrayList<Chasing>();
 
   @Setter
   private long elapsed;
@@ -81,7 +86,7 @@ public class Trover implements Serializable {
     headers.put(name, value);
   }
 
-  public void addBooty(PointInChasing booty) {
+  public void addBooty(Chasing booty) {
     booties.add(booty);
   }
 
@@ -97,7 +102,7 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_SEIZE,
-      TROVER_DSC_SEIZE,
+      VOID_SEIZE,
       false);
   }
 
@@ -131,7 +136,7 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_EXPEL,
-      TROVER_DSC_LONG,
+      VOID_LONG,
       false);
   }
 
@@ -149,7 +154,8 @@ public class Trover implements Serializable {
 
       out.writeObject(trove);
       out.close();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
 
@@ -161,29 +167,14 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_CHASE,
-      TROVER_DSC_CHASE,
+      VOID_CHASE,
       false);
   }
 
   @SuppressWarnings("unused")
-  public static void chase(
-    String className,
-    String methodName,
-    long elapsed,
-    Object[] arguments
-  ) {
+  public static void chase(Chasing booty) {
     final Trover trove = TROVE.get();
     if (trove == null) return;
-
-    final BootyInChasing booty = BootyInChasing.builder()
-      .className(className)
-      .methodName(methodName)
-      .elapsed(elapsed)
-      .build();
-
-    for (Object argument : arguments) {
-      booty.addArgument(new TroveArgument(argument));
-    }
 
     trove.addBooty(booty);
   }
@@ -193,17 +184,17 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_QUERY,
-      TROVER_DSC_STRING,
+      VOID_CHASE,
       false
     );
   }
 
   @SuppressWarnings("unused")
-  public static void query(String sql) {
+  public static void query(Chasing booty) {
     final Trover trove = TROVE.get();
     if (trove == null) return;
 
-    trove.setCurrentQuery(new QueryInChasing(sql));
+    trove.setCurrentQuery((QueryInChasing) booty);
   }
 
   public static void glean(MethodVisitor mv) {
@@ -211,7 +202,7 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_GLEAN,
-      TROVER_DSC_OBJECT,
+      VOID_OBJECT,
       false
     );
   }
@@ -232,21 +223,36 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_BRING,
-      TROVER_DSC_LONG,
+      VOID_BRING,
       false
     );
   }
 
   @SuppressWarnings("unused")
-  public static void bring(long elapsed) {
+  public static void bring(Chasing chasing) {
+    chasing.arrived();
+  }
+
+  public static void taken(MethodVisitor mv) {
+    mv.visitMethodInsn(
+      INVOKESTATIC,
+      TROVER_INTERNAL,
+      TROVER_TAKEN,
+      VOID_LONG,
+      false
+    );
+  }
+
+  @SuppressWarnings("unused")
+  public static void taken(long started) {
     final Trover trove = TROVE.get();
-    if (trove != null) {
-      final QueryInChasing currentQuery = trove.getCurrentQuery();
-      if (currentQuery != null) {
-        currentQuery.setElapsed(elapsed);
-        trove.addBooty(currentQuery);
-      }
-    }
+    if (trove == null) return;
+
+    final QueryInChasing currentQuery = trove.getCurrentQuery();
+    if (currentQuery == null) return;
+
+    currentQuery.setStarted(started);
+    currentQuery.arrived();
   }
 
   public static void vomit(MethodVisitor mv) {
@@ -254,7 +260,7 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_VOMIT,
-      TROVER_DSC_THROWS,
+      VOID_THROWS,
       false
     );
   }

@@ -24,11 +24,9 @@ public class PreparedStatementExecuteVisitor
     super(ASM_VERSION, access, descriptor, visitor);
   }
 
-
   @Override
   public void visitCode() {
     OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
-
     varStarted = newLocal(LONG_TYPE);
     mv.visitVarInsn(LSTORE, varStarted);
 
@@ -36,14 +34,10 @@ public class PreparedStatementExecuteVisitor
   }
 
   @Override
-  @SuppressWarnings("DuplicatedCode")
   public void visitInsn(int opcode) {
     if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
-      OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
       mv.visitVarInsn(LLOAD, varStarted);
-      mv.visitInsn(LSUB);
-
-      Trover.bring(mv);
+      Trover.taken(mv);
     }
 
     mv.visitInsn(opcode);

@@ -47,7 +47,7 @@ public class ASMExample1 implements Opcodes {
     mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintWriter;");
     mv.visitLdcInsn("Hello, ASM World!");
     mv.visitMethodInsn(
-        INVOKESTATIC,
+        INVOKEVIRTUAL,
         "java/io/PrintWriter",
         "println",
         "(Ljava/lang/String;)V",

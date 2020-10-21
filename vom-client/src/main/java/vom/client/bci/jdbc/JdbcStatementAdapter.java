@@ -51,34 +51,32 @@ public class JdbcStatementAdapter
     final MethodVisitor visitor =
       super.visitMethod(access, name, descriptor, signature, exceptions);
 
-    if (null != visitor
-      && (ACC_PUBLIC & access) == 1) {
+    if (null == visitor || (ACC_PUBLIC & access) != 1) return visitor;
 
-      if (isConnection()) {
-        if ("commit".equals(name) || "rollback".equals(name)) {
-          return new ConnectionCommitRollbackVisitor(name, visitor);
-        }
-
-        if (isConnectionPrepareStatement(name, descriptor)) {
-          return new ConnectionPrepareStatementVisitor(visitor);
-        }
+    if (isConnection()) {
+      if ("commit".equals(name) || "rollback".equals(name)) {
+        return new ConnectionCommitRollbackVisitor(access, name, descriptor, visitor);
       }
 
-      if (isStatementExecutesMethod(name, descriptor)) {
-        return new StatementExecutesVisitor(access, descriptor, visitor);
+      if (isConnectionPrepareStatement(name, descriptor)) {
+        return new ConnectionPrepareStatementVisitor(access, descriptor, visitor);
       }
+    }
 
-      if (isPreparedStatement(name)) {
-        if (isPreparedStatementExecuteMethod(name, descriptor)) {
-          return new PreparedStatementExecuteVisitor(access, descriptor, visitor);
-        }
-        else if (isPreparedStatementParameterMethod(name, descriptor)) {
-          return new PreparedStatementParametersVisitor(
-            visitor,
-            access,
-            descriptor
-          );
-        }
+    if (isStatementExecutesMethod(name, descriptor)) {
+      return new StatementExecutesVisitor(access, descriptor, visitor);
+    }
+
+    if (isPreparedStatement()) {
+      if (isPreparedStatementExecuteMethod(name, descriptor)) {
+        return new PreparedStatementExecuteVisitor(access, descriptor, visitor);
+      }
+      else if (isPreparedStatementParameterMethod(name, descriptor)) {
+        return new PreparedStatementParametersVisitor(
+          visitor,
+          access,
+          descriptor
+        );
       }
     }
 
@@ -120,7 +118,7 @@ public class JdbcStatementAdapter
     ) && descriptor.startsWith("()");
   }
 
-  private boolean isPreparedStatement(String name) {
+  private boolean isPreparedStatement() {
     for (String interface_ : reader.getInterfaces()) {
       if (PREPARED_STATEMENT_INTERNAL_NAME.equals(interface_)) {
         return true;

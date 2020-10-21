@@ -12,10 +12,10 @@ import java.util.Date;
 
 class SimpleTroverTest {
 
+  final HttpServlet servlet = new MockTestServlet();
+
   @Test
   void shouldSeizeHttpServletRequest() throws ServletException, IOException {
-    final HttpServlet servlet = new MockTestServlet();
-
     final MockHttpServletRequest request = new MockHttpServletRequest();
     request.setMethod("GET");
     request.setRequestURI("/hi/who/are/you");

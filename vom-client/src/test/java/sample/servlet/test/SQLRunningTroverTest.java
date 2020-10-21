@@ -8,8 +8,10 @@ import sample.servlet.MockTestServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -48,11 +50,32 @@ class SQLRunningTroverTest {
         conn.commit();
       }
       catch (SQLException e) {
-        e.printStackTrace();
+        //e.printStackTrace();
+        System.err.println(e.getMessage());
       }
+
+      executionQuery2(ds);
 
     }
 
+    private void executionQuery2(DataSource ds) {
+      try {
+        final Connection conn = ds.getConnection();
+        final PreparedStatement stmt = conn.prepareStatement(
+          "SELECT * FROM TEST WHERE 1 = ?1 AND '2' = ?2");
+
+        stmt.setInt(1, 1);
+        stmt.setInt(2, 'X');
+
+        stmt.executeQuery();
+        conn.rollback();
+
+        stmt.close();
+      }
+      catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
 
   }
 }

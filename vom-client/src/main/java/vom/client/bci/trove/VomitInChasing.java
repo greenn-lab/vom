@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.io.Serializable;
 
 @Getter
-public class VomitInChasing extends PointInChasing implements Serializable {
+public class VomitInChasing extends Chasing implements Serializable {
 
   private final Throwable cause;
 

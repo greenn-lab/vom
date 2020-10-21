@@ -4,16 +4,18 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 import vom.client.bci.trove.Trover;
-import vom.client.bci.utility.OpcodeUtils;
 
-import static org.objectweb.asm.Type.LONG_TYPE;
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
+import static vom.client.bci.trove.QueryInChasing.QUERY_CONSTRUCTOR_DESC;
+import static vom.client.bci.trove.QueryInChasing.QUERY_INTERNAL;
+import static vom.client.bci.trove.QueryInChasing.QUERY_TYPE;
+import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
 public class StatementExecutesVisitor
   extends LocalVariablesSorter
   implements Opcodes {
 
-  private int varStarted;
+  private int varChase;
 
 
   public StatementExecutesVisitor(
@@ -26,14 +28,27 @@ public class StatementExecutesVisitor
 
 
   @Override
+  @SuppressWarnings("DuplicatedCode")
   public void visitCode() {
-    OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
+    // new QueryInChasing(...)
+    mv.visitTypeInsn(NEW, QUERY_INTERNAL);
+    mv.visitInsn(DUP);
 
-    varStarted = newLocal(LONG_TYPE);
-    mv.visitVarInsn(LSTORE, varStarted);
-
+    // QueryInChasing's 1st parameter
     mv.visitVarInsn(ALOAD, 1);
-    Trover.query(mv);
+
+    mv.visitMethodInsn(
+      INVOKESPECIAL,
+      QUERY_INTERNAL,
+      CONSTRUCTOR,
+      QUERY_CONSTRUCTOR_DESC,
+      false);
+
+    varChase = newLocal(QUERY_TYPE);
+    mv.visitVarInsn(ASTORE, varChase);
+
+    mv.visitVarInsn(ALOAD, varChase);
+    Trover.chase(mv);
 
     mv.visitCode();
   }
@@ -42,10 +57,7 @@ public class StatementExecutesVisitor
   @SuppressWarnings("DuplicatedCode")
   public void visitInsn(int opcode) {
     if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
-      OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
-//      mv.visitVarInsn(LLOAD, varStarted);
-//      mv.visitInsn(LSUB);
-
+      mv.visitVarInsn(ALOAD, varChase);
       Trover.bring(mv);
     }
 

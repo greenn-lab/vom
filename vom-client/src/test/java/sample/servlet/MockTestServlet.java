@@ -15,6 +15,8 @@ public class MockTestServlet extends HttpServlet {
       final String shouted = shout(123);
       System.out.println(shouted);
 
+      noArgument();
+
       methodC(true, 'C', (byte) 0x0001, Short.MAX_VALUE, Integer.MAX_VALUE,
         Float.MIN_VALUE, Long.MAX_VALUE, Double.MIN_VALUE);
     }
@@ -45,5 +47,9 @@ public class MockTestServlet extends HttpServlet {
       catch (InterruptedException e) {
         e.printStackTrace();
       }
+    }
+
+    public void noArgument() {
+      System.out.println("Here is no args :)");
     }
   }
