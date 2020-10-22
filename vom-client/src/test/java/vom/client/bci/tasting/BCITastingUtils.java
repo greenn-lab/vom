@@ -38,7 +38,6 @@ public class BCITastingUtils {
     catch (IOException e) {
       throw new RuntimeException(e);
     }
-
   }
 
   public static byte[] writeTastingClassfile(ClassWriter writer)
@@ -51,7 +50,7 @@ public class BCITastingUtils {
     throws IOException {
 
     final FileOutputStream out =
-      new FileOutputStream("./vom-client/target/classes/Tasting.class");
+      new FileOutputStream("./target/classes/Tasting.class");
     out.write(bytes);
     out.close();
 

@@ -1,13 +1,16 @@
 package vom.client.bci.servlet;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class HttpServletServiceMethodVisitorTestRunner extends ClassLoader {
+class HttpServletServiceMethodVisitorTest extends ClassLoader {
 
-  public static void main(String[] args) throws IOException {
+  @Test
+  void shouldRunBCI() throws IOException {
 
     final byte[] classfileBuffer =
       classfileBytes("javax/servlet/http/HttpServlet");
