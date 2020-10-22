@@ -7,14 +7,14 @@ import org.objectweb.asm.Opcodes;
 
 import java.io.IOException;
 
-import static vom.client.bci.tasting.TastingUtils.OBJECT_INTERNAL;
-import static vom.client.bci.tasting.TastingUtils.writeTastingClassfile;
+import static vom.client.bci.tasting.BCITastingUtils.OBJECT_INTERNAL;
+import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
 public class TastingTryCatch implements Opcodes {
 
   private static final String CLASS_NAME = "tasting/TastingTryCatch";
   private static final String METHOD_NAME = "hi";
-  private static final String METHOD_DESC = "(I)V";
+  private static final String METHOD_DESC = "(I)J";
 
   public static void main(String[] args) throws IOException {
     final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);

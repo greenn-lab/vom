@@ -7,10 +7,12 @@ import org.objectweb.asm.Type;
 import vom.client.bci.utility.OpcodeUtils;
 
 import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.ASM7;
 import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.ATHROW;
 import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.LRETURN;
 import static org.objectweb.asm.Opcodes.RETURN;
 
 public class TastingTryCatchMethodVisitor extends MethodVisitor {
@@ -48,16 +50,8 @@ public class TastingTryCatchMethodVisitor extends MethodVisitor {
     mv.visitInsn(ATHROW);
     mv.visitLabel(catchEnd);
 
-    mv.visitInsn(RETURN);
+    mv.visitLdcInsn(Long.MAX_VALUE);
+    mv.visitInsn(LRETURN);
   }
 
-  @Override
-  public void visitInsn(int opcode) {
-    super.visitInsn(opcode);
-  }
-
-  @Override
-  public void visitEnd() {
-    mv.visitEnd();
-  }
 }

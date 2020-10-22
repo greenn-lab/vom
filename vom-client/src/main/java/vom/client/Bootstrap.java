@@ -30,7 +30,7 @@ public class Bootstrap {
       Config.mergeProperties(configFilepath);
     }
 
-//    bootSystemPerformance();
+    bootSystemPerformance();
 
     instrumentation.addTransformer(
         new VOMClientTransformer(),

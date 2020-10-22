@@ -6,31 +6,28 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import static org.objectweb.asm.Opcodes.AASTORE;
-import static org.objectweb.asm.Opcodes.ACONST_NULL;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ANEWARRAY;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.BIPUSH;
-import static org.objectweb.asm.Opcodes.DLOAD;
-import static org.objectweb.asm.Opcodes.FLOAD;
-import static org.objectweb.asm.Opcodes.ILOAD;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.LLOAD;
-import static vom.client.bci.utility.PrimitiveTypes.OBJECT_NAME;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class OpcodeUtils {
+public class OpcodeUtils implements Opcodes {
 
+  public static final String OBJECT_NAME = Type.getInternalName(Object.class);
+  public static final String BOOLEAN_NAME = Type.getInternalName(Boolean.class);
+  public static final String CHARACTER_NAME =
+    Type.getInternalName(Character.class);
+  public static final String BYTE_NAME = Type.getInternalName(Byte.class);
+  public static final String SHORT_NAME = Type.getInternalName(Short.class);
+  public static final String INTEGER_NAME = Type.getInternalName(Integer.class);
+  public static final String FLOAT_NAME = Type.getInternalName(Float.class);
+  public static final String LONG_NAME = Type.getInternalName(Long.class);
+  public static final String DOUBLE_NAME = Type.getInternalName(Double.class);
   public static final String SYSTEM_INTERNAL =
     Type.getInternalName(System.class);
+
   public static final String CONSTRUCTOR = "<init>";
   public static final String CURRENT_TIME_MILLIS = "currentTimeMillis";
   public static final String CURRENT_TIME_MILLIS_DESC = "()J";
 
   public static final String VOID_LONG = "(J)V";
-  public static final String VOID_OBJECT = "(Ljava/lang/Object;)V";
-  public static final String VOID_THROWS = "(Ljava/lang/Throwable;)V";
+  public static final String VOID_OBJECT = "(L" + OBJECT_NAME + ";)V";
 
 
   public static void invokeSystemCurrentTimeMillis(MethodVisitor mv) {

@@ -4,11 +4,12 @@ import jdk.nashorn.internal.codegen.types.Type;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public abstract class Chasing {
+public abstract class Chasing implements Serializable {
 
   public static final String CHASE_INTERNAL =
     Type.getInternalName(Chasing.class);

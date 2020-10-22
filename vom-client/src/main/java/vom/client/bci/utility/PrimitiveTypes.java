@@ -1,26 +1,24 @@
 package vom.client.bci.utility;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import static vom.client.bci.utility.OpcodeUtils.BOOLEAN_NAME;
+import static vom.client.bci.utility.OpcodeUtils.BYTE_NAME;
+import static vom.client.bci.utility.OpcodeUtils.CHARACTER_NAME;
+import static vom.client.bci.utility.OpcodeUtils.DOUBLE_NAME;
+import static vom.client.bci.utility.OpcodeUtils.FLOAT_NAME;
+import static vom.client.bci.utility.OpcodeUtils.INTEGER_NAME;
+import static vom.client.bci.utility.OpcodeUtils.LONG_NAME;
+import static vom.client.bci.utility.OpcodeUtils.SHORT_NAME;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PrimitiveTypes implements Opcodes {
 
   private static final String VALUE_OF = "valueOf";
-
-  public static final String OBJECT_NAME = Type.getInternalName(Object.class);
-  public static final String BOOLEAN_NAME = Type.getInternalName(Boolean.class);
-  public static final String CHARACTER_NAME = Type.getInternalName(Character.class);
-  public static final String BYTE_NAME = Type.getInternalName(Byte.class);
-  public static final String SHORT_NAME = Type.getInternalName(Short.class);
-  public static final String INTEGER_NAME = Type.getInternalName(Integer.class);
-  public static final String FLOAT_NAME = Type.getInternalName(Float.class);
-  public static final String LONG_NAME = Type.getInternalName(Long.class);
-  public static final String DOUBLE_NAME = Type.getInternalName(Double.class);
-
-
-  private PrimitiveTypes() {
-  }
 
 
   public static void booleanValueOf(MethodVisitor mv) {

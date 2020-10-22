@@ -22,7 +22,6 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static vom.client.bci.trove.Chasing.CHASE_INTERNAL;
 import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
 import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
-import static vom.client.bci.utility.OpcodeUtils.VOID_THROWS;
 
 @Getter
 public class Trover implements Serializable {
@@ -44,9 +43,10 @@ public class Trover implements Serializable {
     "(Ljavax/servlet/http/HttpServletRequest;J)V";
   private static final String VOID_CHASE =
     "(L" + CHASE_INTERNAL + ";)V";
+  private static final String VOID_VOMIT1 = "(J)V";
+  private static final String VOID_VOMIT2 = "(JLjava/lang/Throwable;)V";
   private static final String VOID_BRING =
     "(L" + CHASE_INTERNAL + ";)V";
-
 
   private final String id;
   private final Long collected;
@@ -60,17 +60,16 @@ public class Trover implements Serializable {
   private Map<String, String[]> parameters = new HashMap<String, String[]>();
 
   @Setter
-  @Getter
   private List<Chasing> booties = new ArrayList<Chasing>();
 
   @Setter
   private long elapsed;
 
-  @Getter
   @Setter
   private QueryInChasing currentQuery;
 
-  private VomitInChasing vomit;
+  @Setter
+  private Throwable vomit;
 
 
   @Builder
@@ -88,12 +87,6 @@ public class Trover implements Serializable {
 
   public void addBooty(Chasing booty) {
     booties.add(booty);
-  }
-
-  public void setVomit(VomitInChasing vomit) {
-    if (this.vomit == null) {
-      this.vomit = vomit;
-    }
   }
 
 
@@ -132,20 +125,30 @@ public class Trover implements Serializable {
   }
 
   public static void expel(MethodVisitor mv) {
+    expel(mv, false);
+  }
+
+  public static void expel(MethodVisitor mv, boolean withVomit) {
     mv.visitMethodInsn(
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_EXPEL,
-      VOID_LONG,
+      withVomit ? VOID_VOMIT2 : VOID_VOMIT1,
       false);
   }
 
   @SuppressWarnings("unused")
   public static void expel(long elapsed) {
+    expel(elapsed, null);
+  }
+
+  @SuppressWarnings("unused")
+  public static void expel(long elapsed, Throwable vomit) {
     final Trover trove = TROVE.get();
     if (null == trove) return;
 
     trove.setElapsed(elapsed);
+    trove.setVomit(vomit);
 
     try {
       final ByteArrayOutputStream outByteArray
@@ -253,24 +256,6 @@ public class Trover implements Serializable {
 
     currentQuery.setStarted(started);
     currentQuery.arrived();
-  }
-
-  public static void vomit(MethodVisitor mv) {
-    mv.visitMethodInsn(
-      INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_VOMIT,
-      VOID_THROWS,
-      false
-    );
-  }
-
-  @SuppressWarnings("unused")
-  public static void vomit(Throwable cause) {
-    final Trover trove = TROVE.get();
-    if (trove == null) return;
-
-    trove.setVomit(new VomitInChasing(cause));
   }
 
 }
