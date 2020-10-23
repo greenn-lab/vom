@@ -1,36 +1,60 @@
 package vom.client.connector;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import vom.client.Config;
+import vom.client.bci.trove.Trover;
 import vom.client.connector.sql.SqlManager;
 import vom.client.exception.CarryException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public final class ServerDefaultConnection {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ServerConnection {
 
+  private static final Integer TIMEOUT =
+    Integer.parseInt(Config.get("server.timeout", "2000"));
+  private static final Integer POOL_SIZE =
+    Integer.parseInt(Config.get("server.pool", "100"));
+  private static ExecutorService GIVER_POOL =
+    Executors.newFixedThreadPool(POOL_SIZE);
   private static final HikariDataSource dataSource = new HikariDataSource();
 
   static {
-    final Integer timeout =
-      Integer.parseInt(Config.get("server.timeout", "2000"));
-    final Integer poolSize =
-      Integer.parseInt(Config.get("server.pool", "100"));
-
     dataSource.setJdbcUrl("jdbc:h2:tcp://" +
       Config.getServerHost() + ":" +
       Config.getServerPort() + "/mem:collector"
     );
     dataSource.setUsername("sa");
     dataSource.setPassword("");
-    dataSource.setConnectionTimeout(timeout);
-    dataSource.setMaximumPoolSize(poolSize);
+    dataSource.setConnectionTimeout(TIMEOUT);
+    dataSource.setMaximumPoolSize(POOL_SIZE);
   }
 
+  public static void give(final Trover trover) {
+    GIVER_POOL.execute(new Runnable() {
+      @Override
+      public void run() {
+        // TODO trover serialization and giving
+        try {
+          ServerConnection.getConnection();
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+        finally {
+          System.out.println("---------------------------------");
+          System.out.printf("%s, %d%n", trover.getId(), trover.getCollected());
+          System.out.println("---------------------------------");
+        }
 
-  private ServerDefaultConnection() {
+      }
+    });
   }
 
 
@@ -51,7 +75,7 @@ public final class ServerDefaultConnection {
     );
   }
 
-  private static Connection getConnection() {
+  public static Connection getConnection() {
     try {
       return dataSource.getConnection();
     } catch (SQLException e) {

@@ -6,11 +6,9 @@ import lombok.Setter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
+import vom.client.connector.ServerConnection;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -150,17 +148,7 @@ public class Trover implements Serializable {
     trove.setElapsed(elapsed);
     trove.setVomit(vomit);
 
-    try {
-      final ByteArrayOutputStream outByteArray
-        = new ByteArrayOutputStream();
-      final ObjectOutputStream out = new ObjectOutputStream(outByteArray);
-
-      out.writeObject(trove);
-      out.close();
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
+    ServerConnection.give(trove);
 
     TROVE.remove();
   }

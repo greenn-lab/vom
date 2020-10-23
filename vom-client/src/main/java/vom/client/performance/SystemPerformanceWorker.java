@@ -1,7 +1,7 @@
 package vom.client.performance;
 
 import vom.client.Config;
-import vom.client.connector.ServerDefaultConnection;
+import vom.client.connector.ServerConnection;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +27,7 @@ public class SystemPerformanceWorker extends Thread {
         final long[] network = SystemPerformanceService.getNetwork();
         System.out.println(Arrays.toString(network));
 
-        ServerDefaultConnection.sendSystemStats(
+        ServerConnection.sendSystemStats(
           SystemPerformanceService.getCpu(), disk, memory, network
         );
 

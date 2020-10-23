@@ -9,13 +9,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 class SimpleTroverTest {
 
   final HttpServlet servlet = new MockTestServlet();
 
   @Test
-  void shouldSeizeHttpServletRequest() throws ServletException, IOException {
+  void shouldSeizeHttpServletRequest() throws ServletException, IOException, InterruptedException {
     final MockHttpServletRequest request = new MockHttpServletRequest();
     request.setMethod("GET");
     request.setRequestURI("/hi/who/are/you");
@@ -30,5 +31,14 @@ class SimpleTroverTest {
     response.setWriterAccessAllowed(true);
 
     servlet.service(request, response);
+
+    System.out.println("------------------------------------");
+    System.out.println("------------------------------------");
+    System.out.println("--------------FINISH----------------");
+    System.out.println("------------------------------------");
+    System.out.println("------------------------------------");
+
+    // go to bed happiness
+    TimeUnit.DAYS.sleep(1);
   }
 }
