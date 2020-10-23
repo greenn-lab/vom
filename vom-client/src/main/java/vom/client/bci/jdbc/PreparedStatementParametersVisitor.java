@@ -24,8 +24,6 @@ public class PreparedStatementParametersVisitor
     super(ASM_VERSION, access, descriptor, visitor);
 
     this.valueType = Type.getArgumentTypes(descriptor)[1];
-
-    OpcodeUtils.print(mv, descriptor);
   }
 
   @Override

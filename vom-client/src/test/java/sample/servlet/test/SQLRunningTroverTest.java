@@ -62,7 +62,7 @@ class SQLRunningTroverTest {
       try {
         final Connection conn = ds.getConnection();
         final PreparedStatement stmt = conn.prepareStatement(
-          "SELECT * FROM TESTX WHERE 1 = ?1 AND '2' = ?2");
+          "SELECT * FROM TEST WHERE 1 = ?1 AND '2' = ?2");
 
         stmt.setInt(1, 1);
         stmt.setInt(2, 'X');
