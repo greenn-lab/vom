@@ -27,7 +27,7 @@ class TastingTryCatchTest implements Opcodes {
         String[] exceptions
       ) {
         final MethodVisitor methodVisitor =
-          super.visitMethod(access, name, descriptor, signature, exceptions);
+          cv.visitMethod(access, name, descriptor, signature, exceptions);
 
         if (METHOD_NAME.equals(name)) {
           return new TastingTryCatchMethodVisitor(methodVisitor);

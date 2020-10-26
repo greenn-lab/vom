@@ -38,7 +38,7 @@ public class Trover implements Serializable {
   private static final String TROVER_VOMIT = "vomit";
 
   private static final String VOID_SEIZE =
-    "(Ljavax/servlet/http/HttpServletRequest;J)V";
+    "(Ljava/lang/Object;J)V";
   private static final String VOID_CHASE =
     "(L" + CHASE_INTERNAL + ";)V";
   private static final String VOID_VOMIT1 = "(J)V";
@@ -98,28 +98,33 @@ public class Trover implements Serializable {
   }
 
   @SuppressWarnings("unused")
-  public static void seize(HttpServletRequest request, long started) {
-    if (request == null) return;
+  public static void seize(Object req, long started) {
+    try {
+      HttpServletRequest request = (HttpServletRequest) req;
 
-    final Trover trove = Trover.builder()
-      .id(Config.getId())
-      .collected(started)
-      .method(request.getMethod())
-      .uri(request.getRequestURI())
-      .build();
+      final Trover trove = Trover.builder()
+        .id(Config.getId())
+        .collected(started)
+        .method(request.getMethod())
+        .uri(request.getRequestURI())
+        .build();
 
-    @SuppressWarnings("unchecked") final Map<String, String[]> parameterMap
-      = request.getParameterMap();
-    trove.setParameters(parameterMap);
+      @SuppressWarnings("unchecked") final Map<String, String[]> parameterMap
+        = request.getParameterMap();
+      trove.setParameters(parameterMap);
 
-    @SuppressWarnings("unchecked") final Enumeration<String> headerNames =
-      request.getHeaderNames();
-    while (headerNames.hasMoreElements()) {
-      final String name = headerNames.nextElement();
-      trove.addHeader(name, request.getHeader(name));
+      @SuppressWarnings("unchecked") final Enumeration<String> headerNames =
+        request.getHeaderNames();
+      while (headerNames.hasMoreElements()) {
+        final String name = headerNames.nextElement();
+        trove.addHeader(name, request.getHeader(name));
+      }
+
+      TROVE.set(trove);
     }
-
-    TROVE.set(trove);
+    catch (Throwable cause) {
+      cause.printStackTrace();
+    }
   }
 
   public static void expel(MethodVisitor mv) {

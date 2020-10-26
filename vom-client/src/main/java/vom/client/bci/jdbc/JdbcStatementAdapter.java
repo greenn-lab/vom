@@ -49,7 +49,7 @@ public class JdbcStatementAdapter
                                    String descriptor, String signature,
                                    String[] exceptions) {
     final MethodVisitor visitor =
-      super.visitMethod(access, name, descriptor, signature, exceptions);
+      cv.visitMethod(access, name, descriptor, signature, exceptions);
 
     if (null == visitor || (ACC_PUBLIC & access) != 1) return visitor;
 

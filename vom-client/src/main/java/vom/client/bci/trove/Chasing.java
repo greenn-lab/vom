@@ -1,8 +1,8 @@
 package vom.client.bci.trove;
 
-import jdk.nashorn.internal.codegen.types.Type;
 import lombok.Getter;
 import lombok.Setter;
+import org.objectweb.asm.Type;
 
 import java.io.Serializable;
 import java.util.ArrayList;

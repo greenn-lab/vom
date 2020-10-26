@@ -3,6 +3,7 @@ package vom.client;
 import vom.client.bci.VOMClientTransformer;
 import vom.client.performance.SystemPerformanceWorker;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,7 @@ public class Bootstrap {
       Config.mergeProperties(configFilepath);
     }
 
-    bootSystemPerformance();
+//    bootSystemPerformance();
 
     instrumentation.addTransformer(
         new VOMClientTransformer(),
