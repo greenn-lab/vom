@@ -27,82 +27,61 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
   private int varStarted;
 
+  private ClassLoader classLoader;
+
   public HttpServletServiceMethodVisitor(MethodVisitor visitor, int access, String descriptor) {
     super(ASM_VERSION, access, descriptor, visitor);
   }
 
   @Override
   public void visitCode() {
-
-    mv.visitVarInsn(ALOAD, 0);
-    mv.visitMethodInsn(
-      INVOKEVIRTUAL,
-      "java/lang/Object",
-      "getClass",
-      "()Ljava/lang/Class;",
-      false
-    );
-    mv.visitMethodInsn(
-      INVOKEVIRTUAL,
-      "java/lang/Class",
-      "getClassLoader",
-      "()Ljava/lang/ClassLoader;",
-      false
-    );
-    final int i = newLocal(Type.getType(ClassLoader.class));
-    mv.visitVarInsn(ASTORE, i);
-
-    OpcodeUtils.prePrint(mv);
-    mv.visitVarInsn(ALOAD, i);
-    OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
-
+    OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
+    varStarted = newLocal(LONG_TYPE);
+    mv.visitVarInsn(LSTORE, varStarted);
 
     // Trover.seize()'s 1st parameter
-//    mv.visitVarInsn(ALOAD, 1);
+    mv.visitVarInsn(ALOAD, 1);
 
     // Trover.seize()'s 2nd parameter
-//    OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
-//    Trover.seize(mv);
+    mv.visitVarInsn(LLOAD, varStarted);
 
-//    mv.visitLabel(beginTry);
+    Trover.seize(mv);
+
+    mv.visitLabel(beginTry);
     mv.visitCode();
-
-    OpcodeUtils.print(mv, "whyyyyyyyyyyyyyyyyyyyyyyyy");
-
   }
 
   @Override
   public void visitMaxs(int maxStack, int maxLocals) {
-//    final Label tryEnd = new Label();
-//    mv.visitTryCatchBlock(beginTry, tryEnd, tryEnd, null);
-//    mv.visitLabel(tryEnd);
-//    mv.visitVarInsn(ASTORE, 1);
-//
-//    // Trover.expel()'s 1st parameter
-//    OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
-//    mv.visitVarInsn(LLOAD, varStarted);
-//    mv.visitInsn(LSUB);
-//
-//    // Trover.expel()'s 2nd parameter
-//    mv.visitVarInsn(ALOAD, 1);
-//
-//    Trover.expel(mv, true);
-//
-//    mv.visitVarInsn(ALOAD, 1);
-//    mv.visitInsn(ATHROW);
-//
-    mv.visitMaxs(maxStack + 8, maxLocals + 8);
+    final Label tryEnd = new Label();
+    mv.visitTryCatchBlock(beginTry, tryEnd, tryEnd, null);
+    mv.visitLabel(tryEnd);
+    mv.visitVarInsn(ASTORE, 1);
+
+
+    // Trover.expel()'s 1st parameter
+    OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
+    mv.visitVarInsn(LLOAD, varStarted);
+    mv.visitInsn(LSUB);
+
+    // Trover.expel()'s 2nd parameter
+    mv.visitVarInsn(ALOAD, 1);
+
+    Trover.expel(mv, true);
+
+    mv.visitVarInsn(ALOAD, 1);
+    mv.visitInsn(ATHROW);
+
+    mv.visitMaxs(maxStack, maxLocals);
   }
 
   @Override
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
-//      OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
-//      mv.visitVarInsn(LLOAD, varStarted);
-//      mv.visitInsn(LSUB);
+      OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
+      mv.visitVarInsn(LLOAD, varStarted);
+      mv.visitInsn(LSUB);
 
-      mv.visitLdcInsn(123L);
       Trover.expel(mv);
     }
 

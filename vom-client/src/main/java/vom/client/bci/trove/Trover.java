@@ -8,7 +8,6 @@ import org.objectweb.asm.Type;
 import vom.client.Config;
 import vom.client.connector.ServerConnection;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -52,7 +51,7 @@ public class Trover implements Serializable {
   private final String uri;
 
   @Setter
-  private Map<String, String> headers = new HashMap<String, String>();
+  private Map<String, Serializable> headers = new HashMap<String, Serializable>();
 
   @Setter
   private Map<String, String[]> parameters = new HashMap<String, String[]>();
@@ -97,32 +96,42 @@ public class Trover implements Serializable {
       false);
   }
 
-  @SuppressWarnings("unused")
-  public static void seize(Object req, long started) {
+  @SuppressWarnings({"unused", "unchecked", "JavaReflectionInvocation"})
+  public static void seize(Object request, long started) {
     try {
-      HttpServletRequest request = (HttpServletRequest) req;
+      final Class<?> clazz = request.getClass();
+
+      final String method =
+        (String) clazz.getMethod("getMethod").invoke(request);
+      final String uri =
+        (String) clazz.getMethod("getRequestURI").invoke(request);
 
       final Trover trove = Trover.builder()
         .id(Config.getId())
         .collected(started)
-        .method(request.getMethod())
-        .uri(request.getRequestURI())
+        .method(method)
+        .uri(uri)
         .build();
 
-      @SuppressWarnings("unchecked") final Map<String, String[]> parameterMap
-        = request.getParameterMap();
-      trove.setParameters(parameterMap);
+      trove.setParameters(
+        (Map<String, String[]>) clazz.getMethod("getParameterMap")
+          .invoke(request)
+      );
 
-      @SuppressWarnings("unchecked") final Enumeration<String> headerNames =
-        request.getHeaderNames();
+      final Enumeration<String> headerNames =
+        (Enumeration<String>) clazz.getMethod("getHeaderNames").invoke(request);
       while (headerNames.hasMoreElements()) {
         final String name = headerNames.nextElement();
-        trove.addHeader(name, request.getHeader(name));
+
+        trove.addHeader(
+          name,
+          (String) clazz.getMethod("getHeader", String.class)
+            .invoke(request, name)
+        );
       }
 
       TROVE.set(trove);
-    }
-    catch (Throwable cause) {
+    } catch (Throwable cause) {
       cause.printStackTrace();
     }
   }
@@ -136,7 +145,7 @@ public class Trover implements Serializable {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_EXPEL,
-      withVomit ? VOID_VOMIT2 : VOID_VOMIT1,
+      withVomit ? VOID_VOMIT2:VOID_VOMIT1,
       false);
   }
 

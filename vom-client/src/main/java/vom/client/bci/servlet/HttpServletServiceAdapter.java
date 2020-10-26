@@ -5,7 +5,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import vom.client.bci.ClassWritable;
-import vom.client.bci.taken.ComputeClassWriter;
 
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
 
@@ -13,24 +12,6 @@ public class HttpServletServiceAdapter extends ClassVisitor implements ClassWrit
 
   public HttpServletServiceAdapter(byte[] classfileBuffer) {
     super(ASM_VERSION);
-
-    final ClassReader reader = new ClassReader(classfileBuffer);
-    this.cv = new ClassWriter(
-      reader,
-      ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
-    );
-
-    reader.accept(this, ClassReader.EXPAND_FRAMES);
-  }
-
-  public HttpServletServiceAdapter(ClassWriter cw) {
-    super(ASM_VERSION, cw);
-  }
-
-  public HttpServletServiceAdapter(ClassLoader loader, byte[] classfileBuffer) {
-    super(ASM_VERSION, new ComputeClassWriter(loader,
-      ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
-    ));
 
     final ClassReader reader = new ClassReader(classfileBuffer);
     this.cv = new ClassWriter(

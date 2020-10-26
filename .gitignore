@@ -2,6 +2,8 @@
 .gradle
 target
 spring-petclinic
+demo
+jpetstore
 
 # IntelliJ
 .idea

@@ -24,11 +24,12 @@
       <groupId>com.github.oshi</groupId>
       <artifactId>oshi-core-shaded</artifactId>
       <version>${oshi.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.30</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -81,8 +82,8 @@
               <includes>
                 <include>com/sun/jna/**/*</include>
                 <include>com/zaxxer/**/*</include>
-                <include>org/h2/**/*</include>
                 <include>org/objectweb/**/*</include>
+                <include>org/h2/**/*</include>
                 <include>org/slf4j/**/*</include>
                 <include>oshi/**/*</include>
                 <include>vom/**/*</include>
