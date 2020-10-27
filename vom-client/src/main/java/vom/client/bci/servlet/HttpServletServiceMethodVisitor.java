@@ -2,17 +2,13 @@ package vom.client.bci.servlet;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 import vom.client.bci.trove.Trover;
 import vom.client.bci.utility.OpcodeUtils;
 
-import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.INVOKEDYNAMIC;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.LLOAD;
 import static org.objectweb.asm.Opcodes.LSTORE;
@@ -27,7 +23,6 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
   private int varStarted;
 
-  private ClassLoader classLoader;
 
   public HttpServletServiceMethodVisitor(MethodVisitor visitor, int access, String descriptor) {
     super(ASM_VERSION, access, descriptor, visitor);

@@ -7,7 +7,7 @@ import java.io.IOException;
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class HttpServletServiceMethodVisitorTest extends ClassLoader {
+class HttpServletServiceAdapterTest extends ClassLoader {
 
   @Test
   void shouldRunBCI() throws IOException {

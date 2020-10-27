@@ -20,10 +20,4 @@ public class QueryInChasing extends Chasing implements Serializable {
     this.sql = sql;
   }
 
-
-  @Override
-  public String getSignature() {
-    return sql;
-  }
-
 }

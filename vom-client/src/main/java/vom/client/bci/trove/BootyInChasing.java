@@ -34,10 +34,4 @@ public class BootyInChasing extends Chasing implements Serializable {
     }
   }
 
-
-  @Override
-  public String getSignature() {
-    return String.format("%s#%s", className, methodName);
-  }
-
 }

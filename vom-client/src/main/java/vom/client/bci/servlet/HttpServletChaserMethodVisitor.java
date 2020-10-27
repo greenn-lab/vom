@@ -66,7 +66,8 @@ public class HttpServletChaserMethodVisitor
       BOOTY_INTERNAL,
       CONSTRUCTOR,
       BOOTY_CONSTRUCTOR_DESC,
-      false);
+      false
+    );
 
     varBooty = newLocal(BOOTY_TYPE);
     mv.visitVarInsn(ASTORE, varBooty);

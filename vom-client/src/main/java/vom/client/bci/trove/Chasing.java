@@ -31,6 +31,4 @@ public abstract class Chasing implements Serializable {
     arrived = System.currentTimeMillis();
   }
 
-  public abstract String getSignature();
-
 }
