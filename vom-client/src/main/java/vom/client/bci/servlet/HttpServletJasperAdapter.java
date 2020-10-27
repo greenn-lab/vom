@@ -8,12 +8,12 @@ import vom.client.bci.ClassWritable;
 
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
 
-public class HttpServletServiceAdapter extends ClassVisitor implements ClassWritable {
+public class HttpServletJasperAdapter extends ClassVisitor implements ClassWritable {
 
   private final String className;
 
 
-  public HttpServletServiceAdapter(byte[] classfileBuffer, String className) {
+  public HttpServletJasperAdapter(byte[] classfileBuffer, String className) {
     super(ASM_VERSION);
 
     this.className = className;
@@ -39,11 +39,11 @@ public class HttpServletServiceAdapter extends ClassVisitor implements ClassWrit
 
     if (
       visitor != null &&
-        "service".equals(name) &&
-        "(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V"
+        "serviceJspFile".equals(name) &&
+        "(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;Ljava/lang/String;Z)V"
           .equals(descriptor)
     ) {
-      return new HttpServletServiceMethodVisitor(access, className, descriptor, visitor);
+      return new HttpServletJasperJSPMethodVisitor(access, className, descriptor, visitor);
     }
 
     return visitor;

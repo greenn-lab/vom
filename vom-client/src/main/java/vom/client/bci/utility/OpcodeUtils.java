@@ -10,6 +10,7 @@ import org.objectweb.asm.Type;
 public class OpcodeUtils implements Opcodes {
 
   public static final String OBJECT_NAME = Type.getInternalName(Object.class);
+  public static final String STRING_NAME = Type.getInternalName(String.class);
   public static final String BOOLEAN_NAME = Type.getInternalName(Boolean.class);
   public static final String CHARACTER_NAME =
     Type.getInternalName(Character.class);
@@ -26,8 +27,10 @@ public class OpcodeUtils implements Opcodes {
   public static final String CURRENT_TIME_MILLIS = "currentTimeMillis";
   public static final String CURRENT_TIME_MILLIS_DESC = "()J";
 
+  public static final String VOID_NONE = "()V";
   public static final String VOID_LONG = "(J)V";
   public static final String VOID_OBJECT = "(L" + OBJECT_NAME + ";)V";
+  public static final String VOID_STRING = "(L" + STRING_NAME + ";)V";
 
 
   public static void invokeSystemCurrentTimeMillis(MethodVisitor mv) {

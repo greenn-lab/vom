@@ -21,11 +21,14 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
   private final Label beginTry = new Label();
 
+  private final String className;
+
   private int varStarted;
 
 
-  public HttpServletServiceMethodVisitor(MethodVisitor visitor, int access, String descriptor) {
+  public HttpServletServiceMethodVisitor(int access, String className, String descriptor, MethodVisitor visitor) {
     super(ASM_VERSION, access, descriptor, visitor);
+    this.className = className;
   }
 
   @Override
@@ -41,6 +44,8 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
     mv.visitVarInsn(LLOAD, varStarted);
 
     Trover.seize(mv);
+
+    OpcodeUtils.print(mv, "Seized: " + className);
 
     mv.visitLabel(beginTry);
     mv.visitCode();

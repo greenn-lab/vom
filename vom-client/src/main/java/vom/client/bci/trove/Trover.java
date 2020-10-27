@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
-import vom.client.connector.ServerConnection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,13 +20,12 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
 import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
 @Getter
-public class Trover implements Serializable {
-
-  public static final ThreadLocal<Trover> TROVE = new ThreadLocal<Trover>();
+public class Trover {
 
   private static final String TROVER_INTERNAL =
     Type.getInternalName(Trover.class);
   private static final String TROVER_SEIZE = "seize";
+  private static final String TROVER_PAPER = "paper";
   private static final String TROVER_EXPEL = "expel";
   private static final String TROVER_CHASE = "chase";
   private static final String TROVER_QUERY = "query";
@@ -49,6 +47,12 @@ public class Trover implements Serializable {
   private final Long collected;
   private final String method;
   private final String uri;
+
+  public static final ThreadLocal<Trover> TROVE
+    = new ThreadLocal<Trover>();
+
+  public static final Map<Thread, Trover> TROVES = new HashMap<Thread, Trover>();
+
 
   @Setter
   private Map<String, Serializable> headers = new HashMap<String, Serializable>();
@@ -96,8 +100,11 @@ public class Trover implements Serializable {
       false);
   }
 
-  @SuppressWarnings({"unused", "unchecked", "JavaReflectionInvocation"})
+  @SuppressWarnings({"unused", "unchecked"})
   public static void seize(Object request, long started) {
+    Trover trove = TROVE.get();
+    if (null != trove) return;
+
     try {
       final Class<?> clazz = request.getClass();
 
@@ -106,7 +113,7 @@ public class Trover implements Serializable {
       final String uri =
         (String) clazz.getMethod("getRequestURI").invoke(request);
 
-      final Trover trove = Trover.builder()
+      trove = Trover.builder()
         .id(Config.getId())
         .collected(started)
         .method(method)
@@ -130,8 +137,13 @@ public class Trover implements Serializable {
         );
       }
 
+      System.out.println(Thread.currentThread().getName());
+      System.out.println(Thread.currentThread().getId());
+
       TROVE.set(trove);
-    } catch (Throwable cause) {
+      TROVES.put(Thread.currentThread(), trove);
+    }
+    catch (Throwable cause) {
       cause.printStackTrace();
     }
   }
@@ -162,7 +174,7 @@ public class Trover implements Serializable {
     trove.setElapsed(elapsed);
     trove.setVomit(vomit);
 
-    ServerConnection.give(trove);
+//    ServerConnection.give(trove);
 
     TROVE.remove();
   }
@@ -178,6 +190,8 @@ public class Trover implements Serializable {
 
   @SuppressWarnings("unused")
   public static void chase(Chasing booty) {
+    final Trover trover = TROVES.get(Thread.currentThread());
+
     final Trover trove = TROVE.get();
     if (trove == null) return;
 

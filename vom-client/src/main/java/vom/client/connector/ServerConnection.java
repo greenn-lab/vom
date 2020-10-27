@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import vom.client.Config;
+import vom.client.bci.trove.Chasing;
 import vom.client.bci.trove.Trover;
 import vom.client.connector.sql.SqlManager;
 import vom.client.exception.CarryException;
@@ -42,15 +43,29 @@ public final class ServerConnection {
       public void run() {
         // TODO trover serialization and giving
         try {
-          ServerConnection.getConnection();
+//          ServerConnection.getConnection();
         }
-        catch (Exception e) {
-          e.printStackTrace();
+        catch (Throwable cause) {
+          if (Config.isDebugMode()) {
+            cause.printStackTrace();
+          }
+          else {
+            System.err.println(cause.getMessage());
+          }
         }
         finally {
-          System.out.println("---------------------------------");
-          System.out.printf("%s, %d%n", trover.getId(), trover.getCollected());
-          System.out.println("---------------------------------");
+          System.out.println("Trove----------------------------");
+          System.out.printf("[%d|%s]%n", trover.getBooties().size(), trover.getUri());
+          for (Chasing booty : trover.getBooties()) {
+            System.out.printf(
+              "%d~%d(%dms) %s%n",
+              booty.getStarted(),
+              booty.getArrived(),
+              booty.getArrived() - booty.getStarted(),
+              booty.signature()
+            );
+          }
+          System.out.println("------------------------------end");
         }
 
       }

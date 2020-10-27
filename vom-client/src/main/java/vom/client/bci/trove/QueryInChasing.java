@@ -11,7 +11,6 @@ public class QueryInChasing extends Chasing implements Serializable {
   public static final Type QUERY_TYPE = Type.getType(QueryInChasing.class);
   public static final String QUERY_INTERNAL =
     Type.getInternalName(QueryInChasing.class);
-  public static final String QUERY_CONSTRUCTOR_DESC = "(Ljava/lang/String;)V";
 
   private final String sql;
 
@@ -20,4 +19,8 @@ public class QueryInChasing extends Chasing implements Serializable {
     this.sql = sql;
   }
 
+  @Override
+  public String signature() {
+    return sql;
+  }
 }

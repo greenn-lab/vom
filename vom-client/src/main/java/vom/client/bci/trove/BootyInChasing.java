@@ -34,4 +34,8 @@ public class BootyInChasing extends Chasing implements Serializable {
     }
   }
 
+  @Override
+  public String signature() {
+    return className + "#" + methodName;
+  }
 }

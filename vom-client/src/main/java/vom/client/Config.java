@@ -34,6 +34,12 @@ public final class Config {
     )
   );
 
+  private static final Set<String> DEFAULT_JSP_CLASSES = new HashSet<String>(
+    Collections.singletonList(
+      "org/apache/jasper/servlet/JspServlet"
+    )
+  );
+
   private static final Set<String> DEFAULT_JDBC_CLASSES = new HashSet<String>(
     Arrays.asList(
       "java/sql/Connection",
@@ -121,6 +127,10 @@ public final class Config {
     return false;
   }
 
+  public static boolean containsJSPClass(final String className) {
+    return DEFAULT_JSP_CLASSES.contains(className);
+  }
+
   public static boolean containsServletClass(final String className) {
     return DEFAULT_SERVLET_CLASSES.contains(className);
   }
@@ -129,49 +139,29 @@ public final class Config {
    * 설정파일을 통해서 초기 설정을 구성해요.
    */
   public static void configure() {
-    final URL propFileUrl = ClassLoader.getSystemResource("vom/client/config-default.properties");
+    final URL propFileUrl = ClassLoader
+      .getSystemResource("vom/client/config-default.properties");
 
     InputStream in = null;
 
     try {
       in = propFileUrl.openStream();
       props.load(in);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // no work
     } finally {
       if (in != null) {
         try {
           in.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           // no work
         }
       }
     }
 
     mergeProperties(CONFIG_DEFAULT_PROPERTIES);
-
-    if (getId() == null) {
-      try {
-        final String id = InetAddress.getLocalHost().getHostName();
-        setId(id);
-      } catch (UnknownHostException e) {
-        throw new FallDownException(e);
-      }
-    }
-
-    Collections.addAll(
-      databaseVendors,
-      props.getProperty("database.vendors").split(VALUE_SPLIT_PATTERN)
-    );
-
-    Collections.addAll(
-      packages,
-      props.getProperty("monitor.packages").split(VALUE_SPLIT_PATTERN)
-    );
-
-    for (final String package_ : packages) {
-      packages.add(package_.replace('.', '/'));
-    }
   }
 
   public static void mergeProperties(final String filepath) {
@@ -191,17 +181,53 @@ public final class Config {
       }
 
       System.err.printf("\"%s\" is applied to vom configuration!%n", filepath);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // no work
     } finally {
       if (in != null) {
         try {
           in.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           // no work
         }
       }
     }
+
+
+    if (getId() == null) {
+      try {
+        final String id = InetAddress.getLocalHost().getHostName();
+        setId(id);
+      }
+      catch (UnknownHostException e) {
+        throw new FallDownException(e);
+      }
+    }
+
+    Collections.addAll(
+      databaseVendors,
+      props.getProperty("database.vendors").split(VALUE_SPLIT_PATTERN)
+    );
+
+    for (String package_ : props.getProperty("monitor.packages").split(VALUE_SPLIT_PATTERN)) {
+      package_ = package_.replace('.', '/').trim();
+      if (!"".equals(package_)) {
+        packages.add(package_);
+      }
+    }
   }
 
+  public static void print() {
+    if (Config.isDebugMode()) {
+      System.err.printf("id: %s%n", Config.getId());
+      System.err.printf("server.host: %s%n", Config.getServerHost());
+      System.err.printf("server.port: %s%n", Config.getServerPort());
+      System.err.printf("polling interval: %s%n", Config.getPollingInterval());
+      System.err.printf("servlet packages: %s%n", packages.toString());
+
+      System.out.println();
+    }
+  }
 }

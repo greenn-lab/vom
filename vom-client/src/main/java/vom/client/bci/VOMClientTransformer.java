@@ -5,6 +5,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import vom.client.bci.jdbc.JdbcStatementAdapter;
 import vom.client.bci.servlet.HttpServletChaserAdapter;
+import vom.client.bci.servlet.HttpServletJasperAdapter;
 import vom.client.bci.servlet.HttpServletServiceAdapter;
 import vom.client.exception.FallDownException;
 
@@ -15,6 +16,7 @@ import java.security.ProtectionDomain;
 
 import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
 import static vom.client.Config.containsDatabaseVendor;
+import static vom.client.Config.containsJSPClass;
 import static vom.client.Config.containsJdbcClass;
 import static vom.client.Config.containsServletChasedTarget;
 import static vom.client.Config.containsServletClass;
@@ -36,6 +38,14 @@ public class VOMClientTransformer implements ClassFileTransformer {
       return ZERO_BYTE;
     }
 
+    try {
+      final Class<?> aClass = loader.loadClass("org.apache.jasper.servlet.JspServlet");
+      System.out.println(aClass);
+    }
+    catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+
 
     if (classBeingRedefined != null) {
       System.out.printf(
@@ -45,14 +55,16 @@ public class VOMClientTransformer implements ClassFileTransformer {
       );
     }
 
-    try {
-      // Servlet 이 호출 될 때,
-      // 추적을 위한 코드를 이식 시켜요.
-      if (containsServletClass(className)) {
-        return new HttpServletServiceAdapter(classfileBuffer).toBytes();
-      }
-    } catch (Throwable cause) {
-      cause.printStackTrace();
+    // Servlet 이 호출 될 때,
+    // 추적을 위한 코드를 이식 시켜요.
+    if (containsServletClass(className)) {
+      return new HttpServletServiceAdapter(classfileBuffer, className).toBytes();
+    }
+
+    // JSP 가 호출 될 때,
+    // 추적을 위한 코드를 이식 시켜요.
+    if (containsJSPClass(className)) {
+      return new HttpServletJasperAdapter(classfileBuffer, className).toBytes();
     }
 
     // 모니터링 패키지(monitor.packages) 설정에 속해있는

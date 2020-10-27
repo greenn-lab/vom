@@ -3,7 +3,6 @@ package vom.client;
 import vom.client.bci.VOMClientTransformer;
 import vom.client.performance.SystemPerformanceWorker;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,12 +37,7 @@ public class Bootstrap {
         true
     );
 
-  }
-
-  public static void agentmain(String options, Instrumentation instrumentation) {
-    System.err.printf("Called agentmain(\"%s\" :options, \"%s\" :instrumentation)",
-        options,
-        instrumentation.toString());
+    Config.print();
   }
 
   private static void welcome() {
@@ -61,15 +55,6 @@ public class Bootstrap {
       catch (IOException e) {
         // no work
       }
-    }
-
-    if (Config.isDebugMode()) {
-      System.err.printf("id: %s%n", Config.getId());
-      System.err.printf("server.host: %s%n", Config.getServerHost());
-      System.err.printf("server.port: %s%n", Config.getServerPort());
-      System.err.printf("polling interval: %s%n", Config.getPollingInterval());
-      System.err.printf("servlet packages: %s%n", Config.get("monitor.packages"));
-      System.out.println();
     }
   }
 

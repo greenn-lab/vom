@@ -12,6 +12,7 @@ import static vom.client.bci.trove.BootyInChasing.BOOTY_INTERNAL;
 import static vom.client.bci.trove.BootyInChasing.BOOTY_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.argumentsToObjectArray;
+import static vom.client.bci.utility.OpcodeUtils.print;
 
 public class HttpServletChaserMethodVisitor
   extends LocalVariablesSorter
@@ -23,7 +24,7 @@ public class HttpServletChaserMethodVisitor
   private final String methodName;
   private final Type[] arguments;
 
-  private int varBooty;
+  private int varChase;
 
 
   public HttpServletChaserMethodVisitor(
@@ -69,11 +70,13 @@ public class HttpServletChaserMethodVisitor
       false
     );
 
-    varBooty = newLocal(BOOTY_TYPE);
-    mv.visitVarInsn(ASTORE, varBooty);
+    varChase = newLocal(BOOTY_TYPE);
+    mv.visitVarInsn(ASTORE, varChase);
 
-    mv.visitVarInsn(ALOAD, varBooty);
+    mv.visitVarInsn(ALOAD, varChase);
     Trover.chase(mv);
+
+    print(mv, "Chased: " + className + "#" + methodName);
 
     mv.visitCode();
 
@@ -83,7 +86,7 @@ public class HttpServletChaserMethodVisitor
   public void visitInsn(int opcode) {
     if ((RETURN >= opcode && IRETURN <= opcode)
       || ATHROW == opcode) {
-      mv.visitVarInsn(ALOAD, varBooty);
+      mv.visitVarInsn(ALOAD, varChase);
       Trover.bring(mv);
     }
 

@@ -6,10 +6,10 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 import vom.client.bci.trove.Trover;
 
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
-import static vom.client.bci.trove.QueryInChasing.QUERY_CONSTRUCTOR_DESC;
 import static vom.client.bci.trove.QueryInChasing.QUERY_INTERNAL;
 import static vom.client.bci.trove.QueryInChasing.QUERY_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
+import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
 public class StatementExecutesVisitor
   extends LocalVariablesSorter
@@ -41,7 +41,7 @@ public class StatementExecutesVisitor
       INVOKESPECIAL,
       QUERY_INTERNAL,
       CONSTRUCTOR,
-      QUERY_CONSTRUCTOR_DESC,
+      VOID_STRING,
       false);
 
     varChase = newLocal(QUERY_TYPE);

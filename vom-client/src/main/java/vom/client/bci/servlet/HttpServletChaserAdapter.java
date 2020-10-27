@@ -5,10 +5,13 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import vom.client.Config;
 import vom.client.bci.ClassWritable;
 
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
+import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
 public class HttpServletChaserAdapter extends ClassVisitor implements ClassWritable, Opcodes {
 
@@ -39,8 +42,18 @@ public class HttpServletChaserAdapter extends ClassVisitor implements ClassWrita
     if (!isInterface
       && null != visitor
       && ACC_PUBLIC == access
-      && !"<init>".equals(name)
+      && !CONSTRUCTOR.equals(name)
+      && !isGetterOrSetter(name, descriptor)
+      && !isObjectMethods(name, descriptor)
     ) {
+      if (Config.isDebugMode()) {
+        System.out.printf(
+          "entangled to vom { %s#%s } under arrest%n",
+          className,
+          name
+        );
+      }
+
       visitor = new HttpServletChaserMethodVisitor(
         visitor,
         access,
@@ -53,5 +66,34 @@ public class HttpServletChaserAdapter extends ClassVisitor implements ClassWrita
     return visitor;
   }
 
+  private boolean isObjectMethods(String className, String descriptor) {
+    return "toString".equals(className)
+      && "()Ljava/lang/String;".equals(descriptor);
+  }
+
+  private boolean isGetterOrSetter(String methodName, String descriptor) {
+    try {
+
+      if (
+        methodName.startsWith("get")
+          && descriptor.startsWith("()")
+      ) {
+        return true;
+      }
+
+      if (
+        methodName.startsWith("set")
+          && descriptor.endsWith("V")
+          && 1 == Type.getArgumentTypes(descriptor).length
+      ) {
+        return true;
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return false;
+  }
 
 }

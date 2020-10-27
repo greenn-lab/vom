@@ -7,16 +7,16 @@ import java.io.IOException;
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class HttpServletServiceAdapterTest extends ClassLoader {
+class HttpServletJasperAdapterTest {
 
   @Test
-  void shouldRunBCI() throws IOException {
+  void shouldRunBCIJasperJSP() throws IOException {
 
-    final String className = "javax/servlet/http/HttpServlet";
+    final String className = "org/apache/jasper/servlet/JspServlet";
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new HttpServletServiceAdapter(classfileBuffer, className).toBytes();
+      new HttpServletJasperAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }
