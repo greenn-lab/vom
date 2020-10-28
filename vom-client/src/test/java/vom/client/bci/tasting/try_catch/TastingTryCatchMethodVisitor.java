@@ -32,8 +32,8 @@ public class TastingTryCatchMethodVisitor extends MethodVisitor {
 
     mv.visitTryCatchBlock(tryStart, tryEnd, catchStart, THROWABLE_NAME);
     mv.visitLabel(tryStart);
-    OpcodeUtils.print(mv, "Hello BCI!!");
-    OpcodeUtils.print(mv, "are you fine?");
+    OpcodeUtils.println(mv, "Hello BCI!!");
+    OpcodeUtils.println(mv, "are you fine?");
     mv.visitLabel(tryEnd);
     mv.visitJumpInsn(GOTO, catchEnd);
     mv.visitLabel(catchStart);
@@ -42,7 +42,7 @@ public class TastingTryCatchMethodVisitor extends MethodVisitor {
     mv.visitVarInsn(ALOAD, 1);
     mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Exception", "printStackTrace", "()V", false);
 
-    OpcodeUtils.print(mv, "in the exception");
+    OpcodeUtils.println(mv, "in the exception");
 
     mv.visitVarInsn(ALOAD, 1);
     mv.visitInsn(ATHROW);

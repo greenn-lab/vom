@@ -33,6 +33,11 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
   @Override
   public void visitCode() {
+    OpcodeUtils.print(mv, "<<start>>");
+    OpcodeUtils.prePrint(mv);
+    mv.visitVarInsn(ALOAD, 0);
+    OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
+
     OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
     varStarted = newLocal(LONG_TYPE);
     mv.visitVarInsn(LSTORE, varStarted);
@@ -45,7 +50,7 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
 
     Trover.seize(mv);
 
-    OpcodeUtils.print(mv, "Seized: " + className);
+    OpcodeUtils.println(mv, "Seized: " + className);
 
     mv.visitLabel(beginTry);
     mv.visitCode();
@@ -78,6 +83,11 @@ public class HttpServletServiceMethodVisitor extends LocalVariablesSorter {
   @Override
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
+      OpcodeUtils.print(mv, "<< end >>");
+      OpcodeUtils.prePrint(mv);
+      mv.visitVarInsn(ALOAD, 0);
+      OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
+
       OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
       mv.visitVarInsn(LLOAD, varStarted);
       mv.visitInsn(LSUB);

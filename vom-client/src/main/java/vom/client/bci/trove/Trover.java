@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static vom.client.bci.trove.Chasing.CHASE_INTERNAL;
 import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
 import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
 @Getter
 public class Trover {
+
+  public static final ThreadLocal<Trover> TROVE =
+    new ThreadLocal<Trover>();
 
   private static final String TROVER_INTERNAL =
     Type.getInternalName(Trover.class);
@@ -37,22 +39,15 @@ public class Trover {
   private static final String VOID_SEIZE =
     "(Ljava/lang/Object;J)V";
   private static final String VOID_CHASE =
-    "(L" + CHASE_INTERNAL + ";)V";
+    "(" + Type.getDescriptor(Chasing.class) + ")V";
   private static final String VOID_VOMIT1 = "(J)V";
   private static final String VOID_VOMIT2 = "(JLjava/lang/Throwable;)V";
-  private static final String VOID_BRING =
-    "(L" + CHASE_INTERNAL + ";)V";
+
 
   private final String id;
   private final Long collected;
   private final String method;
   private final String uri;
-
-  public static final ThreadLocal<Trover> TROVE
-    = new ThreadLocal<Trover>();
-
-  public static final Map<Thread, Trover> TROVES = new HashMap<Thread, Trover>();
-
 
   @Setter
   private Map<String, Serializable> headers = new HashMap<String, Serializable>();
@@ -137,11 +132,7 @@ public class Trover {
         );
       }
 
-      System.out.println(Thread.currentThread().getName());
-      System.out.println(Thread.currentThread().getId());
-
       TROVE.set(trove);
-      TROVES.put(Thread.currentThread(), trove);
     }
     catch (Throwable cause) {
       cause.printStackTrace();
@@ -176,7 +167,28 @@ public class Trover {
 
 //    ServerConnection.give(trove);
 
-    TROVE.remove();
+    if (Config.isDebugMode()) {
+      final StringBuilder logs = new StringBuilder();
+      logs.append("Trove----------------------------\n");
+      logs.append(String.format("[%s]%n", trove.uri));
+      for (Chasing booty : trove.booties) {
+        logs.append(String.format(
+          "%dms(%d ~ %d) %s%n",
+          booty.getArrived() - booty.getStarted(),
+          booty.getArrived(),
+          booty.getStarted(),
+          booty.signature())
+        );
+      }
+      logs.append(String.format(
+        "------------------------------%3d%n",
+        trove.booties.size())
+      );
+
+      System.out.println(logs);
+    }
+
+//    TROVE.remove();
   }
 
   public static void chase(MethodVisitor mv) {
@@ -190,30 +202,7 @@ public class Trover {
 
   @SuppressWarnings("unused")
   public static void chase(Chasing booty) {
-    final Trover trover = TROVES.get(Thread.currentThread());
-
-    final Trover trove = TROVE.get();
-    if (trove == null) return;
-
-    trove.addBooty(booty);
-  }
-
-  public static void query(MethodVisitor mv) {
-    mv.visitMethodInsn(
-      INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_QUERY,
-      VOID_CHASE,
-      false
-    );
-  }
-
-  @SuppressWarnings("unused")
-  public static void query(Chasing booty) {
-    final Trover trove = TROVE.get();
-    if (trove == null) return;
-
-    trove.setCurrentQuery((QueryInChasing) booty);
+    booty.keep(TROVE.get());
   }
 
   public static void glean(MethodVisitor mv) {
@@ -242,7 +231,7 @@ public class Trover {
       INVOKESTATIC,
       TROVER_INTERNAL,
       TROVER_BRING,
-      VOID_BRING,
+      VOID_CHASE,
       false
     );
   }

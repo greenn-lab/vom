@@ -11,9 +11,6 @@ import java.util.List;
 @Getter
 public abstract class Chasing implements Serializable {
 
-  public static final String CHASE_INTERNAL =
-    Type.getInternalName(Chasing.class);
-
   @Setter
   private long started = System.currentTimeMillis();
 
@@ -29,6 +26,12 @@ public abstract class Chasing implements Serializable {
 
   public void arrived() {
     arrived = System.currentTimeMillis();
+  }
+
+  public void keep(Trover trover) {
+   if (trover != null) {
+     trover.addBooty(this);
+   }
   }
 
   public abstract String signature();

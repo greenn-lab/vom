@@ -54,18 +54,6 @@ public final class ServerConnection {
           }
         }
         finally {
-          System.out.println("Trove----------------------------");
-          System.out.printf("[%d|%s]%n", trover.getBooties().size(), trover.getUri());
-          for (Chasing booty : trover.getBooties()) {
-            System.out.printf(
-              "%d~%d(%dms) %s%n",
-              booty.getStarted(),
-              booty.getArrived(),
-              booty.getArrived() - booty.getStarted(),
-              booty.signature()
-            );
-          }
-          System.out.println("------------------------------end");
         }
 
       }

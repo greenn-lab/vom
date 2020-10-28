@@ -16,7 +16,6 @@ import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 public class HttpServletChaserAdapter extends ClassVisitor implements ClassWritable, Opcodes {
 
   private final String className;
-  private final boolean isInterface;
 
   public HttpServletChaserAdapter(byte[] classfileBuffer, String className) {
     super(ASM_VERSION);
@@ -25,7 +24,6 @@ public class HttpServletChaserAdapter extends ClassVisitor implements ClassWrita
     this.cv = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
     this.className = className;
-    this.isInterface = (reader.getAccess() & ACC_INTERFACE) != 0;
 
     reader.accept(this, EXPAND_FRAMES);
   }
@@ -39,8 +37,7 @@ public class HttpServletChaserAdapter extends ClassVisitor implements ClassWrita
   public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
     MethodVisitor visitor = cv.visitMethod(access, name, descriptor, signature, exceptions);
 
-    if (!isInterface
-      && null != visitor
+    if (null != visitor
       && ACC_PUBLIC == access
       && !CONSTRUCTOR.equals(name)
       && !isGetterOrSetter(name, descriptor)

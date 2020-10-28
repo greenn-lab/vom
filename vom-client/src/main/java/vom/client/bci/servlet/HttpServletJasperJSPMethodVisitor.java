@@ -51,8 +51,6 @@ public class HttpServletJasperJSPMethodVisitor extends LocalVariablesSorter {
 
     Trover.chase(mv);
 
-    OpcodeUtils.print(mv, "JSP Chased: " + className);
-
     mv.visitCode();
   }
 

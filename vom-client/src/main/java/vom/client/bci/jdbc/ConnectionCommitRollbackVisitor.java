@@ -49,8 +49,8 @@ public class ConnectionCommitRollbackVisitor
 
     varChase = newLocal(QUERY_TYPE);
     mv.visitVarInsn(ASTORE, varChase);
-
     mv.visitVarInsn(ALOAD, varChase);
+
     Trover.chase(mv);
 
     mv.visitCode();
@@ -58,7 +58,7 @@ public class ConnectionCommitRollbackVisitor
 
   @Override
   public void visitInsn(int opcode) {
-    if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
+    if (IRETURN <= opcode && RETURN >= opcode) {
       mv.visitVarInsn(ALOAD, varChase);
       Trover.bring(mv);
     }

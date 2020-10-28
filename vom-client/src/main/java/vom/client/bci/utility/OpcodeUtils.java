@@ -130,7 +130,7 @@ public class OpcodeUtils implements Opcodes {
 
   ///// for debugging
   @SuppressWarnings("unused")
-  public static void print(MethodVisitor mv, String str) {
+  public static void println(MethodVisitor mv, String str) {
     mv.visitFieldInsn(
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
@@ -142,6 +142,23 @@ public class OpcodeUtils implements Opcodes {
       Opcodes.INVOKEVIRTUAL,
       "java/io/PrintStream",
       "println",
+      "(Ljava/lang/String;)V",
+      false
+    );
+  }
+  @SuppressWarnings("unused")
+  public static void print(MethodVisitor mv, String str) {
+    mv.visitFieldInsn(
+      Opcodes.GETSTATIC,
+      SYSTEM_INTERNAL,
+      "out",
+      "Ljava/io/PrintStream;"
+    );
+    mv.visitLdcInsn(str);
+    mv.visitMethodInsn(
+      Opcodes.INVOKEVIRTUAL,
+      "java/io/PrintStream",
+      "print",
       "(Ljava/lang/String;)V",
       false
     );

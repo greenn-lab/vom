@@ -20,6 +20,12 @@ public class QueryInChasing extends Chasing implements Serializable {
   }
 
   @Override
+  public void keep(Trover trover) {
+    super.keep(trover);
+    trover.setCurrentQuery(this);
+  }
+
+  @Override
   public String signature() {
     return sql;
   }

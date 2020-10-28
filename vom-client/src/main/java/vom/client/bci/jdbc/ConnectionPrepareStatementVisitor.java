@@ -42,12 +42,9 @@ public class ConnectionPrepareStatementVisitor
 
     final int varChase = newLocal(QUERY_TYPE);
     mv.visitVarInsn(ASTORE, varChase);
-
     mv.visitVarInsn(ALOAD, varChase);
+
     Trover.chase(mv);
-
-    mv.visitVarInsn(ALOAD, varChase);
-    Trover.query(mv);
 
     mv.visitCode();
   }
