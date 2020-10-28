@@ -4,17 +4,17 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trover;
+import vom.client.bci.trove.Trove;
 import vom.client.bci.utility.OpcodeUtils;
 
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
-import static vom.client.bci.trove.BootyInChasing.BOOTY_CONSTRUCTOR_DESC;
-import static vom.client.bci.trove.BootyInChasing.BOOTY_INTERNAL;
-import static vom.client.bci.trove.BootyInChasing.BOOTY_TYPE;
+import static vom.client.bci.trove.MethodChaser.BOOTY_CONSTRUCTOR_DESC;
+import static vom.client.bci.trove.MethodChaser.BOOTY_INTERNAL;
+import static vom.client.bci.trove.MethodChaser.BOOTY_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.argumentsToObjectArray;
 
-public class HttpServletChaserMethodVisitor
+public class ServletWovenMethodVisitor
   extends LocalVariablesSorter
   implements Opcodes {
 
@@ -27,7 +27,7 @@ public class HttpServletChaserMethodVisitor
   private int varChase;
 
 
-  public HttpServletChaserMethodVisitor(
+  public ServletWovenMethodVisitor(
     MethodVisitor visitor,
     int access,
     String className,
@@ -74,7 +74,7 @@ public class HttpServletChaserMethodVisitor
     mv.visitVarInsn(ASTORE, varChase);
     mv.visitVarInsn(ALOAD, varChase);
 
-    Trover.chase(mv);
+    Trove.chase(mv);
 
     OpcodeUtils.println(mv, "Chased: " + className + "#" + methodName);
 
@@ -85,7 +85,7 @@ public class HttpServletChaserMethodVisitor
   public void visitInsn(int opcode) {
     if (RETURN >= opcode && IRETURN <= opcode) {
       mv.visitVarInsn(ALOAD, varChase);
-      Trover.bring(mv);
+      Trove.bring(mv);
     }
 
     mv.visitInsn(opcode);

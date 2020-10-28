@@ -6,16 +6,16 @@ import org.objectweb.asm.Type;
 import java.io.Serializable;
 
 @Getter
-public class PaperInChasing extends Chasing implements Serializable {
+public class JSPChaser extends Chaser implements Serializable {
 
-  public static final Type PAPER_TYPE = Type.getType(PaperInChasing.class);
+  public static final Type PAPER_TYPE = Type.getType(JSPChaser.class);
   public static final String PAPER_INTERNAL =
-    Type.getInternalName(PaperInChasing.class);
+    Type.getInternalName(JSPChaser.class);
 
   private final String jsp;
 
 
-  public PaperInChasing(String jsp) {
+  public JSPChaser(String jsp) {
     this.jsp = jsp;
   }
 

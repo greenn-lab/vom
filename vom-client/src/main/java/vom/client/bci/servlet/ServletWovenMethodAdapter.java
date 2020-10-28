@@ -13,11 +13,11 @@ import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
-public class HttpServletChaserAdapter extends ClassVisitor implements ClassWritable, Opcodes {
+public class ServletWovenMethodAdapter extends ClassVisitor implements ClassWritable, Opcodes {
 
   private final String className;
 
-  public HttpServletChaserAdapter(byte[] classfileBuffer, String className) {
+  public ServletWovenMethodAdapter(byte[] classfileBuffer, String className) {
     super(ASM_VERSION);
 
     final ClassReader reader = new ClassReader(classfileBuffer);
@@ -51,7 +51,7 @@ public class HttpServletChaserAdapter extends ClassVisitor implements ClassWrita
         );
       }
 
-      visitor = new HttpServletChaserMethodVisitor(
+      visitor = new ServletWovenMethodVisitor(
         visitor,
         access,
         className,

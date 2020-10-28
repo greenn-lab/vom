@@ -6,11 +6,11 @@ import org.objectweb.asm.Type;
 import java.io.Serializable;
 
 @Getter
-public class BootyInChasing extends Chasing implements Serializable {
+public class MethodChaser extends Chaser implements Serializable {
 
-  public static final Type BOOTY_TYPE = Type.getType(BootyInChasing.class);
+  public static final Type BOOTY_TYPE = Type.getType(MethodChaser.class);
   public static final String BOOTY_INTERNAL =
-    Type.getInternalName(BootyInChasing.class);
+    Type.getInternalName(MethodChaser.class);
   public static final String BOOTY_CONSTRUCTOR_DESC =
     "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V";
 
@@ -19,7 +19,7 @@ public class BootyInChasing extends Chasing implements Serializable {
   private final String methodName;
 
 
-  public BootyInChasing(
+  public MethodChaser(
     String className,
     String methodName,
     Object[] arguments

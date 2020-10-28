@@ -4,8 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import vom.client.Config;
-import vom.client.bci.trove.Chasing;
-import vom.client.bci.trove.Trover;
+import vom.client.bci.trove.Trove;
 import vom.client.connector.sql.SqlManager;
 import vom.client.exception.CarryException;
 
@@ -37,7 +36,7 @@ public final class ServerConnection {
     dataSource.setMaximumPoolSize(POOL_SIZE);
   }
 
-  public static void give(final Trover trover) {
+  public static void give(final Trove trove) {
     GIVER_POOL.execute(new Runnable() {
       @Override
       public void run() {

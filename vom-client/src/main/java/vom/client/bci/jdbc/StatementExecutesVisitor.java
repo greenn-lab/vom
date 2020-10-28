@@ -3,11 +3,11 @@ package vom.client.bci.jdbc;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trover;
+import vom.client.bci.trove.Trove;
 
 import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
-import static vom.client.bci.trove.QueryInChasing.QUERY_INTERNAL;
-import static vom.client.bci.trove.QueryInChasing.QUERY_TYPE;
+import static vom.client.bci.trove.SQLChaser.QUERY_INTERNAL;
+import static vom.client.bci.trove.SQLChaser.QUERY_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
@@ -48,7 +48,7 @@ public class StatementExecutesVisitor
     mv.visitVarInsn(ASTORE, varChase);
 
     mv.visitVarInsn(ALOAD, varChase);
-    Trover.chase(mv);
+    Trove.chase(mv);
 
     mv.visitCode();
   }
@@ -58,7 +58,7 @@ public class StatementExecutesVisitor
   public void visitInsn(int opcode) {
     if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
       mv.visitVarInsn(ALOAD, varChase);
-      Trover.bring(mv);
+      Trove.bring(mv);
     }
 
     mv.visitInsn(opcode);

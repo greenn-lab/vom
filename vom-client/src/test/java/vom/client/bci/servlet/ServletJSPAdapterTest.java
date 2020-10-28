@@ -7,7 +7,7 @@ import java.io.IOException;
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class HttpServletJasperAdapterTest {
+class ServletJSPAdapterTest {
 
   @Test
   void shouldRunBCIJasperJSP() throws IOException {
@@ -16,7 +16,7 @@ class HttpServletJasperAdapterTest {
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new HttpServletJasperAdapter(classfileBuffer, className).toBytes();
+      new ServletJSPAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }

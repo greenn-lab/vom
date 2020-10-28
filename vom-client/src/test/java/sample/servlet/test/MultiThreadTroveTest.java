@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-class MultiThreadTroverTest {
+class MultiThreadTroveTest {
 
   @Test
   void shouldRunningSuccessfulInMultiThread() {

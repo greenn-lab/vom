@@ -4,7 +4,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import vom.client.bci.jdbc.JdbcStatementAdapter;
-import vom.client.bci.servlet.HttpServletChaserAdapter;
+import vom.client.bci.servlet.ServletWovenMethodAdapter;
 import vom.client.bci.servlet.HttpServletServiceAdapter;
 import vom.client.exception.FallDownException;
 
@@ -78,7 +78,7 @@ public class VOMClientTransformer implements ClassFileTransformer {
       // 모니터링 패키지(monitor.packages) 설정에 속해있는
       // 대상들을 추적해요.
       if (containsServletChasedTarget(className)) {
-        return new HttpServletChaserAdapter(classfileBuffer, className).toBytes();
+        return new ServletWovenMethodAdapter(classfileBuffer, className).toBytes();
       }
 
       // JDBC 관련된 것들을 추적해요.

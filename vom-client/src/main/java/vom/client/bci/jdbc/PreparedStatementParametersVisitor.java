@@ -4,7 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trover;
+import vom.client.bci.trove.Trove;
 import vom.client.bci.utility.OpcodeUtils;
 import vom.client.bci.utility.PrimitiveTypes;
 
@@ -37,7 +37,7 @@ public class PreparedStatementParametersVisitor
     );
     PrimitiveTypes.valueOf(valueType, mv);
 
-    Trover.glean(mv);
+    Trove.glean(mv);
   }
 
 }

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-class SimpleTroverTest {
+class SimpleTroveTest {
 
   final HttpServlet servlet = new MockTestServlet();
 

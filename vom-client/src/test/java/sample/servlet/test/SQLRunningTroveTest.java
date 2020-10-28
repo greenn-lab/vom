@@ -15,7 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-class SQLRunningTroverTest {
+class SQLRunningTroveTest {
 
   final HttpServlet servlet = new MockTestServletWithSQL();
 

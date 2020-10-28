@@ -8,6 +8,8 @@ indent_size = 2
 indent_style = space
 max_line_length = 80
 trim_trailing_whitespace = true
+ij_any_else_on_new_line = true
+ij_any_catch_on_new_line = true
 
 
 [*.{kt, kts}]

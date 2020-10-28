@@ -43,7 +43,7 @@ public class HttpServletServiceAdapter extends ClassVisitor implements ClassWrit
         "(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V"
           .equals(descriptor)
     ) {
-      return new HttpServletServiceMethodVisitor(access, className, descriptor, visitor);
+      return new HttpServletServiceVisitor(access, className, descriptor, visitor);
     }
 
     return visitor;

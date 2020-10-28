@@ -19,35 +19,34 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
 import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
 @Getter
-public class Trover {
+public class Trove {
 
-  public static final ThreadLocal<Trover> TROVE =
-    new ThreadLocal<Trover>();
+  public static final ThreadLocal<Trove> BOOTY =
+    new ThreadLocal<Trove>();
 
-  private static final String TROVER_INTERNAL =
-    Type.getInternalName(Trover.class);
-  private static final String TROVER_SEIZE = "seize";
-  private static final String TROVER_PAPER = "paper";
-  private static final String TROVER_EXPEL = "expel";
-  private static final String TROVER_CHASE = "chase";
-  private static final String TROVER_QUERY = "query";
-  private static final String TROVER_GLEAN = "glean";
-  private static final String TROVER_BRING = "bring";
-  private static final String TROVER_TAKEN = "taken";
-  private static final String TROVER_VOMIT = "vomit";
+  private static final String INTERNAL_NAME =
+    Type.getInternalName(Trove.class);
+  private static final String CALL_SEIZE = "seize";
+  private static final String CALL_EXPEL = "expel";
+  private static final String CALL_CHASE = "chase";
+  private static final String CALL_GLEAN = "glean";
+  private static final String CALL_BRING = "bring";
+  private static final String CALL_TAKEN = "taken";
+  private static final String CALL_ERROR = "error";
 
   private static final String VOID_SEIZE =
-    "(Ljava/lang/Object;J)V";
+    "(JLjava/lang/Object;Ljava/lang/Object;)V";
   private static final String VOID_CHASE =
-    "(" + Type.getDescriptor(Chasing.class) + ")V";
-  private static final String VOID_VOMIT1 = "(J)V";
-  private static final String VOID_VOMIT2 = "(JLjava/lang/Throwable;)V";
+    "(" + Type.getDescriptor(Chaser.class) + ")V";
+  private static final String VOID_EXPEL = "(JLjava/lang/Object;)V";
+  private static final String VOID_ERROR = "(JLjava/lang/Object;Ljava/lang/Throwable;)V";
 
 
   private final String id;
   private final Long collected;
   private final String method;
   private final String uri;
+  private final Object starter;
 
   @Setter
   private Map<String, Serializable> headers = new HashMap<String, Serializable>();
@@ -56,24 +55,31 @@ public class Trover {
   private Map<String, String[]> parameters = new HashMap<String, String[]>();
 
   @Setter
-  private List<Chasing> booties = new ArrayList<Chasing>();
+  private List<Chaser> dregs = new ArrayList<Chaser>();
 
   @Setter
   private long elapsed;
 
   @Setter
-  private QueryInChasing currentQuery;
+  private SQLChaser currentQuery;
 
   @Setter
-  private Throwable vomit;
+  private Throwable error;
 
 
   @Builder
-  public Trover(String id, Long collected, String method, String uri) {
+  public Trove(
+    String id,
+    Long collected,
+    String method,
+    String uri,
+    Object starter
+  ) {
     this.id = id;
     this.collected = collected;
     this.method = method;
     this.uri = uri;
+    this.starter = starter;
   }
 
 
@@ -81,24 +87,26 @@ public class Trover {
     headers.put(name, value);
   }
 
-  public void addBooty(Chasing booty) {
-    booties.add(booty);
+  public void addBooty(Chaser booty) {
+    dregs.add(booty);
   }
 
 
   public static void seize(MethodVisitor mv) {
     mv.visitMethodInsn(
       INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_SEIZE,
+      INTERNAL_NAME,
+      CALL_SEIZE,
       VOID_SEIZE,
       false);
   }
 
   @SuppressWarnings({"unused", "unchecked"})
-  public static void seize(Object request, long started) {
-    Trover trove = TROVE.get();
-    if (null != trove) return;
+  public static void seize(long started, Object request, Object starter) {
+    Trove trove = BOOTY.get();
+    if (null != trove) {
+      return;
+    }
 
     try {
       final Class<?> clazz = request.getClass();
@@ -108,11 +116,12 @@ public class Trover {
       final String uri =
         (String) clazz.getMethod("getRequestURI").invoke(request);
 
-      trove = Trover.builder()
+      trove = Trove.builder()
         .id(Config.getId())
         .collected(started)
         .method(method)
         .uri(uri)
+        .starter(starter)
         .build();
 
       trove.setParameters(
@@ -132,7 +141,7 @@ public class Trover {
         );
       }
 
-      TROVE.set(trove);
+      BOOTY.set(trove);
     }
     catch (Throwable cause) {
       cause.printStackTrace();
@@ -143,27 +152,28 @@ public class Trover {
     expel(mv, false);
   }
 
-  public static void expel(MethodVisitor mv, boolean withVomit) {
+  public static void expel(MethodVisitor mv, boolean hasError) {
     mv.visitMethodInsn(
       INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_EXPEL,
-      withVomit ? VOID_VOMIT2:VOID_VOMIT1,
+      INTERNAL_NAME,
+      CALL_EXPEL,
+      hasError ? VOID_ERROR:VOID_EXPEL,
       false);
   }
 
   @SuppressWarnings("unused")
-  public static void expel(long elapsed) {
-    expel(elapsed, null);
+  public static void expel(long elapsed, Object finisher) {
+    expel(elapsed, finisher, null);
   }
 
   @SuppressWarnings("unused")
-  public static void expel(long elapsed, Throwable vomit) {
-    final Trover trove = TROVE.get();
-    if (null == trove) return;
+  public static void expel(long elapsed, Object finisher, Throwable error) {
+    final Trove trove = BOOTY.get();
+    if (null == trove
+      || trove.getStarter() != finisher) return;
 
     trove.setElapsed(elapsed);
-    trove.setVomit(vomit);
+    trove.setError(error);
 
 //    ServerConnection.give(trove);
 
@@ -171,7 +181,7 @@ public class Trover {
       final StringBuilder logs = new StringBuilder();
       logs.append("Trove----------------------------\n");
       logs.append(String.format("[%s]%n", trove.uri));
-      for (Chasing booty : trove.booties) {
+      for (Chaser booty : trove.dregs) {
         logs.append(String.format(
           "%dms(%d ~ %d) %s%n",
           booty.getArrived() - booty.getStarted(),
@@ -182,7 +192,7 @@ public class Trover {
       }
       logs.append(String.format(
         "------------------------------%3d%n",
-        trove.booties.size())
+        trove.dregs.size())
       );
 
       System.out.println(logs);
@@ -194,22 +204,22 @@ public class Trover {
   public static void chase(MethodVisitor mv) {
     mv.visitMethodInsn(
       INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_CHASE,
+      INTERNAL_NAME,
+      CALL_CHASE,
       VOID_CHASE,
       false);
   }
 
   @SuppressWarnings("unused")
-  public static void chase(Chasing booty) {
-    booty.keep(TROVE.get());
+  public static void chase(Chaser booty) {
+    booty.keep(BOOTY.get());
   }
 
   public static void glean(MethodVisitor mv) {
     mv.visitMethodInsn(
       INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_GLEAN,
+      INTERNAL_NAME,
+      CALL_GLEAN,
       VOID_OBJECT,
       false
     );
@@ -217,10 +227,10 @@ public class Trover {
 
   @SuppressWarnings("unused")
   public static void glean(Object argument) {
-    final Trover trove = TROVE.get();
+    final Trove trove = BOOTY.get();
     if (trove == null) return;
 
-    final QueryInChasing currentQuery = trove.getCurrentQuery();
+    final SQLChaser currentQuery = trove.getCurrentQuery();
     if (currentQuery == null) return;
 
     currentQuery.addArgument(argument);
@@ -229,23 +239,23 @@ public class Trover {
   public static void bring(MethodVisitor mv) {
     mv.visitMethodInsn(
       INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_BRING,
+      INTERNAL_NAME,
+      CALL_BRING,
       VOID_CHASE,
       false
     );
   }
 
   @SuppressWarnings("unused")
-  public static void bring(Chasing chasing) {
-    chasing.arrived();
+  public static void bring(Chaser chaser) {
+    chaser.arrived();
   }
 
   public static void taken(MethodVisitor mv) {
     mv.visitMethodInsn(
       INVOKESTATIC,
-      TROVER_INTERNAL,
-      TROVER_TAKEN,
+      INTERNAL_NAME,
+      CALL_TAKEN,
       VOID_LONG,
       false
     );
@@ -253,10 +263,10 @@ public class Trover {
 
   @SuppressWarnings("unused")
   public static void taken(long started) {
-    final Trover trove = TROVE.get();
+    final Trove trove = BOOTY.get();
     if (trove == null) return;
 
-    final QueryInChasing currentQuery = trove.getCurrentQuery();
+    final SQLChaser currentQuery = trove.getCurrentQuery();
     if (currentQuery == null) return;
 
     currentQuery.setStarted(started);
