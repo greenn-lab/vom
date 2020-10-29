@@ -3,11 +3,10 @@ package vom.client.bci.jdbc;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trove;
+import vom.client.bci.trove.TroveExecutor;
 import vom.client.bci.utility.OpcodeUtils;
 
 import static org.objectweb.asm.Type.LONG_TYPE;
-import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
 
 public class PreparedStatementExecuteVisitor
   extends LocalVariablesSorter
@@ -21,7 +20,7 @@ public class PreparedStatementExecuteVisitor
     String descriptor,
     MethodVisitor visitor
   ) {
-    super(ASM_VERSION, access, descriptor, visitor);
+    super(ASM7, access, descriptor, visitor);
   }
 
   @Override
@@ -37,7 +36,7 @@ public class PreparedStatementExecuteVisitor
   public void visitInsn(int opcode) {
     if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
       mv.visitVarInsn(LLOAD, varStarted);
-      Trove.taken(mv);
+      TroveExecutor.taken(mv);
     }
 
     mv.visitInsn(opcode);

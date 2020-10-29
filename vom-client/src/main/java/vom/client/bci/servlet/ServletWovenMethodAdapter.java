@@ -1,36 +1,27 @@
 package vom.client.bci.servlet;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import vom.client.Config;
-import vom.client.bci.ClassWritable;
+import vom.client.bci.VOMClassVisitAdapter;
 
-import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
-import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
-public class ServletWovenMethodAdapter extends ClassVisitor implements ClassWritable, Opcodes {
-
-  private final String className;
+public class ServletWovenMethodAdapter extends VOMClassVisitAdapter {
 
   public ServletWovenMethodAdapter(byte[] classfileBuffer, String className) {
-    super(ASM_VERSION);
-
-    final ClassReader reader = new ClassReader(classfileBuffer);
-    this.cv = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-
-    this.className = className;
-
-    reader.accept(this, EXPAND_FRAMES);
+    super(classfileBuffer, className);
   }
 
   @Override
-  public byte[] toBytes() {
-    return ((ClassWriter) cv).toByteArray();
+  public boolean isAdaptable() {
+    for (final String package_ : Config.packages) {
+      if (className.startsWith(package_)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @Override
@@ -45,7 +36,7 @@ public class ServletWovenMethodAdapter extends ClassVisitor implements ClassWrit
     ) {
       if (Config.isDebugMode()) {
         System.out.printf(
-          "entangled to vom { %s#%s } under arrest%n",
+          "became entangled in vom (woven method) { %s#%s }%n",
           className,
           name
         );

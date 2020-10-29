@@ -4,13 +4,11 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trove;
-import vom.client.bci.utility.OpcodeUtils;
+import vom.client.bci.trove.TroveExecutor;
 
-import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
-import static vom.client.bci.trove.MethodChaser.BOOTY_CONSTRUCTOR_DESC;
-import static vom.client.bci.trove.MethodChaser.BOOTY_INTERNAL;
-import static vom.client.bci.trove.MethodChaser.BOOTY_TYPE;
+import static vom.client.bci.trove.MethodChaser.METHOD_CHASER_DESCRIPTOR;
+import static vom.client.bci.trove.MethodChaser.METHOD_CHASER_INTERNAL;
+import static vom.client.bci.trove.MethodChaser.METHOD_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.argumentsToObjectArray;
 
@@ -34,7 +32,7 @@ public class ServletWovenMethodVisitor
     String methodName,
     String descriptor
   ) {
-    super(ASM_VERSION, access, descriptor, visitor);
+    super(ASM7, access, descriptor, visitor);
 
     this.className = className;
     this.methodName = methodName;
@@ -44,39 +42,36 @@ public class ServletWovenMethodVisitor
 
   @Override
   public void visitCode() {
-    // new BootyInChasing(...)
-    mv.visitTypeInsn(NEW, BOOTY_INTERNAL);
+    // new MethodChaser(...)
+    mv.visitTypeInsn(NEW, METHOD_CHASER_INTERNAL);
     mv.visitInsn(DUP);
 
-    // BootyInChasing's 1st parameter
+    // MethodChaser's 1st parameter
     mv.visitLdcInsn(className);
 
-    // BootyInChasing's 2nd parameter
+    // MethodChaser's 2nd parameter
     mv.visitLdcInsn(methodName);
 
-    // BootyInChasing's 3rd parameter
+    // MethodChaser's 3rd parameter
     argumentsToObjectArray(
       mv,
       arguments,
       newLocal(ARGUMENTS_TYPE)
     );
 
-    // execute BootyInChasing constructor
     mv.visitMethodInsn(
       INVOKESPECIAL,
-      BOOTY_INTERNAL,
+      METHOD_CHASER_INTERNAL,
       CONSTRUCTOR,
-      BOOTY_CONSTRUCTOR_DESC,
+      METHOD_CHASER_DESCRIPTOR,
       false
     );
 
-    varChase = newLocal(BOOTY_TYPE);
+    varChase = newLocal(METHOD_CHASER_TYPE);
     mv.visitVarInsn(ASTORE, varChase);
     mv.visitVarInsn(ALOAD, varChase);
 
-    Trove.chase(mv);
-
-    OpcodeUtils.println(mv, "Chased: " + className + "#" + methodName);
+    TroveExecutor.chase(mv);
 
     mv.visitCode();
   }
@@ -85,7 +80,7 @@ public class ServletWovenMethodVisitor
   public void visitInsn(int opcode) {
     if (RETURN >= opcode && IRETURN <= opcode) {
       mv.visitVarInsn(ALOAD, varChase);
-      Trove.bring(mv);
+      TroveExecutor.close(mv);
     }
 
     mv.visitInsn(opcode);

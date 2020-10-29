@@ -4,11 +4,9 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trove;
+import vom.client.bci.trove.TroveExecutor;
 import vom.client.bci.utility.OpcodeUtils;
 import vom.client.bci.utility.PrimitiveTypes;
-
-import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
 
 public class PreparedStatementParametersVisitor
   extends LocalVariablesSorter
@@ -21,7 +19,7 @@ public class PreparedStatementParametersVisitor
     MethodVisitor visitor,
     int access, String descriptor
   ) {
-    super(ASM_VERSION, access, descriptor, visitor);
+    super(ASM7, access, descriptor, visitor);
 
     this.valueType = Type.getArgumentTypes(descriptor)[1];
   }
@@ -37,7 +35,7 @@ public class PreparedStatementParametersVisitor
     );
     PrimitiveTypes.valueOf(valueType, mv);
 
-    Trove.glean(mv);
+    TroveExecutor.glean(mv);
   }
 
 }

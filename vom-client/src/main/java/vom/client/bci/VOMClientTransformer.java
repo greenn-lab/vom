@@ -1,35 +1,30 @@
 package vom.client.bci;
 
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import vom.client.bci.jdbc.JdbcStatementAdapter;
-import vom.client.bci.servlet.ServletWovenMethodAdapter;
+import vom.client.bci.jdbc.StatementAdapter;
 import vom.client.bci.servlet.HttpServletServiceAdapter;
+import vom.client.bci.servlet.ServletJSPAdapter;
+import vom.client.bci.servlet.ServletWovenMethodAdapter;
 import vom.client.exception.FallDownException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
-import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
-import static vom.client.Config.containsDatabaseVendor;
-import static vom.client.Config.containsJdbcClass;
-import static vom.client.Config.containsServletChasedTarget;
-import static vom.client.Config.containsServletClass;
+import java.util.Arrays;
+import java.util.List;
 
 public class VOMClientTransformer implements ClassFileTransformer {
 
-  public static final int ASM_VERSION = Opcodes.ASM7;
-
-  public static Set<ClassLoader> LOADERS = new HashSet<ClassLoader>();
-
   private static final byte[] ZERO_BYTE = new byte[0];
 
+  private static final List<Class<? extends VOMClassVisitAdapter>> adapters =
+    Arrays.asList(
+      HttpServletServiceAdapter.class,
+      ServletJSPAdapter.class,
+      ServletWovenMethodAdapter.class,
+      StatementAdapter.class
+    );
 
   @Override
   public byte[] transform(
@@ -39,10 +34,6 @@ public class VOMClientTransformer implements ClassFileTransformer {
     ProtectionDomain protectionDomain,
     byte[] classfileBuffer
   ) {
-
-    if (loader instanceof URLClassLoader) {
-      LOADERS.add(loader);
-    }
 
     // 내 스스로 감시하진 말아줘...
     if (
@@ -61,39 +52,29 @@ public class VOMClientTransformer implements ClassFileTransformer {
     }
 
     try {
-      // Servlet 이 호출 될 때,
-      // 추적을 위한 코드를 이식 시켜요.
-      if (containsServletClass(className)) {
-        System.out.println("ServletClass: " + className + " | " + loader);
-        return new HttpServletServiceAdapter(classfileBuffer, className).toBytes();
-      }
+      return matchingAdapter(classfileBuffer, className);
+    }
+    catch (Throwable cause) {
+      cause.printStackTrace();
+    }
 
-      // JSP 가 호출 될 때,
-      // 추적을 위한 코드를 이식 시켜요.
-//      if (containsJSPClass(className)) {
-//        System.out.println("JSPClass: " + className + " | " + loader);
-//        return new HttpServletJasperAdapter(classfileBuffer, className).toBytes();
-//      }
+    return ZERO_BYTE;
+  }
 
-      // 모니터링 패키지(monitor.packages) 설정에 속해있는
-      // 대상들을 추적해요.
-      if (containsServletChasedTarget(className)) {
-        return new ServletWovenMethodAdapter(classfileBuffer, className).toBytes();
-      }
+  private byte[] matchingAdapter(byte[] buffer, String className) {
+    try {
+      for (Class<? extends VOMClassVisitAdapter> adapter : adapters) {
+        final VOMClassVisitAdapter instance = adapter
+          .getDeclaredConstructor(byte[].class, String.class)
+          .newInstance(buffer, className);
 
-      // JDBC 관련된 것들을 추적해요.
-      if (
-        containsDatabaseVendor(className)
-          && (className.contains("Connection") || className.contains("Statement"))
-      ) {
-        final ClassReader reader = new ClassReader(classfileBuffer);
-        final boolean isInterface = (ACC_INTERFACE & reader.getAccess()) != 0;
-
-        if (!isInterface && containsJdbcClass(reader)) {
-          return new JdbcStatementAdapter(reader).toBytes();
+        if (instance.isAdaptable()) {
+          return instance.toBytes();
         }
       }
-    } finally {
+    }
+    catch (Exception e) {
+      // no work
     }
 
     return ZERO_BYTE;

@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Getter
 public class SQLChaser extends Chaser implements Serializable {
 
-  public static final Type QUERY_TYPE = Type.getType(SQLChaser.class);
-  public static final String QUERY_INTERNAL =
+  public static final Type SQL_CHASER_TYPE = Type.getType(SQLChaser.class);
+  public static final String SQL_CHASER_INTERNAL =
     Type.getInternalName(SQLChaser.class);
 
   private final String sql;
@@ -20,10 +20,9 @@ public class SQLChaser extends Chaser implements Serializable {
   }
 
   @Override
-  public void keep(Trove trove) {
-    super.keep(trove);
-
+  public void keeping(Trove trove) {
     if (trove != null) {
+      super.keeping(trove);
       trove.setCurrentQuery(this);
     }
   }

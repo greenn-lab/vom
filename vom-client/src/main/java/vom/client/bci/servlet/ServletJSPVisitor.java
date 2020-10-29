@@ -1,54 +1,46 @@
 package vom.client.bci.servlet;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trove;
+import vom.client.bci.trove.TroveExecutor;
+import vom.client.bci.utility.OpcodeUtils;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.DUP;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.NEW;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
-import static vom.client.bci.trove.JSPChaser.PAPER_INTERNAL;
-import static vom.client.bci.trove.JSPChaser.PAPER_TYPE;
+import static vom.client.bci.trove.JSPChaser.JSP_CHASER_INTERNAL;
+import static vom.client.bci.trove.JSPChaser.JSP_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
-public class ServletJSPVisitor extends LocalVariablesSorter {
+public class ServletJSPVisitor extends LocalVariablesSorter implements Opcodes {
 
-  private final String className;
   private int varChase;
 
 
-  public ServletJSPVisitor(int access, String className, String descriptor, MethodVisitor visitor) {
-    super(ASM_VERSION, access, descriptor, visitor);
-    this.className = className;
+  public ServletJSPVisitor(int access, String descriptor, MethodVisitor visitor) {
+    super(ASM7, access, descriptor, visitor);
   }
 
   @Override
   public void visitCode() {
-    // new PaperInChasing()
-    mv.visitTypeInsn(NEW, PAPER_INTERNAL);
+    // new JSPChaser(...)
+    mv.visitTypeInsn(NEW, JSP_CHASER_INTERNAL);
     mv.visitInsn(DUP);
 
-    // PaperInChasing's 1st parameter
+    // JSPChaser's 1st parameter
     mv.visitVarInsn(ALOAD, 3);
 
     mv.visitMethodInsn(
       INVOKESPECIAL,
-      PAPER_INTERNAL,
+      JSP_CHASER_INTERNAL,
       CONSTRUCTOR,
       VOID_STRING,
       false);
 
-    varChase = newLocal(PAPER_TYPE);
+    varChase = newLocal(JSP_CHASER_TYPE);
     mv.visitVarInsn(ASTORE, varChase);
     mv.visitVarInsn(ALOAD, varChase);
 
-    Trove.chase(mv);
+    TroveExecutor.chase(mv);
 
     mv.visitCode();
   }
@@ -56,8 +48,15 @@ public class ServletJSPVisitor extends LocalVariablesSorter {
   @Override
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
+      // TODO remove
+      OpcodeUtils.print(mv, "<<end>>");
+      OpcodeUtils.prePrint(mv);
+      mv.visitVarInsn(ALOAD, 0);
+      OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
+
+
       mv.visitVarInsn(ALOAD, varChase);
-      Trove.bring(mv);
+      TroveExecutor.close(mv);
     }
 
     mv.visitInsn(opcode);

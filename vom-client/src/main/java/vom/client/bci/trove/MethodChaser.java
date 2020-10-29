@@ -8,10 +8,10 @@ import java.io.Serializable;
 @Getter
 public class MethodChaser extends Chaser implements Serializable {
 
-  public static final Type BOOTY_TYPE = Type.getType(MethodChaser.class);
-  public static final String BOOTY_INTERNAL =
+  public static final Type METHOD_CHASER_TYPE = Type.getType(MethodChaser.class);
+  public static final String METHOD_CHASER_INTERNAL =
     Type.getInternalName(MethodChaser.class);
-  public static final String BOOTY_CONSTRUCTOR_DESC =
+  public static final String METHOD_CHASER_DESCRIPTOR =
     "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V";
 
 

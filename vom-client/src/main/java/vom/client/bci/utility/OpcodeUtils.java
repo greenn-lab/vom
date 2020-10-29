@@ -2,9 +2,12 @@ package vom.client.bci.utility;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+
+import java.io.PrintStream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpcodeUtils implements Opcodes {
@@ -135,14 +138,14 @@ public class OpcodeUtils implements Opcodes {
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
       "out",
-      "Ljava/io/PrintStream;"
+      Type.getDescriptor(PrintStream.class)
     );
     mv.visitLdcInsn(str);
     mv.visitMethodInsn(
       Opcodes.INVOKEVIRTUAL,
-      "java/io/PrintStream",
+      Type.getInternalName(PrintStream.class),
       "println",
-      "(Ljava/lang/String;)V",
+      VOID_STRING,
       false
     );
   }
@@ -152,14 +155,14 @@ public class OpcodeUtils implements Opcodes {
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
       "out",
-      "Ljava/io/PrintStream;"
+      Type.getDescriptor(PrintStream.class)
     );
     mv.visitLdcInsn(str);
     mv.visitMethodInsn(
       Opcodes.INVOKEVIRTUAL,
-      "java/io/PrintStream",
+      Type.getInternalName(PrintStream.class),
       "print",
-      "(Ljava/lang/String;)V",
+      VOID_STRING,
       false
     );
   }
@@ -170,7 +173,7 @@ public class OpcodeUtils implements Opcodes {
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
       "out",
-      "Ljava/io/PrintStream;"
+      Type.getDescriptor(PrintStream.class)
     );
   }
 
@@ -178,12 +181,43 @@ public class OpcodeUtils implements Opcodes {
   public static void postPrint(MethodVisitor mv, String argumentType) {
     mv.visitMethodInsn(
       Opcodes.INVOKEVIRTUAL,
-      "java/io/PrintStream",
+      Type.getInternalName(PrintStream.class),
       "println",
       "(" + argumentType + ")V",
       false
     );
   }
 
+  public static boolean isAbleToAssign(byte[] classfileBuffer, Class<?> target) {
+    final Class<? extends ClassReader> clazz =
+      new ClassReader(classfileBuffer).get
+
+    if (clazz.isInterface()) return false;
+
+    return target.isAssignableFrom(clazz);
+  }
+
+  public static boolean isAbleToAssign(String source, Class<?> target) {
+    try {
+      final Type type = Type.getType(source);
+
+      final Class<?> clazz = Class.forName(
+        source.replace('/', '.'),
+        true,
+        Thread.currentThread().getContextClassLoader());
+
+      if (clazz.isInterface()) return false;
+
+      return target.isAssignableFrom(clazz);
+    }
+    catch (Exception e) {
+      // no work
+    }
+
+
+    return false;
+
+
+  }
 
 }

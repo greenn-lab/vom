@@ -3,11 +3,10 @@ package vom.client.bci.jdbc;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import vom.client.bci.trove.Trove;
+import vom.client.bci.trove.TroveExecutor;
 
-import static vom.client.bci.VOMClientTransformer.ASM_VERSION;
-import static vom.client.bci.trove.SQLChaser.QUERY_INTERNAL;
-import static vom.client.bci.trove.SQLChaser.QUERY_TYPE;
+import static vom.client.bci.trove.SQLChaser.SQL_CHASER_INTERNAL;
+import static vom.client.bci.trove.SQLChaser.SQL_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
@@ -23,32 +22,32 @@ public class StatementExecutesVisitor
     String descriptor,
     MethodVisitor visitor
   ) {
-    super(ASM_VERSION, access, descriptor, visitor);
+    super(ASM7, access, descriptor, visitor);
   }
 
 
   @Override
   @SuppressWarnings("DuplicatedCode")
   public void visitCode() {
-    // new QueryInChasing(...)
-    mv.visitTypeInsn(NEW, QUERY_INTERNAL);
+    // new SQLChaser(...)
+    mv.visitTypeInsn(NEW, SQL_CHASER_INTERNAL);
     mv.visitInsn(DUP);
 
-    // QueryInChasing's 1st parameter
+    // SQLChaser's 1st parameter
     mv.visitVarInsn(ALOAD, 1);
 
     mv.visitMethodInsn(
       INVOKESPECIAL,
-      QUERY_INTERNAL,
+      SQL_CHASER_INTERNAL,
       CONSTRUCTOR,
       VOID_STRING,
       false);
 
-    varChase = newLocal(QUERY_TYPE);
+    varChase = newLocal(SQL_CHASER_TYPE);
     mv.visitVarInsn(ASTORE, varChase);
-
     mv.visitVarInsn(ALOAD, varChase);
-    Trove.chase(mv);
+
+    TroveExecutor.chase(mv);
 
     mv.visitCode();
   }
@@ -58,7 +57,7 @@ public class StatementExecutesVisitor
   public void visitInsn(int opcode) {
     if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
       mv.visitVarInsn(ALOAD, varChase);
-      Trove.bring(mv);
+      TroveExecutor.close(mv);
     }
 
     mv.visitInsn(opcode);

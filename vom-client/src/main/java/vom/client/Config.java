@@ -1,6 +1,5 @@
 package vom.client;
 
-import org.objectweb.asm.ClassReader;
 import vom.client.exception.FallDownException;
 
 import java.io.FileInputStream;
@@ -9,7 +8,6 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
@@ -24,30 +22,10 @@ public final class Config {
 
   private static final Properties props = new Properties();
 
-  private static final Set<String> packages = new HashSet<String>();
 
-  private static final Set<String> databaseVendors = new HashSet<String>();
+  public static final Set<String> packages = new HashSet<String>();
 
-  private static final Set<String> DEFAULT_SERVLET_CLASSES = new HashSet<String>(
-    Collections.singletonList(
-      "javax/servlet/http/HttpServlet"
-    )
-  );
-
-  private static final Set<String> DEFAULT_JSP_CLASSES = new HashSet<String>(
-    Collections.singletonList(
-      "org/apache/jasper/servlet/JspServlet"
-    )
-  );
-
-  private static final Set<String> DEFAULT_JDBC_CLASSES = new HashSet<String>(
-    Arrays.asList(
-      "java/sql/Connection",
-      "java/sql/Statement",
-      "java/sql/PreparedStatement",
-      "java/sql/CallableStatement"
-    )
-  );
+  public static final Set<String> databaseVendors = new HashSet<String>();
 
 
   private Config() {
@@ -88,52 +66,6 @@ public final class Config {
     return Boolean.parseBoolean(props.getProperty("debug", "false"));
   }
 
-  public static boolean containsServletChasedTarget(String className) {
-    for (final String package_ : packages) {
-      if (className.startsWith(package_)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-
-  /**
-   * Connection Pool 에서 Proxy 나 Delegating 로 SQL 객체를
-   * 구성하기 때문에 불필요한 구현체들이 추출되는데, 이를 방지하기 위해
-   * 벤더가 실제적으로 사용하는 Statement 구현체를 추려내는 목적으로
-   * 사용해요.
-   *
-   * @return 지정된 데이터베이스 벤더에 포함될까, 아닐까.
-   */
-  public static boolean containsDatabaseVendor(String className) {
-    for (final String vendor : databaseVendors) {
-      if (className.contains(vendor)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  public static boolean containsJdbcClass(final ClassReader reader) {
-    for (String interface_ : reader.getInterfaces()) {
-      if (DEFAULT_JDBC_CLASSES.contains(interface_)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  public static boolean containsJSPClass(final String className) {
-    return DEFAULT_JSP_CLASSES.contains(className);
-  }
-
-  public static boolean containsServletClass(final String className) {
-    return DEFAULT_SERVLET_CLASSES.contains(className);
-  }
 
   /**
    * 설정파일을 통해서 초기 설정을 구성해요.

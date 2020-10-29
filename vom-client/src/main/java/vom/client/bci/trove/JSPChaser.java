@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Getter
 public class JSPChaser extends Chaser implements Serializable {
 
-  public static final Type PAPER_TYPE = Type.getType(JSPChaser.class);
-  public static final String PAPER_INTERNAL =
+  public static final Type JSP_CHASER_TYPE = Type.getType(JSPChaser.class);
+  public static final String JSP_CHASER_INTERNAL =
     Type.getInternalName(JSPChaser.class);
 
   private final String jsp;
