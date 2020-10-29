@@ -2,7 +2,6 @@ package vom.client.bci.utility;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -149,6 +148,7 @@ public class OpcodeUtils implements Opcodes {
       false
     );
   }
+
   @SuppressWarnings("unused")
   public static void print(MethodVisitor mv, String str) {
     mv.visitFieldInsn(
@@ -186,38 +186,6 @@ public class OpcodeUtils implements Opcodes {
       "(" + argumentType + ")V",
       false
     );
-  }
-
-  public static boolean isAbleToAssign(byte[] classfileBuffer, Class<?> target) {
-    final Class<? extends ClassReader> clazz =
-      new ClassReader(classfileBuffer).get
-
-    if (clazz.isInterface()) return false;
-
-    return target.isAssignableFrom(clazz);
-  }
-
-  public static boolean isAbleToAssign(String source, Class<?> target) {
-    try {
-      final Type type = Type.getType(source);
-
-      final Class<?> clazz = Class.forName(
-        source.replace('/', '.'),
-        true,
-        Thread.currentThread().getContextClassLoader());
-
-      if (clazz.isInterface()) return false;
-
-      return target.isAssignableFrom(clazz);
-    }
-    catch (Exception e) {
-      // no work
-    }
-
-
-    return false;
-
-
   }
 
 }

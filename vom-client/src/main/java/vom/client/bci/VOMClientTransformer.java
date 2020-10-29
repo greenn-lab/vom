@@ -1,7 +1,7 @@
 package vom.client.bci;
 
 import org.objectweb.asm.ClassWriter;
-import vom.client.bci.jdbc.StatementAdapter;
+import vom.client.bci.jdbc.JdbcAdapter;
 import vom.client.bci.servlet.HttpServletServiceAdapter;
 import vom.client.bci.servlet.ServletJSPAdapter;
 import vom.client.bci.servlet.ServletWovenMethodAdapter;
@@ -23,7 +23,7 @@ public class VOMClientTransformer implements ClassFileTransformer {
       HttpServletServiceAdapter.class,
       ServletJSPAdapter.class,
       ServletWovenMethodAdapter.class,
-      StatementAdapter.class
+      JdbcAdapter.class
     );
 
   @Override

@@ -1,4 +1,4 @@
-package vom.client.bci.jdbc;
+package vom.client.bci.jdbc.visitor;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -8,14 +8,14 @@ import vom.client.bci.utility.OpcodeUtils;
 
 import static org.objectweb.asm.Type.LONG_TYPE;
 
-public class PreparedStatementExecuteVisitor
+public class PreparedStatementExecutesVisitor
   extends LocalVariablesSorter
   implements Opcodes {
 
   private int varStarted;
 
 
-  public PreparedStatementExecuteVisitor(
+  public PreparedStatementExecutesVisitor(
     int access,
     String descriptor,
     MethodVisitor visitor

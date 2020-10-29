@@ -1,4 +1,4 @@
-package vom.client.bci.jdbc;
+package vom.client.bci.jdbc.visitor;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

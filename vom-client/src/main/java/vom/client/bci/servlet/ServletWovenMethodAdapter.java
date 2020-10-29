@@ -4,10 +4,17 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.servlet.visitor.ServletWovenMethodVisitor;
+
+import java.util.List;
 
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
 public class ServletWovenMethodAdapter extends VOMClassVisitAdapter {
+
+  private static final List<String> monitorPackages =
+    Config.getClassList("monitor.packages");
+
 
   public ServletWovenMethodAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);
@@ -15,7 +22,7 @@ public class ServletWovenMethodAdapter extends VOMClassVisitAdapter {
 
   @Override
   public boolean isAdaptable() {
-    for (final String package_ : Config.packages) {
+    for (final String package_ : monitorPackages) {
       if (className.startsWith(package_)) {
         return true;
       }

@@ -1,5 +1,7 @@
 package vom.client;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import vom.client.exception.FallDownException;
 
 import java.io.FileInputStream;
@@ -8,11 +10,11 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Config {
 
   private static final String VALUE_SPLIT_PATTERN = "[\\s,|]+";
@@ -23,17 +25,23 @@ public final class Config {
   private static final Properties props = new Properties();
 
 
-  public static final Set<String> packages = new HashSet<String>();
-
-  public static final Set<String> databaseVendors = new HashSet<String>();
-
-
-  private Config() {
-  }
-
-
   public static String get(String key) {
     return props.getProperty(key);
+  }
+
+  public static List<String> getClassList(String key) {
+    final String[] values =
+      props.getProperty(key, "").split(VALUE_SPLIT_PATTERN);
+
+    final List<String> list = new ArrayList<String>(values.length);
+    for (String value : values) {
+      value = value.trim().replace('.', '/');
+      if (!value.isEmpty()) {
+        list.add(value);
+      }
+    }
+
+    return list;
   }
 
   public static String get(String key, String defaultValue) {
@@ -137,18 +145,6 @@ public final class Config {
         throw new FallDownException(e);
       }
     }
-
-    Collections.addAll(
-      databaseVendors,
-      props.getProperty("database.vendors").split(VALUE_SPLIT_PATTERN)
-    );
-
-    for (String package_ : props.getProperty("monitor.packages").split(VALUE_SPLIT_PATTERN)) {
-      package_ = package_.replace('.', '/').trim();
-      if (!"".equals(package_)) {
-        packages.add(package_);
-      }
-    }
   }
 
   public static void print() {
@@ -157,7 +153,8 @@ public final class Config {
       System.err.printf("server.host: %s%n", Config.getServerHost());
       System.err.printf("server.port: %s%n", Config.getServerPort());
       System.err.printf("polling interval: %s%n", Config.getPollingInterval());
-      System.err.printf("servlet packages: %s%n", packages.toString());
+      System.err.printf("servlet packages: %s%n",
+        getClassList("monitor.packages"));
 
       System.out.println();
     }

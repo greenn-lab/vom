@@ -1,49 +1,42 @@
-package vom.client.bci.jdbc;
+package vom.client.bci.servlet.visitor;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 import vom.client.bci.trove.TroveExecutor;
+import vom.client.bci.utility.OpcodeUtils;
 
-import static vom.client.bci.trove.SQLChaser.SQL_CHASER_INTERNAL;
-import static vom.client.bci.trove.SQLChaser.SQL_CHASER_TYPE;
+import static vom.client.bci.trove.JSPChaser.JSP_CHASER_INTERNAL;
+import static vom.client.bci.trove.JSPChaser.JSP_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
-public class StatementExecutesVisitor
-  extends LocalVariablesSorter
-  implements Opcodes {
+public class ServletJSPVisitor extends LocalVariablesSorter implements Opcodes {
 
   private int varChase;
 
 
-  public StatementExecutesVisitor(
-    int access,
-    String descriptor,
-    MethodVisitor visitor
-  ) {
+  public ServletJSPVisitor(int access, String descriptor, MethodVisitor visitor) {
     super(ASM7, access, descriptor, visitor);
   }
 
-
   @Override
-  @SuppressWarnings("DuplicatedCode")
   public void visitCode() {
-    // new SQLChaser(...)
-    mv.visitTypeInsn(NEW, SQL_CHASER_INTERNAL);
+    // new JSPChaser(...)
+    mv.visitTypeInsn(NEW, JSP_CHASER_INTERNAL);
     mv.visitInsn(DUP);
 
-    // SQLChaser's 1st parameter
-    mv.visitVarInsn(ALOAD, 1);
+    // JSPChaser's 1st parameter
+    mv.visitVarInsn(ALOAD, 3);
 
     mv.visitMethodInsn(
       INVOKESPECIAL,
-      SQL_CHASER_INTERNAL,
+      JSP_CHASER_INTERNAL,
       CONSTRUCTOR,
       VOID_STRING,
       false);
 
-    varChase = newLocal(SQL_CHASER_TYPE);
+    varChase = newLocal(JSP_CHASER_TYPE);
     mv.visitVarInsn(ASTORE, varChase);
     mv.visitVarInsn(ALOAD, varChase);
 
@@ -53,9 +46,15 @@ public class StatementExecutesVisitor
   }
 
   @Override
-  @SuppressWarnings("DuplicatedCode")
   public void visitInsn(int opcode) {
-    if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
+    if (IRETURN <= opcode && RETURN >= opcode) {
+      // TODO remove
+      OpcodeUtils.print(mv, "<<end>>");
+      OpcodeUtils.prePrint(mv);
+      mv.visitVarInsn(ALOAD, 0);
+      OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
+
+
       mv.visitVarInsn(ALOAD, varChase);
       TroveExecutor.close(mv);
     }

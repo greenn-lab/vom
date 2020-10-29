@@ -5,9 +5,10 @@ import org.h2.jdbc.JdbcConnection;
 import org.h2.jdbc.JdbcPreparedStatement;
 import org.h2.jdbc.JdbcStatement;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Type;
-import vom.client.bci.servlet.HttpServletServiceAdapter;
+import vom.client.Config;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -18,7 +19,12 @@ import java.sql.SQLException;
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class StatementAdapterTest {
+class JdbcAdapterTest {
+
+  @BeforeAll
+  static void setup() {
+    Config.configure();
+  }
 
   @Test
   void shouldTransformConnectionPrepareStatement() throws IOException {
@@ -26,7 +32,7 @@ class StatementAdapterTest {
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new StatementAdapter(classfileBuffer, className).toBytes();
+      new JdbcAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }
@@ -37,7 +43,7 @@ class StatementAdapterTest {
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new StatementAdapter(classfileBuffer, className).toBytes();
+      new JdbcAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }
@@ -48,7 +54,7 @@ class StatementAdapterTest {
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new StatementAdapter(classfileBuffer, className).toBytes();
+      new JdbcAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }

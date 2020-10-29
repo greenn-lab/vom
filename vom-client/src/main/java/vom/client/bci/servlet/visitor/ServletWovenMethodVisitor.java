@@ -1,4 +1,4 @@
-package vom.client.bci.servlet;
+package vom.client.bci.servlet.visitor;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
