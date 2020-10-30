@@ -1,5 +1,6 @@
 package vom.client.bci.jdbc;
 
+import oracle.jdbc.driver.OracleDriver;
 import org.h2.Driver;
 import org.h2.jdbc.JdbcConnection;
 import org.h2.jdbc.JdbcPreparedStatement;
@@ -60,6 +61,18 @@ class JdbcAdapterTest {
   }
 
   @Test
+  void shouldTransformOraclePreparedStatementParameters() throws IOException {
+    final String className =
+      "oracle/jdbc/driver/OraclePreparedStatementWrapper";
+
+    final byte[] classfileBuffer = classfileBytes(className);
+    final byte[] byteCodes =
+      new JdbcAdapter(classfileBuffer, className).toBytes();
+
+    writeTastingClassfile(byteCodes);
+  }
+
+  @Test
   void shouldGetSQLAndParameters() throws SQLException {
     final Driver driver = new Driver();
     final Connection connection = driver.connect("jdbc:h2:mem:test", null);
@@ -79,6 +92,32 @@ class JdbcAdapterTest {
 
       Assertions.assertNotNull(object);
     }
+  }
+
+  @Test
+  void oracleOK() throws SQLException {
+    final OracleDriver driver = new OracleDriver();
+    final Connection connection = driver
+      .connect("jdbc:oracle:thin:APSAMPLE/APSAMPLE@192.168.0.244:1521:orcl",
+        null);
+
+    final PreparedStatement ps = connection
+      .prepareStatement(
+        "SELECT SYSDATE FROM DUAL WHERE 1 = ? " +
+        "AND 2 = ?"
+      );
+
+    ps.setString(1, "1");
+    ps.setInt(2, 2);
+
+    final ResultSet rs = ps.executeQuery();
+    if (rs.next()) {
+      final Object object = rs.getObject(1);
+      System.out.println(object);
+
+      Assertions.assertNotNull(object);
+    }
+
   }
 
 }

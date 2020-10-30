@@ -22,6 +22,7 @@ public class ConnectionPrepareStatementVisitor
     super(ASM7, access, descriptor, visitor);
   }
 
+
   @Override
   @SuppressWarnings("DuplicatedCode")
   public void visitCode() {
