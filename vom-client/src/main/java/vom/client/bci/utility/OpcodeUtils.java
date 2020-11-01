@@ -129,6 +129,18 @@ public class OpcodeUtils implements Opcodes {
     }
   }
 
+  public static boolean antPathMatches(String antPath, final String target) {
+    return target.matches(
+      antPath
+        .replace(".", "\\.")
+        .replace("?", ".")
+        .replace("**/*", ".+?")
+        .replace("**", ".+?")
+        .replace("*", "[^/]+")
+    );
+  }
+
+
 
   ///// for debugging
   @SuppressWarnings("unused")
