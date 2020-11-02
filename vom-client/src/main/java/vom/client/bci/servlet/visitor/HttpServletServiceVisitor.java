@@ -1,28 +1,24 @@
 package vom.client.bci.servlet.visitor;
 
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+import vom.client.bci.VOMAbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 import vom.client.bci.utility.OpcodeUtils;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASM7;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.RETURN;
-
-public class HttpServletServiceVisitor extends LocalVariablesSorter {
+public class HttpServletServiceVisitor extends VOMAbstractMethodVisitor {
 
   private final Label beginTry = new Label();
 
-  private final String className;
 
-
-  public HttpServletServiceVisitor(int access, String className, String descriptor, MethodVisitor visitor) {
-    super(ASM7, access, descriptor, visitor);
-    this.className = className;
+  public HttpServletServiceVisitor(
+    ClassReader reader,
+    MethodVisitor visitor,
+    String methodName,
+    String descriptor
+  ) {
+    super(reader, visitor, methodName, descriptor);
   }
 
 

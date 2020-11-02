@@ -10,9 +10,10 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -25,15 +26,24 @@ public final class Config {
 
   private static final Properties props = new Properties();
 
+  private static final Map<String, List<String>> listConfigCaches =
+    new HashMap<String, List<String>>(5);
+
 
   public static String get(String key) {
     return props.getProperty(key);
   }
 
   public static List<String> getList(String key) {
-    return Arrays.asList(
+    if (listConfigCaches.containsKey(key)) {
+      return listConfigCaches.get(key);
+    }
+
+    listConfigCaches.put(key, Arrays.asList(
       props.getProperty(key).split(VALUE_SPLIT_PATTERN)
-    );
+    ));
+
+    return getList(key);
   }
 
   public static String get(String key, String defaultValue) {
@@ -108,7 +118,10 @@ public final class Config {
         final String value = newProps.getProperty(name);
 
         if (value != null && !"".equals(value.trim())) {
-          props.setProperty(name, value);
+          props.setProperty(name,
+            name.startsWith("classes.")
+            ? props.getProperty(name) + " " + value
+            : value);
         }
       }
 

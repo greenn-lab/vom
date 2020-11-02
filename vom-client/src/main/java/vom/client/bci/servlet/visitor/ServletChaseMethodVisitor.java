@@ -12,7 +12,7 @@ import static vom.client.bci.trove.MethodChaser.METHOD_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.argumentsToObjectArray;
 
-public class ServletWovenMethodVisitor
+public class ServletChaseMethodVisitor
   extends LocalVariablesSorter
   implements Opcodes {
 
@@ -25,7 +25,7 @@ public class ServletWovenMethodVisitor
   private int varChase;
 
 
-  public ServletWovenMethodVisitor(
+  public ServletChaseMethodVisitor(
     MethodVisitor visitor,
     int access,
     String className,

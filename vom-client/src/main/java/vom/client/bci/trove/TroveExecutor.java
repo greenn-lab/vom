@@ -34,13 +34,13 @@ public class TroveExecutor {
   private static final String CALL_GLEAN = "glean";
   private static final String CALL_CLOSE = "close";
   private static final String CALL_TAKEN = "taken";
-  private static final String CALL_ERROR = "error";
 
   private static final String DESC_SEIZE =
     "(Ljava/lang/Object;Ljava/lang/Object;)V";
   private static final String DESC_CHASE =
     "(" + Type.getDescriptor(Chaser.class) + ")V";
-  private static final String DESC_EXPEL = "(JLjava/lang/Object;Ljava/lang/Object;)V";
+  private static final String DESC_EXPEL =
+    "(JLjava/lang/Object;Ljava/lang/Object;)V";
 
 
   public static void seize(MethodVisitor mv) {
@@ -55,11 +55,10 @@ public class TroveExecutor {
   @SuppressWarnings({"unused", "unchecked"})
   public static void seize(Object request, Object starter) {
     Trove trove = TROVE.get();
-    if (null != trove) {
-      return;
-    }
 
-    if (Config.getList("servlet.faints")
+    if (null != trove) return;
+
+    if (Config.getList("classes.ignore-servlet")
       .contains(starter.getClass().getName())) return;
 
     try {
@@ -70,13 +69,7 @@ public class TroveExecutor {
       final String uri =
         (String) clazz.getMethod("getRequestURI").invoke(request);
 
-      trove = new Trove(
-        method,
-        uri,
-        starter,
-        request
-      );
-
+      trove = new Trove(method, uri, starter, request);
       trove.setParameters(
         (Map<String, String[]>) clazz.getMethod("getParameterMap")
           .invoke(request)

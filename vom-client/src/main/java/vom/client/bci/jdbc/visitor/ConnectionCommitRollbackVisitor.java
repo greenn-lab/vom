@@ -1,8 +1,8 @@
 package vom.client.bci.jdbc.visitor;
 
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+import vom.client.bci.VOMAbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 
 import static vom.client.bci.trove.SQLChaser.SQL_CHASER_INTERNAL;
@@ -11,21 +11,18 @@ import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
 public class ConnectionCommitRollbackVisitor
-  extends LocalVariablesSorter
-  implements Opcodes {
+  extends VOMAbstractMethodVisitor {
 
-  private final String methodName;
   private int varChase;
 
 
   public ConnectionCommitRollbackVisitor(
-    int access,
+    ClassReader reader,
+    MethodVisitor visitor,
     String methodName,
-    String descriptor,
-    MethodVisitor visitor
+    String descriptor
   ) {
-    super(ASM7, access, descriptor, visitor);
-    this.methodName = methodName;
+    super(reader, visitor, methodName, descriptor);
   }
 
 

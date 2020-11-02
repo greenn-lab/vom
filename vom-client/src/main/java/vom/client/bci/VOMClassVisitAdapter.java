@@ -3,7 +3,11 @@ package vom.client.bci;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import vom.client.Config;
+
+import java.io.File;
 
 public abstract class VOMClassVisitAdapter
   extends ClassVisitor
@@ -24,6 +28,7 @@ public abstract class VOMClassVisitAdapter
 
 
   @Override
+  @SuppressWarnings("deprecation")
   public byte[] toBytes() {
     reader = new ClassReader(buffer);
 
@@ -36,7 +41,37 @@ public abstract class VOMClassVisitAdapter
 
     reader.accept(this, ClassReader.EXPAND_FRAMES);
 
+    if (Boolean.parseBoolean(Config.get("debug.transform"))) {
+      final String out = System.getProperty("user.home")
+        + "./vom/classes/"
+        + className.replace('.', '/')
+        + ".class";
+
+      if (new File(new File(out).getParent()).mkdirs()) {
+        VOMClientTransformer.writeTastingClassfile(writer.toByteArray(), out);
+      }
+    }
+
     return writer.toByteArray();
+  }
+
+
+  @Override
+  public MethodVisitor visitMethod(
+    int access,
+    String name,
+    String descriptor,
+    String signature,
+    String[] exceptions
+  ) {
+    final MethodVisitor visitor =
+      super.visitMethod(access, name, descriptor, signature, exceptions);
+
+    if (visitor != null && methodMatches(access, name, descriptor)) {
+      return methodVisitor(visitor, name, descriptor);
+    }
+
+    return visitor;
   }
 
 }

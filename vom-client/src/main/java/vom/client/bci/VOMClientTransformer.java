@@ -69,7 +69,7 @@ public class VOMClientTransformer implements ClassFileTransformer {
           .newInstance(buffer, className);
 
         if (instance.isAdaptable()) {
-          return instance.toBytes();
+          instance.toBytes();
         }
       }
     }
@@ -95,6 +95,7 @@ public class VOMClientTransformer implements ClassFileTransformer {
    * @deprecated it only needs for check bytecodes
    */
   @Deprecated
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public static byte[] writeTastingClassfile(byte[] bytes, String filepath) {
     try {
       final FileOutputStream out =

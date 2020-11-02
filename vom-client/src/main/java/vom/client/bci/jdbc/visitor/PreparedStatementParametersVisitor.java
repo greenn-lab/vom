@@ -1,28 +1,32 @@
 package vom.client.bci.jdbc.visitor;
 
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import vom.client.bci.VOMAbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 import vom.client.bci.utility.OpcodeUtils;
 import vom.client.bci.utility.PrimitiveTypes;
 
 public class PreparedStatementParametersVisitor
-  extends LocalVariablesSorter
-  implements Opcodes {
+  extends VOMAbstractMethodVisitor {
 
   private final Type valueType;
 
 
   public PreparedStatementParametersVisitor(
+    ClassReader reader,
     MethodVisitor visitor,
-    int access, String descriptor
+    String methodName,
+    String descriptor
   ) {
-    super(ASM7, access, descriptor, visitor);
+    super(reader, visitor, methodName, descriptor);
 
     final Type[] argumentTypes = Type.getArgumentTypes(descriptor);
     this.valueType = argumentTypes.length > 1 ? argumentTypes[1] : null;
+
   }
 
   @Override

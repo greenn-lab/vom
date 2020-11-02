@@ -14,23 +14,25 @@ public class ServletJSPAdapter extends VOMClassVisitAdapter {
 
   @Override
   public boolean isAdaptable() {
-    return Config.getList("servlet.jsp").contains(className);
+    return Config.getList("classes.jsp-servlet").contains(className);
   }
 
   @Override
-  public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-    final MethodVisitor visitor = super.visitMethod(access, name, descriptor, signature, exceptions);
+  public boolean methodMatches(int access, String methodName, String descriptor) {
+    return "serviceJspFile".equals(methodName) &&
+      ("(Ljavax/servlet/http/HttpServletRequest;" +
+        "Ljavax/servlet/http/HttpServletResponse;" +
+        "Ljava/lang/String;" +
+        "Z)V").equals(descriptor);
+  }
 
-    if (
-      visitor != null &&
-        "serviceJspFile".equals(name) &&
-        "(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;Ljava/lang/String;Z)V"
-          .equals(descriptor)
-    ) {
-      return new ServletJSPVisitor(access, descriptor, visitor);
-    }
-
-    return visitor;
+  @Override
+  public MethodVisitor methodVisitor(
+    MethodVisitor visitor,
+    String methodName,
+    String descriptor
+  ) {
+    return new ServletJSPVisitor(reader, visitor, methodName, descriptor);
   }
 
 }

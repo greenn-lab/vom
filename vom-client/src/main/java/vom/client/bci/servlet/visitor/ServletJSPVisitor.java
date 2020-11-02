@@ -1,8 +1,8 @@
 package vom.client.bci.servlet.visitor;
 
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+import vom.client.bci.VOMAbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 import vom.client.bci.utility.OpcodeUtils;
 
@@ -11,14 +11,15 @@ import static vom.client.bci.trove.JSPChaser.JSP_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
-public class ServletJSPVisitor extends LocalVariablesSorter implements Opcodes {
+public class ServletJSPVisitor extends VOMAbstractMethodVisitor {
 
   private int varChase;
 
 
-  public ServletJSPVisitor(int access, String descriptor, MethodVisitor visitor) {
-    super(ASM7, access, descriptor, visitor);
+  public ServletJSPVisitor(ClassReader reader, MethodVisitor visitor, String methodName, String descriptor) {
+    super(reader, visitor, methodName, descriptor);
   }
+
 
   @Override
   public void visitCode() {

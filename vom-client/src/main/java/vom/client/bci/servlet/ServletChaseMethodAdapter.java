@@ -4,7 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
-import vom.client.bci.servlet.visitor.ServletWovenMethodVisitor;
+import vom.client.bci.servlet.visitor.ServletChaseMethodVisitor;
 import vom.client.bci.utility.OpcodeUtils;
 
 import java.util.List;
@@ -33,6 +33,19 @@ public class ServletChaseMethodAdapter extends VOMClassVisitAdapter {
   }
 
   @Override
+  public boolean methodMatches(int access, String methodName, String descriptor) {
+    return ACC_PUBLIC == access
+          && !CONSTRUCTOR.equals(methodName)
+          && !isGetterOrSetter(methodName, descriptor)
+          && !isObjectMethods(methodName, descriptor);
+  }
+
+  @Override
+  public MethodVisitor methodVisitor(MethodVisitor visitor, String methodName, String descriptor) {
+    return null;
+  }
+
+  @Override
   public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
     MethodVisitor visitor = cv.visitMethod(access, name, descriptor, signature, exceptions);
 
@@ -50,7 +63,7 @@ public class ServletChaseMethodAdapter extends VOMClassVisitAdapter {
         );
       }
 
-      visitor = new ServletWovenMethodVisitor(
+      visitor = new ServletChaseMethodVisitor(
         visitor,
         access,
         className,
