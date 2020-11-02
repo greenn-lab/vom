@@ -12,6 +12,8 @@ public abstract class VOMClassVisitAdapter
   protected final byte[] buffer;
   protected final String className;
 
+  protected ClassReader reader;
+
 
   public VOMClassVisitAdapter(byte[] buffer, String className) {
     super(ASM7);
@@ -23,7 +25,8 @@ public abstract class VOMClassVisitAdapter
 
   @Override
   public byte[] toBytes() {
-    final ClassReader reader = new ClassReader(buffer);
+    reader = new ClassReader(buffer);
+
     final ClassWriter writer = new ClassWriter(
       reader,
       ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS

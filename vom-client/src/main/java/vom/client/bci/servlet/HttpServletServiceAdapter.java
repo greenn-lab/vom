@@ -1,13 +1,19 @@
 package vom.client.bci.servlet;
 
 import org.objectweb.asm.MethodVisitor;
+import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.servlet.visitor.HttpServletServiceVisitor;
 
+import java.util.List;
+
 public class HttpServletServiceAdapter extends VOMClassVisitAdapter {
 
-  private static final String DEFAULT_SERVLET_CLASSES =
-    "javax/servlet/http/HttpServlet";
+  private static final List<String> servletSeizes =
+    Config.getList("servlet.seize");
+
+  private static final List<String> servletFaints =
+    Config.getList("servlet.faint");
 
 
   public HttpServletServiceAdapter(byte[] classfileBuffer, String className) {
@@ -17,7 +23,11 @@ public class HttpServletServiceAdapter extends VOMClassVisitAdapter {
 
   @Override
   public boolean isAdaptable() {
-    return DEFAULT_SERVLET_CLASSES.equals(className);
+    if (servletFaints.contains(className)) {
+      return false;
+    }
+
+    return servletSeizes.contains(className);
   }
 
   @Override

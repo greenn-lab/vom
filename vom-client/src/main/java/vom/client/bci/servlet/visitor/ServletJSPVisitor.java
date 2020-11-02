@@ -49,11 +49,10 @@ public class ServletJSPVisitor extends LocalVariablesSorter implements Opcodes {
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
       // TODO remove
-      OpcodeUtils.print(mv, "<<end>>");
+      OpcodeUtils.print(mv, "<< end >>");
       OpcodeUtils.prePrint(mv);
       mv.visitVarInsn(ALOAD, 0);
       OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
 
       mv.visitVarInsn(ALOAD, varChase);
       TroveExecutor.close(mv);

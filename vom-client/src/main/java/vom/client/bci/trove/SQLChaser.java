@@ -22,7 +22,14 @@ public class SQLChaser extends Chaser implements Serializable {
   @Override
   public void keeping(Trove trove) {
     if (trove != null) {
-      super.keeping(trove);
+      final SQLChaser query = trove.getCurrentQuery();
+
+      if (query != null
+        && query.sql.hashCode() == sql.hashCode()) {
+        return;
+      }
+
+      trove.addBooty(this);
       trove.setCurrentQuery(this);
     }
   }

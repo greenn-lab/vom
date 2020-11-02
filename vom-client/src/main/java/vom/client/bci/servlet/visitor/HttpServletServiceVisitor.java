@@ -25,9 +25,9 @@ public class HttpServletServiceVisitor extends LocalVariablesSorter {
     this.className = className;
   }
 
+
   @Override
   public void visitCode() {
-
     // Trover.seize()'s 1st parameter
     mv.visitVarInsn(ALOAD, 1);
 
@@ -36,7 +36,10 @@ public class HttpServletServiceVisitor extends LocalVariablesSorter {
 
     TroveExecutor.seize(mv);
 
-    OpcodeUtils.println(mv, "Seized: " + className);
+    OpcodeUtils.print(mv, "<<start>>");
+    OpcodeUtils.prePrint(mv);
+    mv.visitVarInsn(ALOAD, 0);
+    OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
 
     mv.visitLabel(beginTry);
     mv.visitCode();
@@ -49,24 +52,22 @@ public class HttpServletServiceVisitor extends LocalVariablesSorter {
     mv.visitLabel(tryEnd);
     mv.visitVarInsn(ASTORE, 1);
 
-
     // Trover.expel()'s 1st parameter
     OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
 
     // Trover.expel()'s 2nd parameter
-    mv.visitVarInsn(ALOAD, 0);
-
-    // Trover.expel()'s 3rd parameter
     mv.visitVarInsn(ALOAD, 1);
 
-    TroveExecutor.expel(mv, true);
+    // Trover.expel()'s 3rd parameter
+    mv.visitVarInsn(ALOAD, 0);
+
+    TroveExecutor.expel(mv);
 
     // TODO remove
-    OpcodeUtils.print(mv, "<<end>>");
+    OpcodeUtils.print(mv, "<< end >>");
     OpcodeUtils.prePrint(mv);
     mv.visitVarInsn(ALOAD, 0);
     OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
 
     mv.visitVarInsn(ALOAD, 1);
     mv.visitInsn(ATHROW);
@@ -78,7 +79,7 @@ public class HttpServletServiceVisitor extends LocalVariablesSorter {
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
       // TODO remove
-      OpcodeUtils.print(mv, "<<end>>");
+      OpcodeUtils.print(mv, "<< end >>");
       OpcodeUtils.prePrint(mv);
       mv.visitVarInsn(ALOAD, 0);
       OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
@@ -87,6 +88,9 @@ public class HttpServletServiceVisitor extends LocalVariablesSorter {
       OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
 
       // Trover.expel()'s 2nd parameter
+      mv.visitVarInsn(ALOAD, 1);
+
+      // Trover.expel()'s 3rd parameter
       mv.visitVarInsn(ALOAD, 0);
 
       TroveExecutor.expel(mv);

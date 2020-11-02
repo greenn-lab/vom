@@ -136,7 +136,7 @@ public class OpcodeUtils implements Opcodes {
         .replace("?", ".")
         .replace("**/*", ".+?")
         .replace("**", ".+?")
-        .replace("*", "[^/]+")
+        .replace("*", "[^/]*")
     );
   }
 

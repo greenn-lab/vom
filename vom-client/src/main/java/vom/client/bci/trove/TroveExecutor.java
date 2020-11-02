@@ -6,6 +6,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -34,12 +36,11 @@ public class TroveExecutor {
   private static final String CALL_TAKEN = "taken";
   private static final String CALL_ERROR = "error";
 
-  private static final String VOID_SEIZE =
+  private static final String DESC_SEIZE =
     "(Ljava/lang/Object;Ljava/lang/Object;)V";
-  private static final String VOID_CHASE =
+  private static final String DESC_CHASE =
     "(" + Type.getDescriptor(Chaser.class) + ")V";
-  private static final String VOID_EXPEL = "(JLjava/lang/Object;)V";
-  private static final String VOID_ERROR = "(JLjava/lang/Object;Ljava/lang/Throwable;)V";
+  private static final String DESC_EXPEL = "(JLjava/lang/Object;Ljava/lang/Object;)V";
 
 
   public static void seize(MethodVisitor mv) {
@@ -47,7 +48,7 @@ public class TroveExecutor {
       INVOKESTATIC,
       INTERNAL_NAME,
       CALL_SEIZE,
-      VOID_SEIZE,
+      DESC_SEIZE,
       false);
   }
 
@@ -57,6 +58,9 @@ public class TroveExecutor {
     if (null != trove) {
       return;
     }
+
+    if (Config.getList("servlet.faints")
+      .contains(starter.getClass().getName())) return;
 
     try {
       final Class<?> clazz = request.getClass();
@@ -69,7 +73,8 @@ public class TroveExecutor {
       trove = new Trove(
         method,
         uri,
-        starter
+        starter,
+        request
       );
 
       trove.setParameters(
@@ -98,31 +103,33 @@ public class TroveExecutor {
 
 
   public static void expel(MethodVisitor mv) {
-    expel(mv, false);
-  }
-
-  public static void expel(MethodVisitor mv, boolean hasError) {
     mv.visitMethodInsn(
       INVOKESTATIC,
       INTERNAL_NAME,
       CALL_EXPEL,
-      hasError ? VOID_ERROR:VOID_EXPEL,
+      DESC_EXPEL,
       false);
   }
 
-  @SuppressWarnings("unused")
-  public static void expel(long finished, Object finisher) {
-    expel(finished, finisher, null);
-  }
 
   @SuppressWarnings("unused")
-  public static void expel(long finished, Object finisher, Throwable error) {
+  public static void expel(long finished, Object identifier, Object finisher) {
     final Trove trove = TROVE.get();
-    if (null == trove
-      || trove.getStarter() != finisher) return;
+    final boolean error = identifier instanceof Throwable;
+
+    if (null == trove) return;
+
+    if (!error &&
+      (
+        trove.getStarter() != finisher
+          || trove.getIdentifier() != identifier
+      )
+    ) return;
 
     trove.setFinished(finished);
-    trove.setError(error);
+
+    if (error)
+      trove.setError((Throwable) identifier);
 
     if (Config.isDebugMode()) {
       print(trove);
@@ -130,8 +137,9 @@ public class TroveExecutor {
 
 /*
     ServerConnection.give(trove);
-    TROVE.remove();
 */
+
+    TROVE.remove();
   }
 
 
@@ -140,7 +148,7 @@ public class TroveExecutor {
       INVOKESTATIC,
       INTERNAL_NAME,
       CALL_CHASE,
-      VOID_CHASE,
+      DESC_CHASE,
       false);
   }
 
@@ -207,7 +215,16 @@ public class TroveExecutor {
 
   private static void print(Trove trove) {
     final StringBuilder logs = new StringBuilder();
-    logs.append(String.format("[%s]---%n", trove.getUri()));
+    logs.append(String.format("%d [%s] ---%n",
+      trove.getIdentifier().hashCode(),
+      trove.getUri()));
+
+    if (null != trove.getError()) {
+      logs.append(String.format("\t|%s", trove.getError().getMessage()));
+      final StringWriter out = new StringWriter();
+      trove.getError().printStackTrace(new PrintWriter(out));
+      logs.append(out.toString().replace("\n", "\n\t|"));
+    }
 
     for (Map.Entry<String, String[]> param : trove.getParameters().entrySet()) {
       logs.append(
@@ -219,17 +236,17 @@ public class TroveExecutor {
 
     for (Chaser dreg : trove.getDregs()) {
       logs.append(String.format(
-        "%6dms (%s) %s%s%n",
+        "%6dms (%d ~ %d) %s%s%n",
         dreg.getArrived() - dreg.getStarted(),
-        msPeriod(dreg.getStarted(), dreg.getArrived()),
+        dreg.getStarted(), dreg.getArrived(),
         dreg.signature(),
-        dreg instanceof JSPChaser ? "" : printArguments(dreg.getArguments()))
+        dreg instanceof JSPChaser ? "":printArguments(dreg.getArguments()))
       );
     }
     logs.append(String.format(
-      "%6dms (%s) elapsed ---%n",
+      "%6dms (%d ~ %d) elapsed ---%n",
       trove.elapse(),
-      msPeriod(trove.getCollected(), trove.getFinished()))
+      trove.getCollected(), trove.getFinished())
     );
 
     System.out.println(logs);
@@ -252,26 +269,6 @@ public class TroveExecutor {
     result.setCharAt(result.length() - 1, ')');
 
     return result.toString();
-  }
-
-  private static String msPeriod(long start, long end) {
-    final String startString = String.valueOf(start);
-    final String endString = String.valueOf(end);
-
-    final char[] startChars = startString.toCharArray();
-    final char[] endChars = String.valueOf(end).toCharArray();
-
-    int i;
-    for (i = 0; i < startChars.length - 1;) {
-      if (startChars[i] != endChars[i]) {
-        break;
-      }
-
-      i++;
-    }
-
-    return String.format(
-      "%s ~ %s", startString.substring(i), endString.substring(i));
   }
 
 }

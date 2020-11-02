@@ -27,17 +27,20 @@ public class Trove implements Serializable {
   private Throwable error;
 
   private final transient Object starter;
+  private final transient Object identifier;
 
   public Trove(
     String method,
     String uri,
-    Object starter
+    Object starter,
+    Object identifier
   ) {
     this.id = Config.getId();
     this.collected = System.currentTimeMillis();
     this.method = method;
     this.uri = uri;
     this.starter = starter;
+    this.identifier = identifier;
 
 
   }

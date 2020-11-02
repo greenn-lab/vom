@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,19 +30,10 @@ public final class Config {
     return props.getProperty(key);
   }
 
-  public static List<String> getClassList(String key) {
-    final String[] values =
-      props.getProperty(key, "").split(VALUE_SPLIT_PATTERN);
-
-    final List<String> list = new ArrayList<String>(values.length);
-    for (String value : values) {
-      value = value.trim().replace('.', '/');
-      if (!value.isEmpty()) {
-        list.add(value);
-      }
-    }
-
-    return list;
+  public static List<String> getList(String key) {
+    return Arrays.asList(
+      props.getProperty(key).split(VALUE_SPLIT_PATTERN)
+    );
   }
 
   public static String get(String key, String defaultValue) {
@@ -154,7 +146,7 @@ public final class Config {
       System.err.printf("server.port: %s%n", Config.getServerPort());
       System.err.printf("polling interval: %s%n", Config.getPollingInterval());
       System.err.printf("servlet packages: %s%n",
-        getClassList("monitor.packages"));
+        getList("servlet.chase.packages"));
 
       System.out.println();
     }

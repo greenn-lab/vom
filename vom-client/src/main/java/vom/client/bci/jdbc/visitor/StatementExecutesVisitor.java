@@ -55,12 +55,12 @@ public class StatementExecutesVisitor
   @Override
   @SuppressWarnings("DuplicatedCode")
   public void visitInsn(int opcode) {
+    mv.visitInsn(opcode);
+
     if ((IRETURN <= opcode && RETURN >= opcode) || ATHROW == opcode) {
       mv.visitVarInsn(ALOAD, varChase);
       TroveExecutor.close(mv);
     }
-
-    mv.visitInsn(opcode);
   }
 
 }

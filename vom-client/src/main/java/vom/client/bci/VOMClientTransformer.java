@@ -4,7 +4,7 @@ import org.objectweb.asm.ClassWriter;
 import vom.client.bci.jdbc.JdbcAdapter;
 import vom.client.bci.servlet.HttpServletServiceAdapter;
 import vom.client.bci.servlet.ServletJSPAdapter;
-import vom.client.bci.servlet.ServletWovenMethodAdapter;
+import vom.client.bci.servlet.ServletChaseMethodAdapter;
 import vom.client.exception.FallDownException;
 
 import java.io.FileOutputStream;
@@ -22,7 +22,7 @@ public class VOMClientTransformer implements ClassFileTransformer {
     Arrays.asList(
       HttpServletServiceAdapter.class,
       ServletJSPAdapter.class,
-      ServletWovenMethodAdapter.class,
+      ServletChaseMethodAdapter.class,
       JdbcAdapter.class
     );
 
@@ -86,7 +86,8 @@ public class VOMClientTransformer implements ClassFileTransformer {
   @Deprecated
   public static byte[] writeTastingClassfile(ClassWriter writer) {
     byte[] code = writer.toByteArray();
-    return writeTastingClassfile(code);
+    return writeTastingClassfile(code,
+      "./target/classes/Tasting.class");
   }
 
 
@@ -94,10 +95,10 @@ public class VOMClientTransformer implements ClassFileTransformer {
    * @deprecated it only needs for check bytecodes
    */
   @Deprecated
-  public static byte[] writeTastingClassfile(byte[] bytes) {
+  public static byte[] writeTastingClassfile(byte[] bytes, String filepath) {
     try {
       final FileOutputStream out =
-        new FileOutputStream("D:/Tasting.class");
+        new FileOutputStream(filepath);
       out.write(bytes);
       out.close();
 

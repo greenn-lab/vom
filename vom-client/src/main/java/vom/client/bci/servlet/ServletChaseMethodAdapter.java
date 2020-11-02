@@ -5,25 +5,26 @@ import org.objectweb.asm.Type;
 import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.servlet.visitor.ServletWovenMethodVisitor;
+import vom.client.bci.utility.OpcodeUtils;
 
 import java.util.List;
 
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
-public class ServletWovenMethodAdapter extends VOMClassVisitAdapter {
+public class ServletChaseMethodAdapter extends VOMClassVisitAdapter {
 
-  private static final List<String> monitorPackages =
-    Config.getClassList("monitor.packages");
+  private static final List<String> servletChasePackages =
+    Config.getList("servlet.chase.packages");
 
 
-  public ServletWovenMethodAdapter(byte[] classfileBuffer, String className) {
+  public ServletChaseMethodAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);
   }
 
   @Override
   public boolean isAdaptable() {
-    for (final String package_ : monitorPackages) {
-      if (className.startsWith(package_)) {
+    for (final String package_ : servletChasePackages) {
+      if (OpcodeUtils.antPathMatches(package_, className)) {
         return true;
       }
     }
@@ -43,7 +44,7 @@ public class ServletWovenMethodAdapter extends VOMClassVisitAdapter {
     ) {
       if (Config.isDebugMode()) {
         System.out.printf(
-          "became entangled in vom (woven method) { %s#%s }%n",
+          "became entangled in vom (chase method) { %s#%s }%n",
           className,
           name
         );

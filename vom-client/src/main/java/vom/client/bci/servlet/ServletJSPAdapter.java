@@ -1,22 +1,20 @@
 package vom.client.bci.servlet;
 
 import org.objectweb.asm.MethodVisitor;
+import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.servlet.visitor.ServletJSPVisitor;
 
 public class ServletJSPAdapter extends VOMClassVisitAdapter {
 
-  private static final String DEFAULT_JSP_CLASSES =
-    "org/apache/jasper/servlet/JspServlet";
-
-
   public ServletJSPAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);
   }
 
+
   @Override
   public boolean isAdaptable() {
-    return DEFAULT_JSP_CLASSES.equals(className);
+    return Config.getList("servlet.jsp").contains(className);
   }
 
   @Override
