@@ -4,19 +4,18 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import vom.client.bci.VOMAbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
-import vom.client.bci.utility.OpcodeUtils;
 
 import static vom.client.bci.trove.JSPChaser.JSP_CHASER_INTERNAL;
 import static vom.client.bci.trove.JSPChaser.JSP_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
-public class ServletJSPVisitor extends VOMAbstractMethodVisitor {
+public class ServletJasperJSPVisitor extends VOMAbstractMethodVisitor {
 
   private int varChase;
 
 
-  public ServletJSPVisitor(ClassReader reader, MethodVisitor visitor, String methodName, String descriptor) {
+  public ServletJasperJSPVisitor(ClassReader reader, MethodVisitor visitor, String methodName, String descriptor) {
     super(reader, visitor, methodName, descriptor);
   }
 
@@ -49,13 +48,8 @@ public class ServletJSPVisitor extends VOMAbstractMethodVisitor {
   @Override
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
-      // TODO remove
-      OpcodeUtils.print(mv, "<< end >>");
-      OpcodeUtils.prePrint(mv);
-      mv.visitVarInsn(ALOAD, 0);
-      OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
       mv.visitVarInsn(ALOAD, varChase);
+
       TroveExecutor.close(mv);
     }
 

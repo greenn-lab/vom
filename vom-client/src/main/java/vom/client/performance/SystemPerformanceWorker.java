@@ -31,7 +31,6 @@ public class SystemPerformanceWorker extends Thread {
           SystemPerformanceService.getCpu(), disk, memory, network
         );
 
-        System.out.println("fall in sleep");
         TimeUnit.SECONDS.sleep(Config.getPollingInterval());
       }
       catch (InterruptedException e) {

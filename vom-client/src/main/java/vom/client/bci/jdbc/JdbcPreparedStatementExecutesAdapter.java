@@ -3,6 +3,7 @@ package vom.client.bci.jdbc;
 import org.objectweb.asm.MethodVisitor;
 import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.jdbc.visitor.PreparedStatementExecutesVisitor;
 
 public class JdbcPreparedStatementExecutesAdapter
   extends VOMClassVisitAdapter {
@@ -31,7 +32,17 @@ public class JdbcPreparedStatementExecutesAdapter
   }
 
   @Override
-  public MethodVisitor methodVisitor(MethodVisitor visitor, String methodName, String descriptor) {
-    return null;
+  public MethodVisitor methodVisitor(
+    MethodVisitor visitor,
+    String methodName,
+    String descriptor
+  ) {
+    return new PreparedStatementExecutesVisitor(
+      reader,
+      visitor,
+      methodName,
+      descriptor
+    );
   }
+
 }

@@ -15,7 +15,7 @@ public class JdbcConnectionPrepareStatementAdapter
 
   @Override
   public boolean isAdaptable() {
-    return Config.getList("classes.jdbc-prepared-statement")
+    return Config.getList("classes.jdbc-connection")
       .contains(className);
   }
 

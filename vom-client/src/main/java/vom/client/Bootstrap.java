@@ -1,6 +1,6 @@
 package vom.client;
 
-import vom.client.bci.VOMClientTransformer;
+import vom.client.bci.VOMClassFileTransformer;
 import vom.client.performance.SystemPerformanceWorker;
 
 import java.io.BufferedReader;
@@ -30,11 +30,11 @@ public class Bootstrap {
       Config.mergeProperties(configFilepath);
     }
 
-//    bootSystemPerformance();
+    bootSystemPerformance();
 
     instrumentation.addTransformer(
-        new VOMClientTransformer(),
-        true
+      new VOMClassFileTransformer(),
+      true
     );
 
     Config.print();
@@ -63,12 +63,14 @@ public class Bootstrap {
 
     worker.start();
 
-    Runtime.getRuntime().addShutdownHook(new Thread("system-performance-worker-shutdown-hook") {
-      @Override
-      public void run() {
-        worker.die();
+    Runtime.getRuntime().addShutdownHook(
+      new Thread("system-performance-worker-shutdown-hook") {
+        @Override
+        public void run() {
+          worker.die();
+        }
       }
-    });
+    );
 
   }
 

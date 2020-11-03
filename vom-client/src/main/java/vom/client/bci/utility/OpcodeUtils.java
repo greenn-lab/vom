@@ -2,10 +2,14 @@ package vom.client.bci.utility;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import vom.client.exception.FallDownException;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -143,12 +147,33 @@ public class OpcodeUtils implements Opcodes {
 
 
   ///// for debugging
+  public static byte[] writeTastingClassfile(ClassWriter writer) {
+    byte[] code = writer.toByteArray();
+    return writeTastingClassfile(code,
+      "./target/classes/Tasting.class");
+  }
+
+
+  public static byte[] writeTastingClassfile(byte[] bytes, String filepath) {
+    try {
+      final FileOutputStream out =
+        new FileOutputStream(filepath);
+      out.write(bytes);
+      out.close();
+
+      return bytes;
+    }
+    catch (IOException e) {
+      throw new FallDownException(e);
+    }
+  }
+
   @SuppressWarnings("unused")
   public static void println(MethodVisitor mv, String str) {
     mv.visitFieldInsn(
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
-      "out",
+      "err",
       Type.getDescriptor(PrintStream.class)
     );
     mv.visitLdcInsn(str);
@@ -166,7 +191,7 @@ public class OpcodeUtils implements Opcodes {
     mv.visitFieldInsn(
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
-      "out",
+      "err",
       Type.getDescriptor(PrintStream.class)
     );
     mv.visitLdcInsn(str);
@@ -184,7 +209,7 @@ public class OpcodeUtils implements Opcodes {
     mv.visitFieldInsn(
       Opcodes.GETSTATIC,
       SYSTEM_INTERNAL,
-      "out",
+      "err",
       Type.getDescriptor(PrintStream.class)
     );
   }

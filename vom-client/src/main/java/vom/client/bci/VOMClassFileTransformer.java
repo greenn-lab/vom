@@ -1,20 +1,20 @@
 package vom.client.bci;
 
-import org.objectweb.asm.ClassWriter;
-import vom.client.bci.jdbc.JdbcAdapter;
+import vom.client.Config;
+import vom.client.bci.jdbc.JdbcConnectionPrepareStatementAdapter;
+import vom.client.bci.jdbc.JdbcPreparedStatementExecutesAdapter;
+import vom.client.bci.jdbc.JdbcPreparedStatementParametersAdapter;
+import vom.client.bci.jdbc.JdbcStatementExecutesAdapter;
 import vom.client.bci.servlet.HttpServletServiceAdapter;
-import vom.client.bci.servlet.ServletJSPAdapter;
 import vom.client.bci.servlet.ServletChaseMethodAdapter;
-import vom.client.exception.FallDownException;
+import vom.client.bci.servlet.ServletJSPAdapter;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.List;
 
-public class VOMClientTransformer implements ClassFileTransformer {
+public class VOMClassFileTransformer implements ClassFileTransformer {
 
   private static final byte[] ZERO_BYTE = new byte[0];
 
@@ -23,7 +23,10 @@ public class VOMClientTransformer implements ClassFileTransformer {
       HttpServletServiceAdapter.class,
       ServletJSPAdapter.class,
       ServletChaseMethodAdapter.class,
-      JdbcAdapter.class
+      JdbcConnectionPrepareStatementAdapter.class,
+      JdbcPreparedStatementExecutesAdapter.class,
+      JdbcPreparedStatementParametersAdapter.class,
+      JdbcStatementExecutesAdapter.class
     );
 
   @Override
@@ -55,59 +58,31 @@ public class VOMClientTransformer implements ClassFileTransformer {
       return matchingAdapter(classfileBuffer, className);
     }
     catch (Throwable cause) {
-      cause.printStackTrace();
+      if (Config.isDebugMode()) {
+        cause.printStackTrace();
+      }
     }
 
     return ZERO_BYTE;
   }
 
   private byte[] matchingAdapter(byte[] buffer, String className) {
-    try {
-      for (Class<? extends VOMClassVisitAdapter> adapter : adapters) {
+    for (Class<? extends VOMClassVisitAdapter> adapter : adapters) {
+      try {
         final VOMClassVisitAdapter instance = adapter
           .getDeclaredConstructor(byte[].class, String.class)
           .newInstance(buffer, className);
 
         if (instance.isAdaptable()) {
-          instance.toBytes();
+          return instance.toBytes();
         }
       }
-    }
-    catch (Exception e) {
-      // no work
+      catch (Exception e) {
+        // no work
+      }
     }
 
     return ZERO_BYTE;
-  }
-
-  /**
-   * @deprecated it only needs for check bytecodes
-   */
-  @Deprecated
-  public static byte[] writeTastingClassfile(ClassWriter writer) {
-    byte[] code = writer.toByteArray();
-    return writeTastingClassfile(code,
-      "./target/classes/Tasting.class");
-  }
-
-
-  /**
-   * @deprecated it only needs for check bytecodes
-   */
-  @Deprecated
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  public static byte[] writeTastingClassfile(byte[] bytes, String filepath) {
-    try {
-      final FileOutputStream out =
-        new FileOutputStream(filepath);
-      out.write(bytes);
-      out.close();
-
-      return bytes;
-    }
-    catch (IOException e) {
-      throw new FallDownException(e);
-    }
   }
 
 }

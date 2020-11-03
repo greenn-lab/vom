@@ -6,6 +6,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import vom.client.Config;
+import vom.client.bci.utility.OpcodeUtils;
 
 import java.io.File;
 
@@ -28,7 +29,6 @@ public abstract class VOMClassVisitAdapter
 
 
   @Override
-  @SuppressWarnings("deprecation")
   public byte[] toBytes() {
     reader = new ClassReader(buffer);
 
@@ -43,13 +43,14 @@ public abstract class VOMClassVisitAdapter
 
     if (Boolean.parseBoolean(Config.get("debug.transform"))) {
       final String out = System.getProperty("user.home")
-        + "./vom/classes/"
+        + "/.vom/classes/"
         + className.replace('.', '/')
         + ".class";
 
-      if (new File(new File(out).getParent()).mkdirs()) {
-        VOMClientTransformer.writeTastingClassfile(writer.toByteArray(), out);
-      }
+      //noinspection ResultOfMethodCallIgnored
+      new File(new File(out).getParent()).mkdirs();
+
+      OpcodeUtils.writeTastingClassfile(writer.toByteArray(), out);
     }
 
     return writer.toByteArray();

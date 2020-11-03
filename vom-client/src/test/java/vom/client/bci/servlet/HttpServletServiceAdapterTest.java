@@ -1,7 +1,9 @@
 package vom.client.bci.servlet;
 
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.Type;
 
+import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
@@ -12,7 +14,7 @@ class HttpServletServiceAdapterTest extends ClassLoader {
   @Test
   void shouldRunBCI() throws IOException {
 
-    final String className = "javax/servlet/http/HttpServlet";
+    final String className = Type.getInternalName(HttpServlet.class);
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =

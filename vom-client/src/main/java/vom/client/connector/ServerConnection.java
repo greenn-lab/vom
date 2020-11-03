@@ -23,7 +23,8 @@ public final class ServerConnection {
     Integer.parseInt(Config.get("server.pool", "100"));
   private static ExecutorService GIVER_POOL =
     Executors.newFixedThreadPool(POOL_SIZE);
-  private static final HikariDataSource dataSource = new HikariDataSource();
+
+  protected static final HikariDataSource dataSource = new HikariDataSource();
 
   static {
     dataSource.setJdbcUrl("jdbc:h2:tcp://" +

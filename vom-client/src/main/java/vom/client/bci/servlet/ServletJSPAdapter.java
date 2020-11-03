@@ -3,7 +3,8 @@ package vom.client.bci.servlet;
 import org.objectweb.asm.MethodVisitor;
 import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
-import vom.client.bci.servlet.visitor.ServletJSPVisitor;
+import vom.client.bci.servlet.visitor.HttpServletServiceVisitor;
+import vom.client.bci.servlet.visitor.ServletJasperJSPVisitor;
 
 public class ServletJSPAdapter extends VOMClassVisitAdapter {
 
@@ -32,7 +33,19 @@ public class ServletJSPAdapter extends VOMClassVisitAdapter {
     String methodName,
     String descriptor
   ) {
-    return new ServletJSPVisitor(reader, visitor, methodName, descriptor);
+    final ServletJasperJSPVisitor jspVisitor = new ServletJasperJSPVisitor(
+      reader,
+      visitor,
+      methodName,
+      descriptor
+    );
+
+    return new HttpServletServiceVisitor(
+      reader,
+      jspVisitor,
+      methodName,
+      descriptor
+    );
   }
 
 }

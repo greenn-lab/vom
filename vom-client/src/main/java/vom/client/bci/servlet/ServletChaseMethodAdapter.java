@@ -7,15 +7,9 @@ import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.servlet.visitor.ServletChaseMethodVisitor;
 import vom.client.bci.utility.OpcodeUtils;
 
-import java.util.List;
-
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
 public class ServletChaseMethodAdapter extends VOMClassVisitAdapter {
-
-  private static final List<String> servletChasePackages =
-    Config.getList("servlet.chase.packages");
-
 
   public ServletChaseMethodAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);
@@ -23,7 +17,7 @@ public class ServletChaseMethodAdapter extends VOMClassVisitAdapter {
 
   @Override
   public boolean isAdaptable() {
-    for (final String package_ : servletChasePackages) {
+    for (final String package_ : Config.getList("servlet.chase.packages")) {
       if (OpcodeUtils.antPathMatches(package_, className)) {
         return true;
       }
@@ -35,44 +29,27 @@ public class ServletChaseMethodAdapter extends VOMClassVisitAdapter {
   @Override
   public boolean methodMatches(int access, String methodName, String descriptor) {
     return ACC_PUBLIC == access
-          && !CONSTRUCTOR.equals(methodName)
-          && !isGetterOrSetter(methodName, descriptor)
-          && !isObjectMethods(methodName, descriptor);
+      && !CONSTRUCTOR.equals(methodName)
+      && !isGetterOrSetter(methodName, descriptor)
+      && !isObjectMethods(methodName, descriptor);
   }
 
   @Override
   public MethodVisitor methodVisitor(MethodVisitor visitor, String methodName, String descriptor) {
-    return null;
-  }
-
-  @Override
-  public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-    MethodVisitor visitor = cv.visitMethod(access, name, descriptor, signature, exceptions);
-
-    if (null != visitor
-      && ACC_PUBLIC == access
-      && !CONSTRUCTOR.equals(name)
-      && !isGetterOrSetter(name, descriptor)
-      && !isObjectMethods(name, descriptor)
-    ) {
-      if (Config.isDebugMode()) {
-        System.out.printf(
-          "became entangled in vom (chase method) { %s#%s }%n",
-          className,
-          name
-        );
-      }
-
-      visitor = new ServletChaseMethodVisitor(
-        visitor,
-        access,
+    if (Config.isDebugMode()) {
+      System.out.printf(
+        "became entangled in vom (chase method) { %s#%s }%n",
         className,
-        name,
-        descriptor
+        methodName
       );
     }
 
-    return visitor;
+    return new ServletChaseMethodVisitor(
+      reader,
+      visitor,
+      methodName,
+      descriptor
+    );
   }
 
   private boolean isObjectMethods(String className, String descriptor) {

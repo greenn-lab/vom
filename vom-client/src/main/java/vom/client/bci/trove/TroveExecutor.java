@@ -128,9 +128,7 @@ public class TroveExecutor {
       print(trove);
     }
 
-/*
-    ServerConnection.give(trove);
-*/
+    // ServerConnection.give(trove);
 
     TROVE.remove();
   }

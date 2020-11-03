@@ -32,11 +32,6 @@ public class HttpServletServiceVisitor extends VOMAbstractMethodVisitor {
 
     TroveExecutor.seize(mv);
 
-    OpcodeUtils.print(mv, "<<start>>");
-    OpcodeUtils.prePrint(mv);
-    mv.visitVarInsn(ALOAD, 0);
-    OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
     mv.visitLabel(beginTry);
     mv.visitCode();
   }
@@ -59,12 +54,6 @@ public class HttpServletServiceVisitor extends VOMAbstractMethodVisitor {
 
     TroveExecutor.expel(mv);
 
-    // TODO remove
-    OpcodeUtils.print(mv, "<< end >>");
-    OpcodeUtils.prePrint(mv);
-    mv.visitVarInsn(ALOAD, 0);
-    OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
     mv.visitVarInsn(ALOAD, 1);
     mv.visitInsn(ATHROW);
 
@@ -74,12 +63,6 @@ public class HttpServletServiceVisitor extends VOMAbstractMethodVisitor {
   @Override
   public void visitInsn(int opcode) {
     if (IRETURN <= opcode && RETURN >= opcode) {
-      // TODO remove
-      OpcodeUtils.print(mv, "<< end >>");
-      OpcodeUtils.prePrint(mv);
-      mv.visitVarInsn(ALOAD, 0);
-      OpcodeUtils.postPrint(mv, "Ljava/lang/Object;");
-
       // Trover.expel()'s 1st parameter
       OpcodeUtils.invokeSystemCurrentTimeMillis(mv);
 
