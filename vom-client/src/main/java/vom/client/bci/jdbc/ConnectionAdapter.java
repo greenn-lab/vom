@@ -5,10 +5,10 @@ import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.jdbc.visitor.ConnectionPrepareStatementVisitor;
 
-public class JdbcConnectionPrepareStatementAdapter
+public class ConnectionAdapter
   extends VOMClassVisitAdapter {
 
-  public JdbcConnectionPrepareStatementAdapter(byte[] buffer, String className) {
+  public ConnectionAdapter(byte[] buffer, String className) {
     super(buffer, className);
   }
 

@@ -3,7 +3,6 @@ package vom.client.performance;
 import vom.client.Config;
 import vom.client.connector.ServerConnection;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class SystemPerformanceWorker extends Thread {
@@ -19,23 +18,25 @@ public class SystemPerformanceWorker extends Thread {
   @Override
   public void run() {
     while (true) {
-      try {
-        final long[] disk = SystemPerformanceService.getDisk();
-        System.out.println(Arrays.toString(disk));
-        final long[] memory = SystemPerformanceService.getMemory();
-        System.out.println(Arrays.toString(memory));
-        final long[] network = SystemPerformanceService.getNetwork();
-        System.out.println(Arrays.toString(network));
+      long[] disk = SystemPerformanceService.getDisk();
+      long[] memory = SystemPerformanceService.getMemory();
+      long[] network = SystemPerformanceService.getNetwork();
 
+      try {
         ServerConnection.sendSystemStats(
           SystemPerformanceService.getCpu(), disk, memory, network
         );
+      }
+      catch (Throwable cause) {
+        // no work
+      }
 
+      try {
         TimeUnit.SECONDS.sleep(Config.getPollingInterval());
       }
       catch (InterruptedException e) {
-        e.printStackTrace(System.err);
-        Thread.currentThread().interrupt();
+        this.interrupt();
+        e.printStackTrace();
       }
 
       if (!running) {

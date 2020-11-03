@@ -1,12 +1,11 @@
 package vom.client.bci;
 
 import vom.client.Config;
-import vom.client.bci.jdbc.JdbcConnectionPrepareStatementAdapter;
-import vom.client.bci.jdbc.JdbcPreparedStatementExecutesAdapter;
-import vom.client.bci.jdbc.JdbcPreparedStatementParametersAdapter;
-import vom.client.bci.jdbc.JdbcStatementExecutesAdapter;
-import vom.client.bci.servlet.HttpServletServiceAdapter;
-import vom.client.bci.servlet.ServletChaseMethodAdapter;
+import vom.client.bci.jdbc.ConnectionAdapter;
+import vom.client.bci.jdbc.PreparedStatementAdapter;
+import vom.client.bci.jdbc.StatementAdapter;
+import vom.client.bci.servlet.HttpServletAdapter;
+import vom.client.bci.servlet.MethodChaserAdapter;
 import vom.client.bci.servlet.ServletJSPAdapter;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -20,13 +19,12 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
 
   private static final List<Class<? extends VOMClassVisitAdapter>> adapters =
     Arrays.asList(
-      HttpServletServiceAdapter.class,
+      HttpServletAdapter.class,
       ServletJSPAdapter.class,
-      ServletChaseMethodAdapter.class,
-      JdbcConnectionPrepareStatementAdapter.class,
-      JdbcPreparedStatementExecutesAdapter.class,
-      JdbcPreparedStatementParametersAdapter.class,
-      JdbcStatementExecutesAdapter.class
+      MethodChaserAdapter.class,
+      ConnectionAdapter.class,
+      PreparedStatementAdapter.class,
+      StatementAdapter.class
     );
 
   @Override

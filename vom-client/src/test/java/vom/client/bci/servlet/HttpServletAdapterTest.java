@@ -9,7 +9,7 @@ import java.io.IOException;
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class HttpServletServiceAdapterTest extends ClassLoader {
+class HttpServletAdapterTest extends ClassLoader {
 
   @Test
   void shouldRunBCI() throws IOException {
@@ -18,7 +18,7 @@ class HttpServletServiceAdapterTest extends ClassLoader {
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new HttpServletServiceAdapter(classfileBuffer, className).toBytes();
+      new HttpServletAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }

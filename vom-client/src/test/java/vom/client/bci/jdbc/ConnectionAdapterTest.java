@@ -11,7 +11,7 @@ import java.io.IOException;
 import static vom.client.bci.tasting.BCITastingUtils.classfileBytes;
 import static vom.client.bci.tasting.BCITastingUtils.writeTastingClassfile;
 
-class JdbcConnectionPrepareStatementAdapterTest {
+class ConnectionAdapterTest {
 
   @BeforeAll
   static void setup() {
@@ -24,7 +24,7 @@ class JdbcConnectionPrepareStatementAdapterTest {
 
     final byte[] classfileBuffer = classfileBytes(className);
     final byte[] byteCodes =
-      new JdbcPreparedStatementExecutesAdapter(classfileBuffer, className).toBytes();
+      new PreparedStatementAdapter(classfileBuffer, className).toBytes();
 
     writeTastingClassfile(byteCodes);
   }

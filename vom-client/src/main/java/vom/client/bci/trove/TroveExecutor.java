@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
+import vom.client.connector.ServerConnection;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -121,14 +122,11 @@ public class TroveExecutor {
 
     trove.setFinished(finished);
 
-    if (error)
+    if (error) {
       trove.setError((Throwable) identifier);
-
-    if (Config.isDebugMode()) {
-      print(trove);
     }
 
-    // ServerConnection.give(trove);
+     ServerConnection.give(trove);
 
     TROVE.remove();
   }
@@ -204,14 +202,14 @@ public class TroveExecutor {
   }
 
 
-  private static void print(Trove trove) {
+  public static void print(Trove trove) {
     final StringBuilder logs = new StringBuilder();
     logs.append(String.format("%d [%s] ---%n",
       trove.getIdentifier().hashCode(),
       trove.getUri()));
 
     if (null != trove.getError()) {
-      logs.append(String.format("\t|%s", trove.getError().getMessage()));
+      logs.append(String.format("\t|%s%n", trove.getError().getMessage()));
       final StringWriter out = new StringWriter();
       trove.getError().printStackTrace(new PrintWriter(out));
       logs.append(out.toString().replace("\n", "\n\t|"));
@@ -219,7 +217,7 @@ public class TroveExecutor {
 
     for (Map.Entry<String, String[]> param : trove.getParameters().entrySet()) {
       logs.append(
-        String.format("\t- %s: %s",
+        String.format("\t- %s: %s%n",
           param.getKey(),
           Arrays.toString(param.getValue()))
       );

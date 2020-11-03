@@ -5,9 +5,9 @@ import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.servlet.visitor.HttpServletServiceVisitor;
 
-public class HttpServletServiceAdapter extends VOMClassVisitAdapter {
+public class HttpServletAdapter extends VOMClassVisitAdapter {
 
-  public HttpServletServiceAdapter(byte[] classfileBuffer, String className) {
+  public HttpServletAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);
   }
 

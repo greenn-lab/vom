@@ -92,18 +92,23 @@
             <filter>
               <artifact>*:*</artifact>
               <includes>
-                <include>com/sun/jna/**/*</include>
-                <include>com/zaxxer/**/*</include>
-                <include>org/objectweb/**/*</include>
-                <include>org/h2/**/*</include>
-                <include>org/slf4j/**/*</include>
-                <include>oshi/**/*</include>
-                <include>vom/**/*</include>
-                <include>META-INF/**/*</include>
+                <include>com/sun/jna/**</include>
+                <include>com/alibaba/**</include>
+                <include>com/zaxxer/**</include>
+                <include>org/objectweb/**</include>
+                <include>org/h2/**</include>
+                <include>org/slf4j/**</include>
+                <include>oshi/**</include>
+                <include>vom/**</include>
+                <include>META-INF/**</include>
               </includes>
             </filter>
           </filters>
           <relocations>
+            <relocation>
+              <pattern>com.alibaba</pattern>
+              <shadedPattern>${vom.package}.com.alibaba</shadedPattern>
+            </relocation>
             <relocation>
               <pattern>com.zaxxer</pattern>
               <shadedPattern>${vom.package}.com.zaxxer</shadedPattern>

@@ -1,10 +1,12 @@
 package vom.client.connector;
 
+import com.alibaba.fastjson.JSON;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import vom.client.Config;
 import vom.client.bci.trove.Trove;
+import vom.client.bci.trove.TroveExecutor;
 import vom.client.connector.sql.SqlManager;
 import vom.client.exception.CarryException;
 
@@ -13,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ServerConnection {
@@ -21,8 +24,13 @@ public final class ServerConnection {
     Integer.parseInt(Config.get("server.timeout", "2000"));
   private static final Integer POOL_SIZE =
     Integer.parseInt(Config.get("server.pool", "100"));
-  private static ExecutorService GIVER_POOL =
-    Executors.newFixedThreadPool(POOL_SIZE);
+  private static final ExecutorService GIVER_POOL =
+    Executors.newFixedThreadPool(POOL_SIZE, new ThreadFactory() {
+      @Override
+      public Thread newThread(Runnable runnable) {
+        return new Thread(runnable, "giver-pool");
+      }
+    });
 
   protected static final HikariDataSource dataSource = new HikariDataSource();
 
@@ -41,7 +49,13 @@ public final class ServerConnection {
     GIVER_POOL.execute(new Runnable() {
       @Override
       public void run() {
-        // TODO trover serialization and giving
+        if (Config.isDebugMode()) {
+          TroveExecutor.print(trove);
+        }
+
+        final String json = JSON.toJSONString(trove);
+        System.err.println(json);
+
         try {
 //          ServerConnection.getConnection();
         }
@@ -50,12 +64,11 @@ public final class ServerConnection {
             cause.printStackTrace();
           }
           else {
-            System.err.println(cause.getMessage());
+            System.err.printf("[%s] %s%n",
+              Thread.currentThread().getName(),
+              cause.getMessage());
           }
         }
-        finally {
-        }
-
       }
     });
   }
@@ -81,7 +94,8 @@ public final class ServerConnection {
   public static Connection getConnection() {
     try {
       return dataSource.getConnection();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       throw new CarryException("refuse connect to server!");
     }
   }
@@ -100,13 +114,15 @@ public final class ServerConnection {
 
       ps.executeUpdate();
       connection.commit();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       // no work
     } finally {
       if (ps != null) {
         try {
           ps.close();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
           // no work
         }
       }
@@ -114,7 +130,8 @@ public final class ServerConnection {
       if (connection != null) {
         try {
           connection.close();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
           // no work
         }
       }

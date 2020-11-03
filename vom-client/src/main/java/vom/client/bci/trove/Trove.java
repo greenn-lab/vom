@@ -23,11 +23,12 @@ public class Trove implements Serializable {
   private Map<String, String[]> parameters = new HashMap<String, String[]>();
   private List<Chaser> dregs = new ArrayList<Chaser>();
   private long finished;
-  private SQLChaser currentQuery;
   private Throwable error;
 
   private final transient Object starter;
   private final transient Object identifier;
+
+  private transient SQLChaser currentQuery;
 
   public Trove(
     String method,

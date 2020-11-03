@@ -12,7 +12,7 @@ import static vom.client.bci.trove.MethodChaser.METHOD_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.argumentsToObjectArray;
 
-public class ServletChaseMethodVisitor extends VOMAbstractMethodVisitor {
+public class MethodChaserVisitor extends VOMAbstractMethodVisitor {
 
   private static final Type ARGUMENTS_TYPE = Type.getType(Object[].class);
 
@@ -21,7 +21,7 @@ public class ServletChaseMethodVisitor extends VOMAbstractMethodVisitor {
   private int varChase;
 
 
-  public ServletChaseMethodVisitor(
+  public MethodChaserVisitor(
     ClassReader reader,
     MethodVisitor visitor,
     String methodName,

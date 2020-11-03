@@ -5,9 +5,9 @@ import vom.client.Config;
 import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.jdbc.visitor.StatementExecutesVisitor;
 
-public class JdbcStatementExecutesAdapter extends VOMClassVisitAdapter {
+public class StatementAdapter extends VOMClassVisitAdapter {
 
-  public JdbcStatementExecutesAdapter(byte[] buffer, String className) {
+  public StatementAdapter(byte[] buffer, String className) {
     super(buffer, className);
   }
 
