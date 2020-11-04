@@ -6,11 +6,25 @@ import vom.client.bci.VOMClassVisitAdapter;
 import vom.client.bci.jdbc.visitor.PreparedStatementExecutesVisitor;
 import vom.client.bci.jdbc.visitor.PreparedStatementParametersVisitor;
 
-public class PreparedStatementAdapter
-  extends VOMClassVisitAdapter {
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-  private boolean isExecute = false;
-  private boolean isParameter = false;
+public class PreparedStatementAdapter extends VOMClassVisitAdapter {
+
+  private static final Set<String> executeMethodNames =
+    new HashSet<String>(
+      Arrays.asList(
+        "execute",
+        "executeLargeUpdate",
+        "executeQuery",
+        "executeUpdate"
+      )
+    );
+
+  private boolean isExecuteMethod = false;
+  private boolean isParameterMethod = false;
+
 
   public PreparedStatementAdapter(byte[] buffer, String className) {
     super(buffer, className);
@@ -25,18 +39,16 @@ public class PreparedStatementAdapter
 
   @Override
   public boolean methodMatches(int access, String methodName, String descriptor) {
-    isExecute = (
-      "execute".equals(methodName)
-        || "executeLargeUpdate".equals(methodName)
-        || "executeQuery".equals(methodName)
-        || "executeUpdate".equals(methodName)
-    ) && descriptor.startsWith("()");
+    isExecuteMethod = executeMethodNames.contains(methodName)
+      && descriptor.startsWith("()");
 
-    isParameter = methodName.startsWith("set")
+    if (isExecuteMethod) return true;
+
+    isParameterMethod = methodName.startsWith("set")
       && descriptor.startsWith("(I")
       && descriptor.endsWith(")V");
 
-    return isExecute || isParameter;
+    return isParameterMethod;
   }
 
   @Override
@@ -46,8 +58,8 @@ public class PreparedStatementAdapter
     String descriptor
   ) {
 
-    if (isExecute) {
-      visitor = new PreparedStatementExecutesVisitor(
+    if (isExecuteMethod) {
+      return new PreparedStatementExecutesVisitor(
         reader,
         visitor,
         methodName,
@@ -55,8 +67,8 @@ public class PreparedStatementAdapter
       );
     }
 
-    if (isParameter) {
-      visitor = new PreparedStatementParametersVisitor(
+    if (isParameterMethod) {
+      return new PreparedStatementParametersVisitor(
         reader,
         visitor,
         methodName,
