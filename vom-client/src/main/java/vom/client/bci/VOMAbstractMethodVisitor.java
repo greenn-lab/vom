@@ -1,16 +1,18 @@
 package vom.client.bci;
 
+import lombok.Setter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
+@Setter
 public class VOMAbstractMethodVisitor
   extends LocalVariablesSorter
   implements Opcodes {
 
-  protected final String className;
-  protected final String methodName;
+  protected String className;
+  protected String methodName;
 
 
   public VOMAbstractMethodVisitor(
