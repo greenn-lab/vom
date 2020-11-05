@@ -4,6 +4,7 @@ import vom.client.Config;
 import vom.client.bci.jdbc.ConnectionAdapter;
 import vom.client.bci.jdbc.PreparedStatementAdapter;
 import vom.client.bci.jdbc.StatementAdapter;
+import vom.client.bci.mybatis.MybatisMapperProxyAdapter;
 import vom.client.bci.servlet.HttpServletAdapter;
 import vom.client.bci.servlet.MethodChaserAdapter;
 import vom.client.bci.servlet.ServletJSPAdapter;
@@ -24,7 +25,9 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
       MethodChaserAdapter.class,
       ConnectionAdapter.class,
       PreparedStatementAdapter.class,
-      StatementAdapter.class
+      StatementAdapter.class,
+
+      MybatisMapperProxyAdapter.class
     );
 
   @Override
@@ -39,7 +42,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
     // 내 스스로 감시하진 말아줘...
     if (
       className == null
-//          || className.startsWith("vom/")
+        || className.startsWith("vom/")
     ) {
       return ZERO_BYTE;
     }

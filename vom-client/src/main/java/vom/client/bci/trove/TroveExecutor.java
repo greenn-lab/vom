@@ -21,8 +21,8 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
 public class TroveExecutor {
 
-  public static final ThreadLocal<Trove> TROVE =
-    new ThreadLocal<Trove>();
+  public static final InheritableThreadLocal<Trove> TROVE =
+    new InheritableThreadLocal<Trove>();
 
   private static final String INTERNAL_NAME =
     Type.getInternalName(TroveExecutor.class);
@@ -115,18 +115,23 @@ public class TroveExecutor {
 
     if (null == trove) return;
 
-    if (!error && (
-      trove.getStarter() != finisher
-        || trove.getIdentifier() != identifier
-    )) return;
-
-    trove.setFinished(finished);
-
     if (error) {
       trove.setError((Throwable) identifier);
     }
+    else if (
+      trove.getStarter() != finisher
+        || trove.getIdentifier() != identifier
+    ) return;
 
-    ServerConnection.give(trove);
+
+    trove.setFinished(finished);
+
+    try {
+      ServerConnection.give(trove);
+    }
+    catch (Throwable cause) {
+      cause.printStackTrace();
+    }
 
     TROVE.remove();
   }
@@ -213,6 +218,7 @@ public class TroveExecutor {
       final StringWriter out = new StringWriter();
       trove.getError().printStackTrace(new PrintWriter(out));
       logs.append(out.toString().replace("\n", "\n\t|"));
+      logs.append("\n");
     }
 
     for (Map.Entry<String, String[]> param : trove.getParameters().entrySet()) {

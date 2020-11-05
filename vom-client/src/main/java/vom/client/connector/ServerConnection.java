@@ -41,7 +41,7 @@ public final class ServerConnection {
     );
     dataSource.setUsername("sa");
     dataSource.setPassword("");
-    dataSource.setConnectionTimeout(TIMEOUT);
+    dataSource.setConnectionTimeout(TIMEOUT * 1000L);
     dataSource.setMaximumPoolSize(POOL_SIZE);
   }
 

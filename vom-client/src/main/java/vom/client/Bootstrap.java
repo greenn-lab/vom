@@ -30,14 +30,14 @@ public class Bootstrap {
       Config.mergeProperties(configFilepath);
     }
 
-    bootSystemPerformance();
+    Config.print();
 
     instrumentation.addTransformer(
       new VOMClassFileTransformer(),
       true
     );
 
-    Config.print();
+    bootSystemPerformance();
   }
 
   private static void welcome() {

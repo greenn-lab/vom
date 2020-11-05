@@ -70,21 +70,21 @@ public class OpcodeUtils implements Opcodes {
 
   public static void argumentsToObjectArray(
     MethodVisitor mv,
-    Type[] arguments,
-    int arrayIndex
+    Type[] types,
+    int varIndex
   ) {
-    if (0 == arguments.length) {
+    if (0 == types.length) {
       mv.visitInsn(ACONST_NULL);
     }
     else {
-      mv.visitIntInsn(BIPUSH, arguments.length);
+      mv.visitIntInsn(BIPUSH, types.length);
       mv.visitTypeInsn(ANEWARRAY, OBJECT_NAME);
-      mv.visitVarInsn(ASTORE, arrayIndex);
+      mv.visitVarInsn(ASTORE, varIndex);
 
       int index = 1;
       int arrayPoint = 0;
-      for (final Type argument : arguments) {
-        mv.visitVarInsn(ALOAD, arrayIndex);
+      for (final Type argument : types) {
+        mv.visitVarInsn(ALOAD, varIndex);
         mv.visitIntInsn(BIPUSH, arrayPoint++);
 
         switch (argument.getSort()) {
@@ -129,7 +129,7 @@ public class OpcodeUtils implements Opcodes {
         index += argument.getSize();
       }
 
-      mv.visitVarInsn(ALOAD, arrayIndex);
+      mv.visitVarInsn(ALOAD, varIndex);
     }
   }
 
