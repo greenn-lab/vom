@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadFactory;
 public final class ServerConnection {
 
   private static final Integer TIMEOUT =
-    Integer.parseInt(Config.get("server.timeout", "2000"));
+    Integer.parseInt(Config.get("server.timeout", "2"));
   private static final Integer POOL_SIZE =
     Integer.parseInt(Config.get("server.pool", "100"));
   private static final ExecutorService GIVER_POOL =

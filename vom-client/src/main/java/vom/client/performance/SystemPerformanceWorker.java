@@ -32,7 +32,7 @@ public class SystemPerformanceWorker extends Thread {
       }
 
       try {
-        TimeUnit.SECONDS.sleep(Config.getPollingInterval());
+        TimeUnit.SECONDS.sleep(Config.getServerPullGap());
       }
       catch (InterruptedException e) {
         this.interrupt();

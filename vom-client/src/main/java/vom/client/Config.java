@@ -54,8 +54,8 @@ public final class Config {
     return props.getProperty("id");
   }
 
-  public static int getPollingInterval() {
-    return Integer.parseInt(props.getProperty("polling.interval"));
+  public static int getServerPullGap() {
+    return Integer.parseInt(props.getProperty("server.pull.gap"));
   }
 
   public static void setId(String id) {
@@ -157,7 +157,7 @@ public final class Config {
       System.err.printf("id: %s%n", Config.getId());
       System.err.printf("server.host: %s%n", Config.getServerHost());
       System.err.printf("server.port: %s%n", Config.getServerPort());
-      System.err.printf("polling interval: %s%n", Config.getPollingInterval());
+      System.err.printf("polling interval: %s%n", Config.getServerPullGap());
       System.err.printf("servlet packages: %s%n",
         getList("packages.chase"));
 
