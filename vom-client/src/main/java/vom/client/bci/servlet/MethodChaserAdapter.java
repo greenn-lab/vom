@@ -17,7 +17,21 @@ public class MethodChaserAdapter extends VOMClassVisitAdapter {
 
   @Override
   public boolean isAdaptable() {
-    for (final String package_ : Config.getList("chaser.package")) {
+    return belong() && !avoid();
+  }
+
+  private boolean belong() {
+    for (final String package_ : Config.getList("packages.chase")) {
+      if (OpcodeUtils.antPathMatches(package_, className)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean avoid() {
+    for (final String package_ : Config.getList("packages.avoid")) {
       if (OpcodeUtils.antPathMatches(package_, className)) {
         return true;
       }

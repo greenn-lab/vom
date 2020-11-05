@@ -159,7 +159,7 @@ public final class Config {
       System.err.printf("server.port: %s%n", Config.getServerPort());
       System.err.printf("polling interval: %s%n", Config.getPollingInterval());
       System.err.printf("servlet packages: %s%n",
-        getList("chaser.package"));
+        getList("packages.chase"));
 
       System.out.println();
     }

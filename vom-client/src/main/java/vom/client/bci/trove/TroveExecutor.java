@@ -1,7 +1,5 @@
 package vom.client.bci.trove;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
@@ -21,7 +19,6 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
 import static vom.client.bci.utility.OpcodeUtils.VOID_NONE;
 import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TroveExecutor {
 
   public static final ThreadLocal<Trove> TROVE =
@@ -42,6 +39,11 @@ public class TroveExecutor {
     "(" + Type.getDescriptor(Chaser.class) + ")V";
   private static final String DESC_EXPEL =
     "(JLjava/lang/Object;Ljava/lang/Object;)V";
+
+
+  private TroveExecutor() {
+    throw new IllegalStateException();
+  }
 
 
   public static void seize(MethodVisitor mv) {
@@ -113,12 +115,10 @@ public class TroveExecutor {
 
     if (null == trove) return;
 
-    if (!error &&
-      (
-        trove.getStarter() != finisher
-          || trove.getIdentifier() != identifier
-      )
-    ) return;
+    if (!error && (
+      trove.getStarter() != finisher
+        || trove.getIdentifier() != identifier
+    )) return;
 
     trove.setFinished(finished);
 
@@ -126,7 +126,7 @@ public class TroveExecutor {
       trove.setError((Throwable) identifier);
     }
 
-     ServerConnection.give(trove);
+    ServerConnection.give(trove);
 
     TROVE.remove();
   }
