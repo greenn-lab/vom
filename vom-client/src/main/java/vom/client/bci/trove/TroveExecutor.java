@@ -58,6 +58,7 @@ public class TroveExecutor {
   @SuppressWarnings({"unused", "unchecked"})
   public static void seize(Object request, Object starter) {
     Trove trove = TROVE.get();
+    final Class<?> clazz = request.getClass();
 
     if (null != trove) return;
 
@@ -65,8 +66,6 @@ public class TroveExecutor {
       .contains(starter.getClass().getName())) return;
 
     try {
-      final Class<?> clazz = request.getClass();
-
       final String method =
         (String) clazz.getMethod("getMethod").invoke(request);
       final String uri =
@@ -91,6 +90,10 @@ public class TroveExecutor {
       }
 
       TROVE.set(trove);
+    }
+    catch (IllegalAccessException iae) {
+      // no work
+      System.err.println(iae.getMessage());
     }
     catch (Throwable cause) {
       cause.printStackTrace();
