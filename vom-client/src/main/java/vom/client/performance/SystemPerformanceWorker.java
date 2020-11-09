@@ -1,11 +1,12 @@
 package vom.client.performance;
 
 import vom.client.Config;
-import vom.client.connector.ServerConnection;
+import vom.client.connector.CollectorConnection;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-public class SystemPerformanceWorker extends Thread {
+public class SystemPerformanceWorker extends Thread implements Serializable {
 
   private boolean running = true;
 
@@ -23,7 +24,7 @@ public class SystemPerformanceWorker extends Thread {
       long[] network = SystemPerformanceService.getNetwork();
 
       try {
-        ServerConnection.sendSystemStats(
+        CollectorConnection.sendSystemPerf(
           SystemPerformanceService.getCpu(), disk, memory, network
         );
       }

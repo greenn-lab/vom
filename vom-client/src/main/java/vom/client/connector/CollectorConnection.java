@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ServerConnection {
+public final class CollectorConnection {
 
   private static final Integer TIMEOUT =
     Integer.parseInt(Config.get("server.timeout", "2"));
@@ -35,6 +35,7 @@ public final class ServerConnection {
   protected static final HikariDataSource dataSource = new HikariDataSource();
 
   static {
+    dataSource.setDriverClassName("org.h2.Driver");
     dataSource.setJdbcUrl("jdbc:h2:tcp://" +
       Config.getServerHost() + ":" +
       Config.getServerPort() + "/mem:collector"
@@ -53,11 +54,9 @@ public final class ServerConnection {
           TroveExecutor.print(trove);
         }
 
-        final String json = JSON.toJSONString(trove);
-        System.err.println(json);
-
         try {
-//          ServerConnection.getConnection();
+          final String json = JSON.toJSONString(trove);
+          sendExecChaser(trove, json);
         }
         catch (Throwable cause) {
           if (Config.isDebugMode()) {
@@ -74,14 +73,23 @@ public final class ServerConnection {
   }
 
 
-  public static void sendSystemStats(
+  public static void sendExecChaser(Trove trove, String json) {
+    execute(
+      SqlManager.getInstance().get("insert-exec-chaser"),
+      trove.getId(),
+      trove.getCollected(),
+      json
+    );
+  }
+
+  public static void sendSystemPerf(
     Double cpu,
     long[] disk,
     long[] memory,
     long[] network
   ) {
     execute(
-      SqlManager.getInstance().get("system-stats"),
+      SqlManager.getInstance().get("insert-system-perf"),
       Config.getId(),
       System.currentTimeMillis(),
       cpu,

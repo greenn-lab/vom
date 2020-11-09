@@ -14,11 +14,11 @@ class VOMServer : CommandLineRunner {
       .start()
 
     Runtime.getRuntime().addShutdownHook(
-      Thread(Runnable {
+      Thread {
         if (server.isRunning(false)) {
           server.stop()
         }
-      })
+      }
     )
   }
 

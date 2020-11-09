@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <collector>
-  <sql id="system-stats"><![CDATA[
+  <sql id="insert-exec-chaser"><![CDATA[
+  ]]>
+    INSERT INTO EXEC_CHASER (
+      ID,
+      COLLECTED,
+      JSON
+    )
+    VALUES (
+      ?1, ?2, ?3
+    )
+  </sql>
+  <sql id="insert-system-perf"><![CDATA[
     INSERT INTO SYSTEM_STATS (
       ID,
       COLLECTED,

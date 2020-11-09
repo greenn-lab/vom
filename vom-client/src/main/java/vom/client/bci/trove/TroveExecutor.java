@@ -3,7 +3,7 @@ package vom.client.bci.trove;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
-import vom.client.connector.ServerConnection;
+import vom.client.connector.CollectorConnection;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -130,7 +130,7 @@ public class TroveExecutor {
     trove.setFinished(finished);
 
     try {
-      ServerConnection.give(trove);
+      CollectorConnection.give(trove);
     }
     catch (Throwable cause) {
       cause.printStackTrace();

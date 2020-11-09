@@ -3,9 +3,9 @@ package vom.server.collector.stats
 import javax.persistence.*
 
 @Entity
-@Table(name = "SYSTEM_STATS")
-@IdClass(SystemStatsId::class)
-class SystemStats(
+@Table(name = "SYSTEM_PERF")
+@IdClass(SystemPerfId::class)
+class SystemPerf(
   @Id var id: String,
   @Id var collected: Long
 ) {

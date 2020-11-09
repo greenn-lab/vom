@@ -26,5 +26,6 @@ collector:
     password: ""
 
 
+
 server:
   port: 8888

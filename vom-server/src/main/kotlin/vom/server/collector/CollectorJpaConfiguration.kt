@@ -48,7 +48,7 @@ class CollectorJpaConfiguration {
     val vendorAdapter = HibernateJpaVendorAdapter()
     vendorAdapter.setDatabase(Database.H2)
     bean.jpaVendorAdapter = vendorAdapter
-    val props: MutableMap<String, String?> = HashMap(2)
+    val props: MutableMap<String, String?> = HashMap(3)
     props["hibernate.show_sql"] = showSql.toString()
     props["hibernate.format_sql"] = showSql.toString()
     props["hibernate.hbm2ddl.auto"] = ddlMode

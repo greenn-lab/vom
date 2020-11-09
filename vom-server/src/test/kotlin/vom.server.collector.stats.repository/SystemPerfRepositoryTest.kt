@@ -4,16 +4,16 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import vom.server.collector.stats.SystemStats
+import vom.server.collector.stats.SystemPerf
 
 @SpringBootTest
-class SystemStatsRepositoryTest @Autowired constructor(
+class SystemPerfRepositoryTest @Autowired constructor(
   val repo: SystemStatsRepository
 ) {
 
   @Test
   fun `Should insert system statistics successfully`() {
-    val stats: SystemStats = SystemStats("test", 123)
+    val perf: SystemPerf = SystemPerf("test", 123)
       .apply {
         cpu = 123.1
         diskFree = 3
@@ -25,7 +25,7 @@ class SystemStatsRepositoryTest @Autowired constructor(
         networkBandwidth = 9
       }
 
-    val save = repo.save(stats)
+    val save = repo.save(perf)
 
     Assertions.assertNotNull(save)
   }
