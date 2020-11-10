@@ -126,7 +126,6 @@ public class TroveExecutor {
         || trove.getIdentifier() != identifier
     ) return;
 
-
     trove.setFinished(finished);
 
     try {
@@ -237,7 +236,7 @@ public class TroveExecutor {
         "%6dms (%d ~ %d) %s%s%n",
         dreg.getArrived() - dreg.getStarted(),
         dreg.getStarted(), dreg.getArrived(),
-        dreg.signature(),
+        dreg.signature() + "::" + dreg.getClass(),
         dreg instanceof JSPChaser ? "":printArguments(dreg.getArguments()))
       );
     }

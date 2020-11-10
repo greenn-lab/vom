@@ -9,9 +9,11 @@ import static vom.client.bci.utility.OpcodeUtils.argumentsToObjectArray;
 
 public class MethodChaserVisitor extends MethodChaserVisitHelper {
 
-  private static final Type OBJECT_ARRAY_TYPE = Type.getType(Object[].class);
+  public static final Type OBJECT_ARRAY_TYPE = Type.getType(Object[].class);
+
 
   private final Type[] argumentTypes;
+
 
   public MethodChaserVisitor(
     ClassReader reader,
@@ -23,6 +25,7 @@ public class MethodChaserVisitor extends MethodChaserVisitHelper {
     this.argumentTypes = Type.getArgumentTypes(descriptor);
   }
 
+
   @Override
   protected void setMethodChaserArguments(MethodVisitor mv) {
     argumentsToObjectArray(
@@ -30,7 +33,6 @@ public class MethodChaserVisitor extends MethodChaserVisitHelper {
       argumentTypes,
       newLocal(OBJECT_ARRAY_TYPE)
     );
-
   }
 
 }

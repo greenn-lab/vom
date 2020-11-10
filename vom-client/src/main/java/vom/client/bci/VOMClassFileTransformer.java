@@ -4,7 +4,7 @@ import vom.client.Config;
 import vom.client.bci.jdbc.ConnectionAdapter;
 import vom.client.bci.jdbc.PreparedStatementAdapter;
 import vom.client.bci.jdbc.StatementAdapter;
-import vom.client.bci.mybatis.MybatisMapperProxyAdapter;
+import vom.client.bci.mybatis.MybatisDefaultSqlSessionAdapter;
 import vom.client.bci.servlet.HttpServletAdapter;
 import vom.client.bci.servlet.MethodChaserAdapter;
 import vom.client.bci.servlet.ServletJSPAdapter;
@@ -27,7 +27,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
       PreparedStatementAdapter.class,
       StatementAdapter.class,
 
-      MybatisMapperProxyAdapter.class
+      MybatisDefaultSqlSessionAdapter.class
     );
 
   @Override

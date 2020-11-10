@@ -9,13 +9,14 @@ import java.util.HashMap;
 
 public class SqlManager extends HashMap<String, String> {
 
-  private static final SqlManager instance = new SqlManager();
-
   private static final String ACCESS_EXTERNAL_DTD =
     "http://javax.xml.XMLConstants/property/accessExternalDTD";
 
   private static final String ACCESS_EXTERNAL_SCHEMA =
     "http://javax.xml.XMLConstants/property/accessExternalSchema";
+
+  private static final SqlManager instance = new SqlManager();
+
 
   private SqlManager() {
     InputStream in;
@@ -37,6 +38,7 @@ public class SqlManager extends HashMap<String, String> {
     }
 
   }
+
 
   public static SqlManager getInstance() {
     return instance;

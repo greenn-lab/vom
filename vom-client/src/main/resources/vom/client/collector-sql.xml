@@ -12,7 +12,7 @@
     )
   </sql>
   <sql id="insert-system-perf"><![CDATA[
-    INSERT INTO SYSTEM_STATS (
+    INSERT INTO SYSTEM_PERF (
       ID,
       COLLECTED,
       CPU,
