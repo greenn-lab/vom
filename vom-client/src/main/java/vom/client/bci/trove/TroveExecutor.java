@@ -236,7 +236,7 @@ public class TroveExecutor {
         "%6dms (%d ~ %d) %s%s%n",
         dreg.getArrived() - dreg.getStarted(),
         dreg.getStarted(), dreg.getArrived(),
-        dreg.signature() + "::" + dreg.getClass(),
+        dreg.signature(),
         dreg instanceof JSPChaser ? "":printArguments(dreg.getArguments()))
       );
     }

@@ -32,8 +32,8 @@ public abstract class VOMClassVisitAdapter
   public byte[] toBytes() {
     reader = new ClassReader(buffer);
 
-    final ClassWriter writer = new ClassWriter(
-      reader,
+    final ComputeClassWriter writer = new ComputeClassWriter(
+      Thread.currentThread().getContextClassLoader(),
       ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
     );
 

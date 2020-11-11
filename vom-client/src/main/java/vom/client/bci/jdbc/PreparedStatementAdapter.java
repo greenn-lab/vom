@@ -42,13 +42,11 @@ public class PreparedStatementAdapter extends VOMClassVisitAdapter {
     isExecuteMethod = executeMethodNames.contains(methodName)
       && descriptor.startsWith("()");
 
-    if (isExecuteMethod) return true;
-
     isParameterMethod = methodName.startsWith("set")
       && descriptor.startsWith("(I")
       && descriptor.endsWith(")V");
 
-    return isParameterMethod;
+    return isExecuteMethod || isParameterMethod;
   }
 
   @Override
@@ -59,7 +57,7 @@ public class PreparedStatementAdapter extends VOMClassVisitAdapter {
   ) {
 
     if (isExecuteMethod) {
-      return new PreparedStatementExecutesVisitor(
+      visitor = new PreparedStatementExecutesVisitor(
         reader,
         visitor,
         methodName,
@@ -68,7 +66,7 @@ public class PreparedStatementAdapter extends VOMClassVisitAdapter {
     }
 
     if (isParameterMethod) {
-      return new PreparedStatementParametersVisitor(
+      visitor = new PreparedStatementParametersVisitor(
         reader,
         visitor,
         methodName,

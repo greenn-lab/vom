@@ -47,6 +47,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
       return ZERO_BYTE;
     }
 
+
     if (classBeingRedefined != null) {
       System.out.printf(
         "%n%n%n--- classBeingRedefined ---%n%s%n%s%n---/classBeingRedefined ---%n",
@@ -78,8 +79,10 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
           return instance.toBytes();
         }
       }
-      catch (Exception e) {
-        // no work
+      catch (Throwable cause) {
+        if (Config.isDebugMode()) {
+          cause.printStackTrace(System.err);
+        }
       }
     }
 
