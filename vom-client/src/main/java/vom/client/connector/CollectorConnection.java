@@ -8,7 +8,7 @@ import vom.client.Config;
 import vom.client.bci.trove.Trove;
 import vom.client.bci.trove.TroveExecutor;
 import vom.client.connector.sql.SqlManager;
-import vom.client.exception.CarryException;
+import vom.client.exception.RoughAndReadyException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -103,8 +103,8 @@ public final class CollectorConnection {
     try {
       return dataSource.getConnection();
     }
-    catch (SQLException e) {
-      throw new CarryException("refuse connect to server!");
+    catch (Throwable cause) {
+      throw new RoughAndReadyException(cause);
     }
   }
 
@@ -125,7 +125,8 @@ public final class CollectorConnection {
     }
     catch (SQLException e) {
       // no work
-    } finally {
+    }
+    finally {
       if (ps != null) {
         try {
           ps.close();

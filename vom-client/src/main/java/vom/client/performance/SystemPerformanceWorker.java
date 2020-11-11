@@ -19,17 +19,18 @@ public class SystemPerformanceWorker extends Thread implements Serializable {
   @Override
   public void run() {
     while (true) {
-      long[] disk = SystemPerformanceService.getDisk();
-      long[] memory = SystemPerformanceService.getMemory();
-      long[] network = SystemPerformanceService.getNetwork();
+      final double cpu = SystemPerformanceService.getCpu();
+      final long[] disk = SystemPerformanceService.getDisk();
+      final long[] memory = SystemPerformanceService.getMemory();
+      final long[] network = SystemPerformanceService.getNetwork();
 
       try {
-        CollectorConnection.sendSystemPerf(
-          SystemPerformanceService.getCpu(), disk, memory, network
-        );
+        CollectorConnection.sendSystemPerf(cpu, disk, memory, network);
       }
       catch (Throwable cause) {
-        // no work
+        if (Config.isDebugMode()) {
+          cause.printStackTrace(System.err);
+        }
       }
 
       try {
