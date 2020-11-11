@@ -2,7 +2,7 @@ package vom.client.bci.jdbc;
 
 import org.objectweb.asm.MethodVisitor;
 import vom.client.Config;
-import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.ClassVisitAdapter;
 import vom.client.bci.jdbc.visitor.PreparedStatementExecutesVisitor;
 import vom.client.bci.jdbc.visitor.PreparedStatementParametersVisitor;
 
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PreparedStatementAdapter extends VOMClassVisitAdapter {
+public class PreparedStatementAdapter extends ClassVisitAdapter {
 
   private static final Set<String> executeMethodNames =
     new HashSet<String>(

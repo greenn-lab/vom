@@ -3,13 +3,13 @@ package vom.client.bci.servlet;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import vom.client.Config;
-import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.ClassVisitAdapter;
 import vom.client.bci.servlet.visitor.MethodChaserVisitor;
 import vom.client.bci.utility.OpcodeUtils;
 
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
-public class MethodChaserAdapter extends VOMClassVisitAdapter {
+public class MethodChaserAdapter extends ClassVisitAdapter {
 
   public MethodChaserAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);

@@ -18,7 +18,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
 
   private static final byte[] ZERO_BYTE = new byte[0];
 
-  private static final List<Class<? extends VOMClassVisitAdapter>> adapters =
+  private static final List<Class<? extends ClassVisitAdapter>> adapters =
     Arrays.asList(
       HttpServletAdapter.class,
       ServletJSPAdapter.class,
@@ -39,10 +39,9 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
     byte[] classfileBuffer
   ) {
 
-    // 내 스스로 감시하진 말아줘...
     if (
       className == null
-        || className.startsWith("vom/")
+        || className.startsWith("vom/") // 내 스스로 감시하진 말아줘...
     ) {
       return ZERO_BYTE;
     }
@@ -50,7 +49,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
 
     if (classBeingRedefined != null) {
       System.out.printf(
-        "%n%n%n--- classBeingRedefined ---%n%s%n%s%n---/classBeingRedefined ---%n",
+        "%n--- classBeingRedefined ---%n%s%n%s%n---/classBeingRedefined ---%n",
         classBeingRedefined.toString(),
         className
       );
@@ -69,9 +68,9 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
   }
 
   private byte[] matchingAdapter(byte[] buffer, String className) {
-    for (Class<? extends VOMClassVisitAdapter> adapter : adapters) {
+    for (Class<? extends ClassVisitAdapter> adapter : adapters) {
       try {
-        final VOMClassVisitAdapter instance = adapter
+        final ClassVisitAdapter instance = adapter
           .getDeclaredConstructor(byte[].class, String.class)
           .newInstance(buffer, className);
 

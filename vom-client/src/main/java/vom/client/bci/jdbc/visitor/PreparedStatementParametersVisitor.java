@@ -3,13 +3,13 @@ package vom.client.bci.jdbc.visitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import vom.client.bci.VOMAbstractMethodVisitor;
+import vom.client.bci.AbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 import vom.client.bci.utility.OpcodeUtils;
 import vom.client.bci.utility.PrimitiveTypes;
 
 public class PreparedStatementParametersVisitor
-  extends VOMAbstractMethodVisitor {
+  extends AbstractMethodVisitor {
 
   private final Type valueType;
 

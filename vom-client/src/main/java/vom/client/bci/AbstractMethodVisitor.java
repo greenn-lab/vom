@@ -7,15 +7,14 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 @Setter
-public class VOMAbstractMethodVisitor
-  extends LocalVariablesSorter
+public class AbstractMethodVisitor extends LocalVariablesSorter
   implements Opcodes {
 
   protected String className;
   protected String methodName;
 
 
-  public VOMAbstractMethodVisitor(
+  public AbstractMethodVisitor(
     ClassReader reader,
     MethodVisitor visitor,
     String methodName,

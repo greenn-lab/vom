@@ -2,10 +2,10 @@ package vom.client.bci.jdbc;
 
 import org.objectweb.asm.MethodVisitor;
 import vom.client.Config;
-import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.ClassVisitAdapter;
 import vom.client.bci.jdbc.visitor.StatementExecutesVisitor;
 
-public class StatementAdapter extends VOMClassVisitAdapter {
+public class StatementAdapter extends ClassVisitAdapter {
 
   public StatementAdapter(byte[] buffer, String className) {
     super(buffer, className);

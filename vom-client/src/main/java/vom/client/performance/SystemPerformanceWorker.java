@@ -28,9 +28,7 @@ public class SystemPerformanceWorker extends Thread implements Serializable {
         CollectorConnection.sendSystemPerf(cpu, disk, memory, network);
       }
       catch (Throwable cause) {
-        if (Config.isDebugMode()) {
-          cause.printStackTrace(System.err);
-        }
+        // no works
       }
 
       try {

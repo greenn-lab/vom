@@ -10,8 +10,7 @@ import vom.client.bci.utility.OpcodeUtils;
 
 import java.io.File;
 
-public abstract class VOMClassVisitAdapter
-  extends ClassVisitor
+public abstract class ClassVisitAdapter extends ClassVisitor
   implements ClassWritable, Opcodes {
 
   protected final byte[] buffer;
@@ -20,7 +19,7 @@ public abstract class VOMClassVisitAdapter
   protected ClassReader reader;
 
 
-  public VOMClassVisitAdapter(byte[] buffer, String className) {
+  public ClassVisitAdapter(byte[] buffer, String className) {
     super(ASM7);
 
     this.buffer = buffer;

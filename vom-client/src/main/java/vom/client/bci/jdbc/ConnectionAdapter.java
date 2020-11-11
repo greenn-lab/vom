@@ -2,11 +2,11 @@ package vom.client.bci.jdbc;
 
 import org.objectweb.asm.MethodVisitor;
 import vom.client.Config;
-import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.ClassVisitAdapter;
 import vom.client.bci.jdbc.visitor.ConnectionPrepareStatementVisitor;
 
 public class ConnectionAdapter
-  extends VOMClassVisitAdapter {
+  extends ClassVisitAdapter {
 
   public ConnectionAdapter(byte[] buffer, String className) {
     super(buffer, className);

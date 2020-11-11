@@ -1,12 +1,12 @@
 package vom.client.bci.mybatis;
 
 import org.objectweb.asm.MethodVisitor;
-import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.ClassVisitAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MybatisDefaultSqlSessionAdapter extends VOMClassVisitAdapter {
+public class MybatisDefaultSqlSessionAdapter extends ClassVisitAdapter {
 
   private static final String INTERNAL_NAME;
   private static final Map<String, String> METHODS;

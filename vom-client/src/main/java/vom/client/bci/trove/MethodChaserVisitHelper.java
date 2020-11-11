@@ -3,11 +3,11 @@ package vom.client.bci.trove;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import vom.client.bci.VOMAbstractMethodVisitor;
+import vom.client.bci.AbstractMethodVisitor;
 
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 
-public abstract class MethodChaserVisitHelper extends VOMAbstractMethodVisitor {
+public abstract class MethodChaserVisitHelper extends AbstractMethodVisitor {
 
   public static final Type METHOD_CHASER_TYPE = Type.getType(MethodChaser.class);
   public static final String METHOD_CHASER_INTERNAL =

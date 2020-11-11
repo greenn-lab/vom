@@ -2,11 +2,11 @@ package vom.client.bci.servlet;
 
 import org.objectweb.asm.MethodVisitor;
 import vom.client.Config;
-import vom.client.bci.VOMClassVisitAdapter;
+import vom.client.bci.ClassVisitAdapter;
 import vom.client.bci.servlet.visitor.HttpServletServiceVisitor;
 import vom.client.bci.servlet.visitor.ServletJasperJSPVisitor;
 
-public class ServletJSPAdapter extends VOMClassVisitAdapter {
+public class ServletJSPAdapter extends ClassVisitAdapter {
 
   public ServletJSPAdapter(byte[] classfileBuffer, String className) {
     super(classfileBuffer, className);

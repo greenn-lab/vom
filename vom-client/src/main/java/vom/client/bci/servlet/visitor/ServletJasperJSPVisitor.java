@@ -2,7 +2,7 @@ package vom.client.bci.servlet.visitor;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
-import vom.client.bci.VOMAbstractMethodVisitor;
+import vom.client.bci.AbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 
 import static vom.client.bci.trove.JSPChaser.JSP_CHASER_INTERNAL;
@@ -10,7 +10,7 @@ import static vom.client.bci.trove.JSPChaser.JSP_CHASER_TYPE;
 import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
-public class ServletJasperJSPVisitor extends VOMAbstractMethodVisitor {
+public class ServletJasperJSPVisitor extends AbstractMethodVisitor {
 
   private int varChase;
 

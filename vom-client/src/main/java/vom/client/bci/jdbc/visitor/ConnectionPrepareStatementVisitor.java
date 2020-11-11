@@ -2,7 +2,7 @@ package vom.client.bci.jdbc.visitor;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
-import vom.client.bci.VOMAbstractMethodVisitor;
+import vom.client.bci.AbstractMethodVisitor;
 import vom.client.bci.trove.TroveExecutor;
 
 import static vom.client.bci.trove.SQLChaser.SQL_CHASER_INTERNAL;
@@ -11,7 +11,7 @@ import static vom.client.bci.utility.OpcodeUtils.CONSTRUCTOR;
 import static vom.client.bci.utility.OpcodeUtils.VOID_STRING;
 
 public class ConnectionPrepareStatementVisitor
-  extends VOMAbstractMethodVisitor {
+  extends AbstractMethodVisitor {
 
   public ConnectionPrepareStatementVisitor(
     ClassReader reader,
