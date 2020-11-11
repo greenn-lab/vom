@@ -39,6 +39,8 @@ public class PreparedStatementAdapter extends ClassVisitAdapter {
 
   @Override
   public boolean methodMatches(int access, String methodName, String descriptor) {
+    if ((access & ACC_PUBLIC) == 0) return false;
+
     isExecuteMethod = executeMethodNames.contains(methodName)
       && descriptor.startsWith("()");
 
