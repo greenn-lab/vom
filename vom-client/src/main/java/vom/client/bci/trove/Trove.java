@@ -42,8 +42,6 @@ public class Trove implements Serializable {
     this.uri = uri;
     this.starter = starter;
     this.identifier = identifier;
-
-
   }
 
 

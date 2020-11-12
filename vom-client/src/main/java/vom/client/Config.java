@@ -92,7 +92,8 @@ public final class Config {
     }
     catch (IOException e) {
       // no work
-    } finally {
+    }
+    finally {
       if (in != null) {
         try {
           in.close();
@@ -120,8 +121,8 @@ public final class Config {
         if (value != null && !"".equals(value.trim())) {
           props.setProperty(name,
             name.startsWith("classes.")
-            ? props.getProperty(name) + " " + value
-            : value);
+              ? props.getProperty(name) + " " + value
+              :value);
         }
       }
 
@@ -129,7 +130,8 @@ public final class Config {
     }
     catch (IOException e) {
       // no work
-    } finally {
+    }
+    finally {
       if (in != null) {
         try {
           in.close();
@@ -164,4 +166,5 @@ public final class Config {
       System.out.println();
     }
   }
+
 }

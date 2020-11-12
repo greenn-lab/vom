@@ -1,6 +1,6 @@
 package vom.client.connector;
 
-import com.alibaba.fastjson.JSON;
+import com.jsoniter.output.JsonStream;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -55,7 +55,7 @@ public final class CollectorConnection {
         }
 
         try {
-          final String json = JSON.toJSONString(trove);
+          final String json = JsonStream.serialize(trove);
           sendExecChaser(trove, json);
         }
         catch (Throwable cause) {

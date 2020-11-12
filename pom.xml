@@ -22,8 +22,7 @@
     <oshi.version>3.13.6</oshi.version>
     <hikari-cp.version>3.4.5</hikari-cp.version>
     <h2.version>1.4.200</h2.version>
-    <kryo.version>4.0.2</kryo.version>
-    <fastjson.version>1.2.74</fastjson.version>
+    <jsoniter.version>0.9.19</jsoniter.version>
   </properties>
 
   <dependencies>
@@ -45,9 +44,9 @@
       <version>${h2.version}</version>
     </dependency>
     <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>fastjson</artifactId>
-        <version>${fastjson.version}</version>
+        <groupId>com.jsoniter</groupId>
+        <artifactId>jsoniter</artifactId>
+        <version>0.9.19</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

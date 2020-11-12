@@ -104,8 +104,8 @@
             <filter>
               <artifact>*:*</artifact>
               <includes>
+                <include>com/jsoniter/**</include>
                 <include>com/sun/jna/**</include>
-                <include>com/alibaba/**</include>
                 <include>com/zaxxer/**</include>
                 <include>org/objectweb/**</include>
                 <include>org/h2/**</include>
@@ -118,8 +118,8 @@
           </filters>
           <relocations>
             <relocation>
-              <pattern>com.alibaba</pattern>
-              <shadedPattern>${vom.package}.com.alibaba</shadedPattern>
+              <pattern>com.jsoniter</pattern>
+              <shadedPattern>${vom.package}.com.jsoniter</shadedPattern>
             </relocation>
             <relocation>
               <pattern>com.zaxxer</pattern>
