@@ -91,9 +91,8 @@ public class TroveExecutor {
 
       TROVE.set(trove);
     }
-    catch (IllegalAccessException iae) {
-      // no work
-      System.err.println(iae.getMessage());
+    catch (IllegalAccessException ignored) {
+      // no works
     }
     catch (Throwable cause) {
       cause.printStackTrace();
