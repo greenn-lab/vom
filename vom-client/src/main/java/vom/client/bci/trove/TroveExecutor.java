@@ -7,7 +7,6 @@ import vom.client.connector.CollectorConnection;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,8 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
 public class TroveExecutor {
 
-  public static final InheritableThreadLocal<Trove> TROVE =
-    new InheritableThreadLocal<Trove>();
+  public static final ThreadLocal<Trove> TROVE =
+    new ThreadLocal<Trove>();
 
   private static final String INTERNAL_NAME =
     Type.getInternalName(TroveExecutor.class);
@@ -58,7 +57,6 @@ public class TroveExecutor {
   @SuppressWarnings({"unused", "unchecked"})
   public static void seize(Object request, Object starter) {
     Trove trove = TROVE.get();
-    final Class<?> clazz = request.getClass();
 
     if (null != trove) return;
 
@@ -66,16 +64,22 @@ public class TroveExecutor {
       .contains(starter.getClass().getName())) return;
 
     try {
+      final Class<?> clazz = request.getClass();
+
       final String method =
         (String) clazz.getMethod("getMethod").invoke(request);
       final String uri =
         (String) clazz.getMethod("getRequestURI").invoke(request);
 
       trove = new Trove(method, uri, starter, request);
-      trove.setParameters(
+
+      @SuppressWarnings("rawtypes") final Map<String, String[]> parameterMap =
         (Map<String, String[]>) clazz.getMethod("getParameterMap")
-          .invoke(request)
-      );
+          .invoke(request);
+
+      for (Map.Entry<String, String[]> param : parameterMap.entrySet()) {
+        trove.addParameter(param.getKey(), param.getValue());
+      }
 
       final Enumeration<String> headerNames =
         (Enumeration<String>) clazz.getMethod("getHeaderNames").invoke(request);
@@ -222,11 +226,12 @@ public class TroveExecutor {
       logs.append("\n");
     }
 
-    for (Map.Entry<String, String[]> param : trove.getParameters().entrySet()) {
+    for (Map.Entry<String, String> param : trove.getParameters().entrySet()) {
       logs.append(
         String.format("\t- %s: %s%n",
           param.getKey(),
-          Arrays.toString(param.getValue()))
+          param.getValue()
+        )
       );
     }
 
