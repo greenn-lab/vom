@@ -26,13 +26,16 @@ public abstract class ClassVisitAdapter extends ClassVisitor
     this.className = className;
   }
 
+  public byte[] toBytes() {
+    return toBytes(Thread.currentThread().getContextClassLoader());
+  }
 
   @Override
-  public byte[] toBytes() {
+  public byte[] toBytes(ClassLoader loader) {
     reader = new ClassReader(buffer);
 
     final ComputeClassWriter writer = new ComputeClassWriter(
-      Thread.currentThread().getContextClassLoader(),
+      loader,
       ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
     );
 

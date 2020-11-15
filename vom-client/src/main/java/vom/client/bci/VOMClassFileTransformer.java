@@ -56,7 +56,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
     }
 
     try {
-      return matchingAdapter(classfileBuffer, className);
+      return matchingAdapter(loader, classfileBuffer, className);
     }
     catch (Throwable cause) {
       if (Config.isDebugMode()) {
@@ -67,7 +67,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
     return ZERO_BYTE;
   }
 
-  private byte[] matchingAdapter(byte[] buffer, String className) {
+  private byte[] matchingAdapter(ClassLoader loader, byte[] buffer, String className) {
     for (Class<? extends ClassVisitAdapter> adapter : adapters) {
       try {
         final ClassVisitAdapter instance = adapter
@@ -75,7 +75,7 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
           .newInstance(buffer, className);
 
         if (instance.isAdaptable()) {
-          return instance.toBytes();
+          return instance.toBytes(loader);
         }
       }
       catch (Throwable cause) {

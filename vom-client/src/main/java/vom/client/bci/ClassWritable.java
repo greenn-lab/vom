@@ -6,7 +6,7 @@ public interface ClassWritable {
 
   boolean isAdaptable();
 
-  byte[] toBytes();
+  byte[] toBytes(ClassLoader loader);
 
   boolean methodMatches(int access, String methodName, String descriptor);
 
