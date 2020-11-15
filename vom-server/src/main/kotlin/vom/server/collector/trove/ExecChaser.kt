@@ -11,6 +11,8 @@ class ExecChaser(
   @Id val collected: Long
 ) : Serializable {
 
+  val uri: String = ""
+
   @Lob
   val json: String = ""
 

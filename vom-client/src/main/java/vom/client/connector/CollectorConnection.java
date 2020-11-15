@@ -78,6 +78,7 @@ public final class CollectorConnection {
       SqlManager.getInstance().get("insert-exec-chaser"),
       trove.getId(),
       trove.getCollected(),
+      trove.getUri(),
       json
     );
   }

@@ -5,10 +5,11 @@
     INSERT INTO EXEC_CHASER (
       ID,
       COLLECTED,
+      URI,
       JSON
     )
     VALUES (
-      ?1, ?2, ?3
+      ?1, ?2, ?3, ?4
     )
   </sql>
   <sql id="insert-system-perf"><![CDATA[
