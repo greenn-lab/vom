@@ -46,7 +46,6 @@ public class VOMClassFileTransformer implements ClassFileTransformer {
       return ZERO_BYTE;
     }
 
-
     if (classBeingRedefined != null) {
       System.out.printf(
         "%n--- classBeingRedefined ---%n%s%n%s%n---/classBeingRedefined ---%n",

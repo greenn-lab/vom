@@ -22,7 +22,7 @@
     <oshi.version>3.13.6</oshi.version>
     <hikari-cp.version>3.4.5</hikari-cp.version>
     <h2.version>1.4.200</h2.version>
-    <jsoniter.version>0.9.19</jsoniter.version>
+    <fastjson.version>1.2.74</fastjson.version>
   </properties>
 
   <dependencies>
@@ -33,9 +33,9 @@
     </dependency>
 
     <dependency>
-        <groupId>com.zaxxer</groupId>
-        <artifactId>HikariCP</artifactId>
-        <version>${hikari-cp.version}</version>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>${hikari-cp.version}</version>
     </dependency>
 
     <dependency>
@@ -44,9 +44,9 @@
       <version>${h2.version}</version>
     </dependency>
     <dependency>
-        <groupId>com.jsoniter</groupId>
-        <artifactId>jsoniter</artifactId>
-        <version>${jsoniter.version}</version>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>${fastjson.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

@@ -104,7 +104,7 @@
             <filter>
               <artifact>*:*</artifact>
               <includes>
-                <include>com/jsoniter/**</include>
+                <include>com/alibaba/**</include>
                 <include>com/sun/jna/**</include>
                 <include>com/zaxxer/**</include>
                 <include>org/objectweb/**</include>
@@ -117,10 +117,12 @@
             </filter>
           </filters>
           <relocations>
+<!--
             <relocation>
               <pattern>com.jsoniter</pattern>
               <shadedPattern>${vom.package}.com.jsoniter</shadedPattern>
             </relocation>
+-->
             <relocation>
               <pattern>com.zaxxer</pattern>
               <shadedPattern>${vom.package}.com.zaxxer</shadedPattern>

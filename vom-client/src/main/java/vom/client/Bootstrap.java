@@ -32,6 +32,8 @@ public class Bootstrap {
 
     Config.print();
 
+    Logger.initialize();
+
     instrumentation.addTransformer(
       new VOMClassFileTransformer(),
       true
