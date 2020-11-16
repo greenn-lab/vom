@@ -3,9 +3,9 @@
   <sql id="insert-exec-chaser"><![CDATA[
   ]]>
     INSERT INTO EXEC_CHASER (
-      ID,
       COLLECTED,
       URI,
+      METHOD,
       JSON
     )
     VALUES (

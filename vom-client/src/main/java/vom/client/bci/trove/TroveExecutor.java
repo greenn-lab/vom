@@ -18,8 +18,8 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_NONE;
 
 public class TroveExecutor {
 
-  public static final ThreadLocal<Trove> TROVE =
-    new ThreadLocal<Trove>();
+  public static final InheritableThreadLocal<Trove> TROVE =
+    new InheritableThreadLocal<Trove>();
 
   private static final String INTERNAL_NAME =
     Type.getInternalName(TroveExecutor.class);
@@ -212,9 +212,11 @@ public class TroveExecutor {
 
   public static void print(Trove trove) {
     final StringBuilder logs = new StringBuilder();
-    logs.append(String.format("%d [%s] ---%n",
+    logs.append(String.format("%d [%s %s] collected: %d ---%n",
       trove.getIdentifier().hashCode(),
-      trove.getUri()));
+      trove.getMethod(),
+      trove.getUri(),
+      trove.getCollected()));
 
     if (null != trove.getError()) {
       logs.append(String.format("\t|%s%n", trove.getError().getMessage()));

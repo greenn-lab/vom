@@ -5,13 +5,15 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "EXEC_CHASER")
-@IdClass(ExecChaserId::class)
 class ExecChaser(
-  @Id val id: String,
-  @Id val collected: Long
+  @Id @GeneratedValue(GenerationType.IDENTITY) val id: Long
 ) : Serializable {
 
+  val collected: Long = 0
+
   val uri: String = ""
+
+  var method: String = ""
 
   @Lob
   val json: String = ""
