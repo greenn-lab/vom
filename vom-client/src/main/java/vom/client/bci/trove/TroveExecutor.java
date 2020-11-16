@@ -19,7 +19,13 @@ import static vom.client.bci.utility.OpcodeUtils.VOID_NONE;
 public class TroveExecutor {
 
   public static final InheritableThreadLocal<Trove> TROVE =
-    new InheritableThreadLocal<Trove>();
+    new InheritableThreadLocal<Trove>() {
+      @Override
+      protected Trove childValue(Trove parentValue) {
+        return parentValue;
+      }
+    };
+
 
   private static final String INTERNAL_NAME =
     Type.getInternalName(TroveExecutor.class);
