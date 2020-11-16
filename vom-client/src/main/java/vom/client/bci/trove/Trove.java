@@ -30,13 +30,10 @@ public class Trove implements Serializable {
 
   private List<Chaser> dregs = new ArrayList<Chaser>();
 
-  @JSONField(serialize = false)
   private transient Object starter;
 
-  @JSONField(serialize = false)
   private transient Object identifier;
 
-  @JSONField(serialize = false)
   private transient SQLChaser currentQuery;
 
 
@@ -94,6 +91,8 @@ public class Trove implements Serializable {
 
     @Override
     public String toString() {
+      if (value == null) return "";
+
       return String.format("\"%s\"(%s)", value.toString(), type.getName());
     }
 
