@@ -1,8 +1,10 @@
 package vom.client.bci.trove;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 import org.objectweb.asm.Type;
+import vom.client.fastjson.ChaserArgumentsCodec;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ public abstract class Chaser implements Serializable {
   @Setter
   private long arrived;
 
+  @JSONField(serializeUsing = ChaserArgumentsCodec.class)
   @Setter
   private Map<Integer, Trove.Argument> arguments =
     new HashMap<Integer, Trove.Argument>();

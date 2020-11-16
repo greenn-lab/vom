@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import vom.client.Config;
 import vom.client.bci.trove.Trove;
 import vom.client.bci.trove.TroveExecutor;
@@ -28,7 +29,9 @@ public final class CollectorConnection {
     Executors.newFixedThreadPool(POOL_SIZE, new ThreadFactory() {
       @Override
       public Thread newThread(Runnable runnable) {
-        return new Thread(runnable, "giver-pool");
+        final Thread thread = new Thread(runnable, "giver-pool");
+        thread.setDaemon(true);
+        return thread;
       }
     });
 
@@ -76,9 +79,9 @@ public final class CollectorConnection {
   public static void sendExecChaser(Trove trove, String json) {
     execute(
       SqlManager.getInstance().get("insert-exec-chaser"),
-      trove.getId(),
       trove.getCollected(),
       trove.getUri(),
+      trove.getMethod(),
       json
     );
   }
@@ -126,6 +129,9 @@ public final class CollectorConnection {
     }
     catch (SQLException e) {
       // no work
+      if (Config.isDebugMode()) {
+        e.printStackTrace(System.err);
+      }
     }
     finally {
       if (ps != null) {
