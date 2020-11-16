@@ -13,7 +13,7 @@ class TroveSerializationTest {
   void whyOccurredException() {
     final Trove trove = new Trove("X", "Y", "Z", "A");
     final SQLChaser booty = new SQLChaser("SELECT 1 FROM DUAL");
-    booty.addArgument(new Trove.Argument(new String[]{"A", "b"}));
+    booty.addArgument(0, new Trove.Argument(new String[]{"A", "b"}));
     trove.addBooty(booty);
 
 

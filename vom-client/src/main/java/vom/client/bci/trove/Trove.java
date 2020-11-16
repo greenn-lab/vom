@@ -83,11 +83,18 @@ public class Trove implements Serializable {
     @JSONField(serializeUsing = ArgumentValueCodec.class)
     private final Serializable value;
 
+
     public Argument(Object value) {
       this.type = null == value ? null:value.getClass();
       this.value = value instanceof Serializable
         ? (Serializable) value
         :null;
+    }
+
+
+    @Override
+    public String toString() {
+      return String.format("\"%s\"(%s)", value.toString(), type.getName());
     }
 
   }

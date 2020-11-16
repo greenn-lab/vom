@@ -34,6 +34,9 @@ public class PreparedStatementParametersVisitor
     if (valueType == null) return;
 
     // Trover.glean()'s 1st parameter
+    mv.visitVarInsn(ILOAD, 1);
+
+    // Trover.glean()'s 2nd parameter
     mv.visitVarInsn(
       OpcodeUtils.loadLocalVariable(valueType),
       2

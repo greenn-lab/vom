@@ -20,8 +20,8 @@ public class MethodChaser extends Chaser implements Serializable {
     this.methodName = methodName;
 
     if (arguments != null) {
-      for (Object argument : arguments) {
-        addArgument(argument);
+      for (int i = 0; i < arguments.length; i++) {
+        addArgument(i, arguments[i]);
       }
     }
   }

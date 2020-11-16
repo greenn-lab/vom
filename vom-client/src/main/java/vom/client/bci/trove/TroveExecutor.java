@@ -8,7 +8,6 @@ import vom.client.connector.CollectorConnection;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
@@ -16,7 +15,6 @@ import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static vom.client.bci.trove.Chaser.CHASER_INTERNAL;
 import static vom.client.bci.utility.OpcodeUtils.VOID_LONG;
 import static vom.client.bci.utility.OpcodeUtils.VOID_NONE;
-import static vom.client.bci.utility.OpcodeUtils.VOID_OBJECT;
 
 public class TroveExecutor {
 
@@ -73,7 +71,7 @@ public class TroveExecutor {
 
       trove = new Trove(method, uri, starter, request);
 
-      @SuppressWarnings("rawtypes") final Map<String, String[]> parameterMap =
+      final Map<String, String[]> parameterMap =
         (Map<String, String[]>) clazz.getMethod("getParameterMap")
           .invoke(request);
 
@@ -161,20 +159,20 @@ public class TroveExecutor {
       INVOKESTATIC,
       INTERNAL_NAME,
       CALL_GLEAN,
-      VOID_OBJECT,
+      "(ILjava/lang/Object;)V",
       false
     );
   }
 
   @SuppressWarnings("unused")
-  public static void glean(Object argument) {
+  public static void glean(int index, Object argument) {
     final Trove trove = TROVE.get();
     if (trove == null) return;
 
     final SQLChaser currentQuery = trove.getCurrentQuery();
     if (currentQuery == null) return;
 
-    currentQuery.addArgument(argument);
+    currentQuery.addArgument(index, argument);
   }
 
 
@@ -241,7 +239,7 @@ public class TroveExecutor {
         dreg.getArrived() - dreg.getStarted(),
         dreg.getStarted(), dreg.getArrived(),
         dreg.signature(),
-        dreg instanceof JSPChaser ? "":printArguments(dreg.getArguments()))
+        dreg.getArguments().toString())
       );
     }
     logs.append(String.format(
@@ -251,25 +249,6 @@ public class TroveExecutor {
     );
 
     System.out.println(logs);
-  }
-
-  private static String printArguments(List<Trove.Argument> args) {
-    if (args.isEmpty()) return "()";
-
-    final StringBuilder result = new StringBuilder();
-    result.append('(');
-
-    for (Trove.Argument arg : args) {
-      final String name = arg.getType().getCanonicalName();
-
-      result
-        .append(name.substring(name.lastIndexOf(".") + 1))
-        .append(",");
-    }
-
-    result.setCharAt(result.length() - 1, ')');
-
-    return result.toString();
   }
 
 }

@@ -5,8 +5,8 @@ import lombok.Setter;
 import org.objectweb.asm.Type;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 public abstract class Chaser implements Serializable {
@@ -22,10 +22,11 @@ public abstract class Chaser implements Serializable {
   private long arrived;
 
   @Setter
-  private List<Trove.Argument> arguments = new ArrayList<Trove.Argument>();
+  private Map<Integer, Trove.Argument> arguments =
+    new HashMap<Integer, Trove.Argument>();
 
-  public void addArgument(Object argument) {
-    arguments.add(new Trove.Argument(argument));
+  public void addArgument(int index, Object argument) {
+    arguments.put(index, new Trove.Argument(argument));
   }
 
   public void close() {
