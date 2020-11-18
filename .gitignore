@@ -1,6 +1,9 @@
 .mvn
 .gradle
+.DS_Store
 target
+node_modules
+dist
 spring-petclinic
 demo
 jpetstore
