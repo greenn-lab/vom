@@ -5,12 +5,12 @@
       <v-col/>
       <v-col md="6">
         <v-card
-          elevation="1"
-          outlined
+            elevation="1"
+            outlined
         >
           <v-card-title>CPU</v-card-title>
           <v-card-text>
-            <ChartCPU />
+            <ChartCPU/>
           </v-card-text>
         </v-card>
 
@@ -21,15 +21,8 @@
 </template>
 <script>
 import ChartCPU from "../components/dashboard/ChartCPU";
-import {mapGetters} from "vuex";
 
 export default {
-  components: {ChartCPU},
-  computed: {
-    ...mapGetters('dashboard', {cpu: 'cpuStats'})
-  },
-  mounted() {
-    console.log('cpu', this.cpu)
-  }
+  components: {ChartCPU}
 }
 </script>

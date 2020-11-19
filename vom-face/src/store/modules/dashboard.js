@@ -3,12 +3,12 @@ const state = {
   colors: ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet', 'magenta'],
   cpu: {
     'DEV0': Array(30).fill(0).map((n, i) => ({
-      x: Date.now() - (30 - i) * 1000,
-      y: 0.7
+      x: Date.now() - (27 - i) * 1000,
+      y: 0
     })),
     'DEV1': Array(30).fill(0).map((n, i) => ({
-      x: Date.now() - (30 - i) * 1000,
-      y: 0.7
+      x: Date.now() - (27 - i) * 1000,
+      y: 0
     }))
   }
 }

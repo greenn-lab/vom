@@ -5,11 +5,14 @@ import {mapGetters} from "vuex";
 export default {
   extends: Line,
   computed: {
-    ...mapGetters('dashboard', {
-      clients: 'clients',
-      colors: 'colors',
-      stats: 'cpuStats',
-    })
+    ...mapGetters(
+      'dashboard',
+      {
+        clients: 'clients',
+        colors: 'colors',
+        stats: 'cpuStats'
+      }
+    )
   },
   mounted() {
     this.renderChart(
@@ -48,6 +51,8 @@ export default {
                 refresh: 2000,
                 delay: 2000,
                 onRefresh: function (chart) {
+                  console.log(chart)
+                  window.c = chart
                   chart.data.datasets.forEach(dataset =>
                     dataset.data.push({
                       x: Date.now(),
